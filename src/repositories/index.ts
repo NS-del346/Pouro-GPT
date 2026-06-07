@@ -6,3 +6,9 @@ export {
   saveBrewSession,
 } from "./brewHistoryRepository";
 
+export {
+  getUserSettings,
+  resetUserSettings,
+  saveUserSettings,
+} from "./userSettingsRepository";
+
