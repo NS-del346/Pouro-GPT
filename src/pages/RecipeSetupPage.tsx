@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { visiblePlaceholderMethods } from "../data";
@@ -10,9 +10,15 @@ const ratioOptions = [14, 15, 16];
 
 interface RecipeSetupPageProps {
   onStartBrew: (setup: BrewSetup) => void;
+  replaySetupDraft: BrewSetup | null;
+  onReplaySetupConsumed: () => void;
 }
 
-export function RecipeSetupPage({ onStartBrew }: RecipeSetupPageProps) {
+export function RecipeSetupPage({
+  onStartBrew,
+  replaySetupDraft,
+  onReplaySetupConsumed,
+}: RecipeSetupPageProps) {
   const { methodId } = useParams();
   const navigate = useNavigate();
   const method = visiblePlaceholderMethods.find((item) => item.id === methodId);
@@ -22,6 +28,17 @@ export function RecipeSetupPage({ onStartBrew }: RecipeSetupPageProps) {
   const [waterTempMemo, setWaterTempMemo] = useState("");
   const [grindMemo, setGrindMemo] = useState("");
   const [freeMemo, setFreeMemo] = useState("");
+
+  useEffect(() => {
+    if (!replaySetupDraft || replaySetupDraft.methodId !== methodId) return;
+
+    setCoffeeGrams(replaySetupDraft.coffeeGrams);
+    setRatio(replaySetupDraft.ratio);
+    setWaterTempMemo(replaySetupDraft.waterTempMemo);
+    setGrindMemo(replaySetupDraft.grindMemo);
+    setFreeMemo(replaySetupDraft.freeMemo);
+    onReplaySetupConsumed();
+  }, [methodId, onReplaySetupConsumed, replaySetupDraft]);
 
   const waterGrams = useMemo(
     () => Math.round(coffeeGrams * ratio),

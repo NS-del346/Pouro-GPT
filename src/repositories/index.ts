@@ -1,3 +1,8 @@
-// localStorage repositories are introduced in PR-005.
-export {};
+export {
+  clearBrewHistory,
+  deleteBrewSession,
+  getBrewHistory,
+  getBrewSessionById,
+  saveBrewSession,
+} from "./brewHistoryRepository";
 
