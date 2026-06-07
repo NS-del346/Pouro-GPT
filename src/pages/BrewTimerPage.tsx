@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { visiblePlaceholderMethods } from "../data";
-import type { BrewSetup, TimerStatus } from "../types";
-import { formatPourGrams, formatRecipeGrams } from "../utils";
+import type { BrewSession, BrewSetup, TimerStatus } from "../types";
+import { createId, formatPourGrams, formatRecipeGrams } from "../utils";
 
 interface BrewTimerPageProps {
   activeSetup: BrewSetup | null;
+  onFinishBrew: (session: BrewSession) => void;
 }
 
 function formatTimerMs(ms: number): string {
@@ -23,7 +24,7 @@ function formatStepTime(sec: number | null): string {
   return formatTimerMs(sec * 1000);
 }
 
-export function BrewTimerPage({ activeSetup }: BrewTimerPageProps) {
+export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps) {
   const navigate = useNavigate();
   const method = visiblePlaceholderMethods.find(
     (item) => item.id === activeSetup?.methodId,
@@ -73,6 +74,8 @@ export function BrewTimerPage({ activeSetup }: BrewTimerPageProps) {
     return <Navigate to="/" replace />;
   }
 
+  const currentMethod = method;
+  const currentSetup = activeSetup;
   const currentStep = steps[currentStepIndex] ?? steps[0];
   const nextStep = steps[currentStepIndex + 1] ?? null;
   const isLastStep = currentStepIndex >= steps.length - 1;
@@ -131,9 +134,31 @@ export function BrewTimerPage({ activeSetup }: BrewTimerPageProps) {
     }
 
     const finishedAt = Date.now();
-    setElapsedMsAtFinish(calculateElapsedMs(finishedAt));
+    const finalElapsedMs = calculateElapsedMs(finishedAt);
+    const sessionStartedAtMs = startedAtMs ?? finishedAt;
+
+    const finishedSessionDraft: BrewSession = {
+      id: createId(),
+      methodId: currentMethod.id,
+      methodSnapshot: currentMethod,
+      setupSnapshot: currentSetup,
+      timerStatus: "finished",
+      startedAtIso: new Date(sessionStartedAtMs).toISOString(),
+      finishedAtIso: new Date(finishedAt).toISOString(),
+      startedAtMs: sessionStartedAtMs,
+      pausedAtMs,
+      totalPausedMs,
+      elapsedMsAtFinish: finalElapsedMs,
+      currentStepIndex,
+      completed: true,
+      cancelled: false,
+      result: null,
+    };
+
+    setElapsedMsAtFinish(finalElapsedMs);
     setNowMs(finishedAt);
     setTimerStatus("finished");
+    onFinishBrew(finishedSessionDraft);
     navigate("/finish");
   }
 
