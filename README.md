@@ -15,6 +15,18 @@ This repository currently contains the application foundation:
 
 Recipe data, timer logic, local storage, PWA files, and finished screen UI are intentionally deferred to later PRs.
 
+## PR-002 Types and Placeholder Data
+
+PR-002 adds the domain model and placeholder method data used by later UI work:
+
+- `SourceStatus` and `VerificationLevel` for source and verification state
+- Brew domain types for methods, recipes, steps, setup, sessions, settings, and taste notes
+- Four placeholder methods: `4:6 Method`, `Hybrid Method`, `10 Pour Method`, and `Ice Brew`
+- Review labels such as `レシピ確認中`, `出典確認中`, `参考表示`, and `未確定`
+- Formatting helpers that can render unknown pour values as `Pour --g` and `Total --g`
+
+The placeholder methods are not confirmed recipes. Their recipe values, pour amounts, timings, and step text are intentionally nullable or marked as placeholder data until source review is complete.
+
 ## Getting Started
 
 ```bash
