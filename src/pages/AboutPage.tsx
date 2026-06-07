@@ -20,7 +20,7 @@ export function AboutPage() {
       <section className="content-card">
         <h2>できること</h2>
         <p>
-          抽出メソッドの選択、豆量・比率・湯量などの抽出条件入力、Timerによる
+          抽出メソッドの選択、豆量・比率・湯量などの抽出条件入力、タイマーによる
           抽出補助、抽出後の記録、履歴からの再抽出を行えます。
         </p>
         <p>

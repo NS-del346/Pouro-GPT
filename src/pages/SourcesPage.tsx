@@ -15,17 +15,16 @@ export function SourcesPage() {
           湯量、時間、説明文は、確定レシピとして扱わないでください。
         </p>
         <p>
-          型として verified / official は存在しますが、現在のplaceholderデータは
+          内部分類として verified / official は存在しますが、現在の確認中データは
           verified / official ではありません。
         </p>
         <p>
-          sourceStatus と verificationLevel は、将来の原典確認に応じて情報を
-          更新するための分類です。
+          出典状態と確認段階は、将来の原典確認に応じて情報を更新するための分類です。
         </p>
       </section>
 
       <section className="content-card">
-        <h2>sourceStatus</h2>
+        <h2>出典状態（sourceStatus）</h2>
         <dl className="detail-list">
           <div>
             <dt>placeholder</dt>
@@ -47,7 +46,7 @@ export function SourcesPage() {
       </section>
 
       <section className="content-card">
-        <h2>verificationLevel</h2>
+        <h2>確認段階（verificationLevel）</h2>
         <dl className="detail-list">
           <div>
             <dt>placeholder</dt>
@@ -91,7 +90,7 @@ export function SourcesPage() {
             <div key={method.id}>
               <dt>{method.displayName}</dt>
               <dd>
-                sourceStatus: {method.sourceStatus} / verificationLevel:{" "}
+                出典状態: {method.sourceStatus} / 確認段階:{" "}
                 {method.verificationLevel}
               </dd>
             </div>

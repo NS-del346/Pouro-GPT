@@ -181,12 +181,12 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
     ? `Next ${formatStepTime(nextStep.startSec)} / ${formatPourGrams(
         nextStep.pourGrams,
       )}`
-    : "Next Finish";
+    : "Finish へ進む";
 
   return (
     <Page
       title="Brew Timer"
-      description="Date.now()基準で経過時間を管理します。保存・音・バイブレーションはまだ実装しません。"
+      description="抽出中の経過時間、現在のステップ、次の操作を確認します。記録はFinish後の画面で保存できます。"
     >
       <section className="timer-core" aria-labelledby="timer-method-title">
         <div className="timer-method-summary">
@@ -220,7 +220,13 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
 
         <p className="timer-next-preview">{nextPreview}</p>
 
-        <div className="timer-controls" aria-label="Timer controls">
+        {isLastStep && timerStatus !== "idle" && timerStatus !== "finished" && (
+          <p className="timer-finish-note">
+            抽出を終了して記録画面へ進みます。
+          </p>
+        )}
+
+        <div className="timer-controls" aria-label="タイマー操作">
           <button
             className="timer-control-button"
             disabled={!canMoveBack}
@@ -244,7 +250,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
             {timerActionLabel}
           </button>
           <button
-            className="timer-control-button"
+            className={`timer-control-button${
+              isLastStep ? " timer-control-button--finish" : ""
+            }`}
             disabled={timerStatus === "idle" || timerStatus === "finished"}
             onClick={handleNextOrFinish}
             type="button"

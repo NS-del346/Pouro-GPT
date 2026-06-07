@@ -10,7 +10,7 @@ export function PrivacyPage() {
       <section className="content-card">
         <h2>保存場所</h2>
         <p>
-          Pourōは、抽出履歴や設定をブラウザのlocalStorageに保存します。
+          Pourōは、抽出履歴や設定をブラウザのローカル保存領域に保存します。
         </p>
         <p>
           MVP時点では、アカウント登録、ログイン、クラウド同期はありません。

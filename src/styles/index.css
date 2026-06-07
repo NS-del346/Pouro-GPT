@@ -556,6 +556,16 @@ p {
   line-height: 1.2;
 }
 
+.timer-finish-note {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-border));
+  border-radius: 16px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent-soft) 34%, var(--color-surface));
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .timer-controls {
   position: sticky;
   bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
@@ -577,6 +587,12 @@ p {
 .timer-control-button--primary {
   border-color: var(--color-accent);
   background: var(--color-accent-soft);
+}
+
+.timer-control-button--finish {
+  border-color: var(--color-text);
+  color: var(--color-surface);
+  background: var(--color-text);
 }
 
 .timer-control-button:disabled {
