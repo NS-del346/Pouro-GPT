@@ -2,44 +2,65 @@
 
 Pourō is a quiet pour-over coffee brew guide and timer PWA.
 
-## Concept
+## PR-001 Project Foundation
 
-Pour slowly. Brew deeply.
+This repository currently contains the application foundation:
 
-Pourō helps users follow source-based pour-over coffee recipes with clear brew steps, timer guidance, pour amount, cumulative water amount, and reflective brew history.
+- Vite + React + TypeScript
+- React Router-based page routing
+- App Shell and Brew / History / Settings Bottom Tabs
+- Empty foundations for the seven MVP screens
+- Minimal About / Sources / Legal / Privacy pages
+- Shared CSS variables and responsive base styles
 
-## Current Status
+Recipe data, timer logic, local storage, PWA files, and finished screen UI are intentionally deferred to later PRs.
 
-MVP planning and implementation preparation.
+## Getting Started
 
-## Tech Stack
+```bash
+npm install
+npm run dev
+```
 
-- React
-- TypeScript
-- Vite
-- PWA
-- Local storage
-- No login
-- No external API
+Create a production build:
 
-## MVP Scope
+```bash
+npm run build
+npm run preview
+```
 
-- Brew Home
-- Recipe Setup
-- Brew Timer
-- Brew Finish
-- History
-- History Detail
-- Settings
+## Routes
 
-## Non-Goals
+- `/` - Brew Home
+- `/setup/:methodId` - Recipe Setup
+- `/timer` - Brew Timer
+- `/finish` - Brew Finish
+- `/history` - History
+- `/history/:sessionId` - History Detail
+- `/settings` - Settings
+- `/settings/about` - About
+- `/settings/sources` - Sources
+- `/settings/legal` - Legal
+- `/settings/privacy` - Privacy
 
-- SNS
-- Recipe posting
-- Bean inventory
-- Water management
-- Roasting log
-- Bluetooth scale integration
-- Account system
-- Subscription
-- AI taste diagnosis
+## Project Structure
+
+```text
+src/
+├── components/
+│   ├── layout/
+│   └── navigation/
+├── data/
+├── hooks/
+├── pages/
+├── repositories/
+├── styles/
+└── types/
+```
+
+## Product Constraints
+
+- No login, external API, advertising, analytics, or cloud sync
+- Brew Home remains focused on method selection
+- Brew Timer does not display Bottom Tabs
+- iPhone SE equivalent `375 × 667 CSS px` is the minimum layout baseline
