@@ -143,7 +143,7 @@ export function SettingsPage() {
           <h2 id="data-heading">データ管理</h2>
         </div>
         <p className="notice-text">
-          抽出履歴と設定は、このブラウザのlocalStorageに保存されます。
+          抽出履歴と設定は、このブラウザのローカル保存領域に保存されます。
           履歴削除は取り消せません。
         </p>
         <p className="history-count">

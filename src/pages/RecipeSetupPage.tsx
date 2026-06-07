@@ -72,7 +72,7 @@ export function RecipeSetupPage({
   return (
     <Page
       title="Recipe Setup"
-      description="抽出開始前に、今回使う条件だけを設定します。ここで入力する値はユーザー入力値であり、原典レシピ値ではありません。"
+      description="抽出開始前に、今回使う条件だけを設定します。ここで入力する値は、確認中のレシピ値とは別に扱われます。"
       backTo="/"
     >
       <form className="setup-form" onSubmit={handleSubmit}>
@@ -83,7 +83,7 @@ export function RecipeSetupPage({
           </div>
           <span className="status-pill">{getRecipeStatusLabel(method)}</span>
           <p>
-            {method.needsReviewReason} placeholder データの null 値と、この画面で作る抽出条件は別のものです。
+            {method.needsReviewReason} この画面で設定する値は、今回の抽出用の入力値です。確認中のレシピ値とは別に扱われます。
           </p>
         </section>
 
