@@ -4,6 +4,7 @@ export type {
 } from "./source";
 
 export type {
+  AppTheme,
   BrewMethod,
   BrewRecipe,
   BrewResult,
@@ -15,4 +16,5 @@ export type {
   StorageSchema,
   TasteNote,
   TimerStatus,
+  UserSettings,
 } from "./brew";

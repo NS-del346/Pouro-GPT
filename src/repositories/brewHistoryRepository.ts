@@ -4,7 +4,11 @@ const BREW_HISTORY_KEY = "brewHistory";
 const MAX_HISTORY_COUNT = 500;
 
 function canUseLocalStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  try {
+    return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  } catch {
+    return false;
+  }
 }
 
 function readHistoryValue(): BrewSession[] {

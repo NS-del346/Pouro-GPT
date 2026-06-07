@@ -130,6 +130,16 @@ export interface BrewResult {
   updatedAt: string;
 }
 
+export type AppTheme = "light" | "warm" | "dark";
+
+export type UserSettings = {
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
+  theme: AppTheme;
+  showTemperatureGuide: boolean;
+  updatedAt: string;
+};
+
 export interface BrewSettings {
   soundEnabled: boolean;
   vibrationEnabled: boolean;
