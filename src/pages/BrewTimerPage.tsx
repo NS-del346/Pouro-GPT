@@ -1,15 +1,33 @@
 import { Page } from "../components/layout/Page";
-import { RouteLinks } from "../components/navigation/RouteLinks";
+import { visiblePlaceholderMethods } from "../data";
+import type { BrewSetup } from "../types";
 
-export function BrewTimerPage() {
+interface BrewTimerPageProps {
+  activeSetup: BrewSetup | null;
+}
+
+export function BrewTimerPage({ activeSetup }: BrewTimerPageProps) {
+  const method = visiblePlaceholderMethods.find(
+    (item) => item.id === activeSetup?.methodId,
+  );
+
   return (
     <Page
       title="Brew Timer"
-      description="TimerロジックはPR-004で実装します。この画面ではBottom Tabsを表示しません。"
-      backTo="/setup/example"
+      description="Timer ロジックは PR-004 で実装します。PR-003 では Recipe Setup からここへ進めることだけを確認します。"
+      backTo={activeSetup ? `/setup/${activeSetup.methodId}` : "/"}
     >
-      <RouteLinks links={[{ label: "Brew Finishを確認", to: "/finish" }]} />
+      <section className="timer-placeholder">
+        <p className="eyebrow">PR-003 placeholder</p>
+        <h2>{method ? method.displayName : "抽出準備"}</h2>
+        {activeSetup ? (
+          <p>
+            Setup は一時的な React state で受け取りました。保存はまだ行いません。
+          </p>
+        ) : (
+          <p>抽出条件はまだありません。Brew Home から設定してください。</p>
+        )}
+      </section>
     </Page>
   );
 }
-

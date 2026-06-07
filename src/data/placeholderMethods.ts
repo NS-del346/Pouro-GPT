@@ -17,10 +17,10 @@ type PlaceholderMethodSeed = {
 };
 
 const commonNeedsReviewReason =
-  "レシピ値、注湯量、ステップ文言は原典確認前のため、確定値として扱いません。";
+  "レシピ値、注湯量、手順文は出典確認前のため、確定値として扱いません。";
 
 const commonLegalNote =
-  "このメソッドデータは参考表示用の未確認データです。特定の個人、団体、メーカーによる確認済みデータとして扱わないでください。";
+  "このメソッド情報はUI確認用の未確定データです。特定の個人、団体、メーカーによる確認済みデータとして扱わないでください。";
 
 function createPlaceholderSteps(methodId: string): BrewStep[] {
   const steps: BrewStep[] = [
@@ -33,7 +33,7 @@ function createPlaceholderSteps(methodId: string): BrewStep[] {
       actionLabel: formatPourGrams(null),
       pourGrams: null,
       totalWaterGrams: null,
-      instruction: "このステップ文言は確認中です。",
+      instruction: "この手順文は確認中です。",
       nextPreview: `Next 00:30 / ${formatPourGrams(null)}`,
       sourceStatus: "placeholder",
       verificationLevel: "placeholder",
@@ -48,7 +48,7 @@ function createPlaceholderSteps(methodId: string): BrewStep[] {
       actionLabel: formatPourGrams(null),
       pourGrams: null,
       totalWaterGrams: null,
-      instruction: "このステップ文言は確認中です。",
+      instruction: "この手順文は確認中です。",
       nextPreview: `Next 01:00 / ${formatTotalWaterGrams(null)}`,
       sourceStatus: "placeholder",
       verificationLevel: "placeholder",
@@ -90,9 +90,10 @@ export const placeholderMethods: BrewMethod[] = [
     id: "four-six",
     displayName: "4:6 Method",
     shortName: "4:6",
-    shortDescription: "味と濃度の設計を意識する抽出として参考表示します。",
+    shortDescription:
+      "味わいの組み立てを意識する抽出案として参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみを候補として扱います。",
+      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
     iconKey: "method-four-six",
     methodStatus: "needsReview",
     sourceStatus: "placeholder",
@@ -102,9 +103,10 @@ export const placeholderMethods: BrewMethod[] = [
     id: "hybrid",
     displayName: "Hybrid Method",
     shortName: "Hybrid",
-    shortDescription: "浸漬と透過を組み合わせる抽出として参考表示します。",
+    shortDescription:
+      "浸漬と透過を組み合わせる抽出案として参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみを候補として扱います。",
+      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
     iconKey: "method-hybrid",
     methodStatus: "needsReview",
     sourceStatus: "needsReview",
@@ -114,9 +116,10 @@ export const placeholderMethods: BrewMethod[] = [
     id: "ten-pour",
     displayName: "10 Pour Method",
     shortName: "10 Pour",
-    shortDescription: "複数回の注湯で組み立てる抽出として参考表示します。",
+    shortDescription:
+      "複数回の注湯で構成する抽出案として参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみを候補として扱います。",
+      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
     iconKey: "method-ten-pour",
     methodStatus: "candidate",
     sourceStatus: "needsReview",
@@ -126,9 +129,10 @@ export const placeholderMethods: BrewMethod[] = [
     id: "ice-brew",
     displayName: "Ice Brew",
     shortName: "Ice",
-    shortDescription: "冷たい抽出の候補として参考表示します。",
+    shortDescription:
+      "冷たい抽出の候補として、未確定のまま参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみを候補として扱います。",
+      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
     iconKey: "method-ice-brew",
     methodStatus: "candidate",
     sourceStatus: "placeholder",
