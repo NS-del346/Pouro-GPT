@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { AboutPage } from "./pages/AboutPage";
@@ -11,14 +12,23 @@ import { PrivacyPage } from "./pages/PrivacyPage";
 import { RecipeSetupPage } from "./pages/RecipeSetupPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
+import type { BrewSetup } from "./types";
 
 export function App() {
+  const [activeSetup, setActiveSetup] = useState<BrewSetup | null>(null);
+
   return (
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<BrewHomePage />} />
-        <Route path="setup/:methodId" element={<RecipeSetupPage />} />
-        <Route path="timer" element={<BrewTimerPage />} />
+        <Route
+          path="setup/:methodId"
+          element={<RecipeSetupPage onStartBrew={setActiveSetup} />}
+        />
+        <Route
+          path="timer"
+          element={<BrewTimerPage activeSetup={activeSetup} />}
+        />
         <Route path="finish" element={<BrewFinishPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="history/:sessionId" element={<HistoryDetailPage />} />
@@ -32,4 +42,3 @@ export function App() {
     </Routes>
   );
 }
-

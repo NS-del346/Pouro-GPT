@@ -11,7 +11,7 @@ interface PageProps {
 
 export function Page({
   title,
-  eyebrow = "PR-001 foundation",
+  eyebrow = "pourō",
   description,
   backTo,
   children,
@@ -32,4 +32,3 @@ export function Page({
     </section>
   );
 }
-
