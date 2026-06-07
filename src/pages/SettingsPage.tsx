@@ -9,13 +9,17 @@ import {
 } from "../repositories";
 import type { AppTheme, UserSettings } from "../types";
 
-const themeOptions: AppTheme[] = ["light", "warm", "dark"];
+const themeOptions: Array<{ label: string; value: AppTheme }> = [
+  { label: "ライト", value: "light" },
+  { label: "ウォーム", value: "warm" },
+  { label: "ダーク", value: "dark" },
+];
 
 export function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(() => getUserSettings());
   const [historyCount, setHistoryCount] = useState(() => getBrewHistory().length);
   const [saveMessage, setSaveMessage] = useState(
-    "Settings are saved on this device.",
+    "設定はこのブラウザに保存されます。",
   );
 
   function updateSettings(patch: Partial<UserSettings>) {
@@ -25,28 +29,28 @@ export function SettingsPage() {
     });
 
     setSettings(savedSettings);
-    setSaveMessage("Saved.");
+    setSaveMessage("保存しました。");
   }
 
   function handleDeleteData() {
     const confirmed = window.confirm(
-      "Delete all saved brew history on this device? App settings will be kept.",
+      "このブラウザに保存された抽出履歴をすべて削除します。設定は削除されません。",
     );
 
     if (!confirmed) return;
 
     clearBrewHistory();
     setHistoryCount(0);
-    setSaveMessage("Saved brew history was deleted. Settings were kept.");
+    setSaveMessage("抽出履歴を削除しました。設定は保持されています。");
   }
 
   return (
     <Page
-      title="Settings"
+      title="設定"
       eyebrow="pourō"
-      description="Pourō app settings, local data controls, and release notes for privacy, sources, and legal notices."
+      description="Pourōの設定、ローカルデータ管理、アプリ情報・出典・免責・プライバシーへの入口です。"
     >
-      <section className="settings-brand" aria-label="App identity">
+      <section className="settings-brand" aria-label="アプリ情報">
         <p className="logo-mark">pourō</p>
         <h2>Pourō</h2>
         <p>Pour slowly. Brew deeply.</p>
@@ -54,17 +58,17 @@ export function SettingsPage() {
 
       <section className="settings-panel" aria-labelledby="preferences-heading">
         <div className="section-heading">
-          <p className="eyebrow">Preferences</p>
-          <h2 id="preferences-heading">App settings</h2>
+          <p className="eyebrow">設定</p>
+          <h2 id="preferences-heading">基本設定</h2>
         </div>
 
         <label className="setting-row">
           <span>
-            <strong>Notification sound</strong>
-            <small>UI and local saving only in PR-006.</small>
+            <strong>通知音</strong>
+            <small>PR-006ではUIと保存のみを実装しています。</small>
           </span>
           <input
-            aria-label="Notification sound"
+            aria-label="通知音"
             checked={settings.soundEnabled}
             onChange={(event) =>
               updateSettings({ soundEnabled: event.currentTarget.checked })
@@ -75,11 +79,11 @@ export function SettingsPage() {
 
         <label className="setting-row">
           <span>
-            <strong>Vibration</strong>
-            <small>UI and local saving only in PR-006.</small>
+            <strong>バイブレーション</strong>
+            <small>PR-006ではUIと保存のみを実装しています。</small>
           </span>
           <input
-            aria-label="Vibration"
+            aria-label="バイブレーション"
             checked={settings.vibrationEnabled}
             onChange={(event) =>
               updateSettings({ vibrationEnabled: event.currentTarget.checked })
@@ -90,22 +94,22 @@ export function SettingsPage() {
 
         <div className="setting-row setting-row--stacked">
           <span>
-            <strong>Theme</strong>
-            <small>The saved value is prepared for later theme work.</small>
+            <strong>テーマ</strong>
+            <small>保存値のみを扱い、完全なテーマ切替は後続PRで調整します。</small>
           </span>
-          <div className="segmented-control" role="group" aria-label="Theme">
+          <div className="segmented-control" role="group" aria-label="テーマ">
             {themeOptions.map((theme) => (
               <button
                 className={
-                  settings.theme === theme
+                  settings.theme === theme.value
                     ? "segment-button segment-button--selected"
                     : "segment-button"
                 }
-                key={theme}
-                onClick={() => updateSettings({ theme })}
+                key={theme.value}
+                onClick={() => updateSettings({ theme: theme.value })}
                 type="button"
               >
-                {theme}
+                {theme.label}
               </button>
             ))}
           </div>
@@ -113,11 +117,11 @@ export function SettingsPage() {
 
         <label className="setting-row">
           <span>
-            <strong>Show temperature guide</strong>
-            <small>No unverified temperature recommendations are shown.</small>
+            <strong>温度ガイド表示</strong>
+            <small>原典未確認の推奨湯温表示は実装していません。</small>
           </span>
           <input
-            aria-label="Show temperature guide"
+            aria-label="温度ガイド表示"
             checked={settings.showTemperatureGuide}
             onChange={(event) =>
               updateSettings({
@@ -135,31 +139,31 @@ export function SettingsPage() {
 
       <section className="settings-panel" aria-labelledby="data-heading">
         <div className="section-heading">
-          <p className="eyebrow">Data</p>
-          <h2 id="data-heading">Data management</h2>
+          <p className="eyebrow">データ</p>
+          <h2 id="data-heading">データ管理</h2>
         </div>
         <p className="notice-text">
-          Brew history and settings are stored only in this browser's
-          localStorage. Deleting brew history cannot be undone.
+          抽出履歴と設定は、このブラウザのlocalStorageに保存されます。
+          履歴削除は取り消せません。
         </p>
         <p className="history-count">
-          Saved brew history: <strong>{historyCount}</strong>
+          保存済み記録: <strong>{historyCount}</strong>
         </p>
         <button
           className="danger-button"
           onClick={handleDeleteData}
           type="button"
         >
-          Delete brew history
+          すべての履歴を削除
         </button>
       </section>
 
       <RouteLinks
         links={[
-          { label: "About Pourō", to: "/settings/about" },
-          { label: "Sources and review status", to: "/settings/sources" },
-          { label: "Legal notices", to: "/settings/legal" },
-          { label: "Privacy policy", to: "/settings/privacy" },
+          { label: "Pourōについて", to: "/settings/about" },
+          { label: "出典・確認状況", to: "/settings/sources" },
+          { label: "免責事項", to: "/settings/legal" },
+          { label: "プライバシーポリシー", to: "/settings/privacy" },
         ]}
       />
     </Page>

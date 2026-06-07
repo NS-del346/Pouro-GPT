@@ -20,7 +20,7 @@ export function Page({
     <section className="page">
       {backTo && (
         <Link className="back-link" to={backTo}>
-          Back
+          戻る
         </Link>
       )}
       <header className="page-header">

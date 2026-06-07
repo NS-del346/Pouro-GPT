@@ -3,33 +3,42 @@ import { Page } from "../components/layout/Page";
 export function PrivacyPage() {
   return (
     <Page
-      title="Privacy Policy"
-      description="Pourō stores MVP data locally on your device and does not send brew notes to an external service."
+      title="プライバシーポリシー"
+      description="PourōのMVP時点における保存データと、外部送信の扱いについて説明します。"
       backTo="/settings"
     >
       <section className="content-card">
-        <h2>Local storage</h2>
+        <h2>保存場所</h2>
         <p>
-          Pourō stores brew history and app settings in this browser's
-          localStorage. This includes brew setup values, brew result notes, and
-          the settings saved from the Settings screen.
+          Pourōは、抽出履歴や設定をブラウザのlocalStorageに保存します。
+        </p>
+        <p>
+          MVP時点では、アカウント登録、ログイン、クラウド同期はありません。
+          また、抽出履歴や設定を外部サーバーへ送信しません。
         </p>
       </section>
 
       <section className="content-card">
-        <h2>No account or tracking</h2>
-        <p>
-          The MVP does not use login, accounts, ads, analytics, cloud sync, or
-          external APIs. Brew notes and settings are not sent to a server by
-          Pourō.
-        </p>
+        <h2>保存される情報</h2>
+        <ul className="content-list">
+          <li>抽出メソッドID</li>
+          <li>入力した豆量・比率・湯量</li>
+          <li>メモ</li>
+          <li>味の印象</li>
+          <li>評価</li>
+          <li>抽出時間</li>
+          <li>設定値</li>
+        </ul>
       </section>
 
       <section className="content-card">
-        <h2>Deleting data</h2>
+        <h2>削除とデータ保持</h2>
         <p>
-          You can delete saved data from Settings. Browser or device data
-          deletion can also remove saved Pourō history and settings.
+          設定画面から保存済みの抽出履歴を削除できます。
+        </p>
+        <p>
+          ブラウザのデータ削除、端末変更、別ブラウザ利用などにより、保存データが
+          失われる場合があります。
         </p>
       </section>
     </Page>

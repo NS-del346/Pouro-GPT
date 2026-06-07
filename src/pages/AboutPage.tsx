@@ -3,29 +3,37 @@ import { Page } from "../components/layout/Page";
 export function AboutPage() {
   return (
     <Page
-      title="About Pourō"
-      description="A quiet brew guide and timer for hand-drip coffee."
+      title="Pourōについて"
+      description="Pourōは、ハンドドリップコーヒー専用のブリューガイド＆タイマーPWAです。"
       backTo="/settings"
     >
       <section className="content-card">
-        <h2>Pour slowly. Brew deeply.</h2>
+        <p className="logo-mark">pourō</p>
+        <h2>Pourō</h2>
+        <p>Pour slowly. Brew deeply.</p>
         <p>
-          Pourō helps organize the small decisions in a hand-drip brew:
-          sequence, timing, water amount, and reflection after the cup.
-        </p>
-        <p>
-          The MVP is intentionally local and lightweight. It does not include
-          login, cloud sync, ads, analytics, social features, or external API
-          integrations.
+          Pourōは、抽出中に迷いやすい手順、時間、湯量、記録を整理するための
+          静かな抽出補助ツールです。
         </p>
       </section>
 
       <section className="content-card">
-        <h2>Independent guide</h2>
+        <h2>できること</h2>
         <p>
-          Pourō is an independent brew guide and timer. It is not connected to
-          or produced by any individual, organization, roaster, competition, or
-          equipment maker referenced in the app.
+          抽出メソッドの選択、豆量・比率・湯量などの抽出条件入力、Timerによる
+          抽出補助、抽出後の記録、履歴からの再抽出を行えます。
+        </p>
+        <p>
+          MVP時点では、入力内容と履歴はブラウザ内に保存され、ログインや
+          クラウド同期を前提にしない構成です。
+        </p>
+      </section>
+
+      <section className="content-card">
+        <h2>意図していないこと</h2>
+        <p>
+          Pourōは、美味しさの保証、公式レシピの完全再現、公式・公認・監修
+          アプリとしての表示、AI診断、コミュニティ機能を意図していません。
         </p>
       </section>
     </Page>
