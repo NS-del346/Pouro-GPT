@@ -68,6 +68,7 @@ export function BrewFinishPage({
     };
 
     saveBrewSession(savedSession);
+    onClearFinishedSession();
     navigate(`/history/${savedSession.id}`);
   }
 
