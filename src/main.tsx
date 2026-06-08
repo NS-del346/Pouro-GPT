@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import "./styles/index.css";
+import "./styles/recipe-setup-compact.css";
 import { registerServiceWorker } from "./utils/registerServiceWorker";
 
 createRoot(document.getElementById("root")!).render(
@@ -14,4 +15,3 @@ createRoot(document.getElementById("root")!).render(
 );
 
 registerServiceWorker();
-
