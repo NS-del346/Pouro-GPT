@@ -22,8 +22,10 @@ export function BrewHomePage() {
   return (
     <section className="brew-home" aria-labelledby="brew-home-title">
       <header className="home-hero">
-        <p className="logo-mark">pourō</p>
-        <h1 id="brew-home-title">Pour slowly. Brew deeply.</h1>
+        <h1 className="home-wordmark" id="brew-home-title">
+          pourō
+        </h1>
+        <p className="home-tagline">Pour slowly. Brew deeply.</p>
         <p>
           抽出メソッドを選び、次の画面であなたの抽出条件を設定します。
         </p>

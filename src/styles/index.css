@@ -16,7 +16,8 @@
 
   --radius-card: 20px;
   --radius-button: 999px;
-  --shadow-soft: 0 8px 24px rgba(23, 33, 43, 0.08);
+  --shadow-soft: 0 6px 18px rgba(23, 33, 43, 0.06);
+  --bottom-tabs-height: 76px;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -79,19 +80,24 @@ p {
 
 .app-content {
   min-height: 100vh;
-  padding: var(--space-5) var(--space-4) calc(88px + env(safe-area-inset-bottom));
+  padding: var(--space-5) var(--space-4)
+    calc(var(--bottom-tabs-height) + var(--space-6) + env(safe-area-inset-bottom));
+}
+
+.app-content--full {
+  padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
 }
 
 .page {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-4);
   width: 100%;
 }
 
 .page-header {
   display: grid;
-  gap: var(--space-3);
-  padding: var(--space-5);
+  gap: var(--space-2);
+  padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
@@ -99,8 +105,8 @@ p {
 }
 
 .page-header h1 {
-  font-size: clamp(2rem, 10vw, 3.5rem);
-  line-height: 1;
+  font-size: clamp(1.9rem, 9vw, 3.1rem);
+  line-height: 0.98;
 }
 
 .page-header p:last-child {
@@ -151,7 +157,8 @@ p {
   margin: 0 auto;
   padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  background: var(--color-bg);
+  box-shadow: 0 -14px 28px var(--color-bg);
 }
 
 .bottom-tab {
@@ -177,8 +184,9 @@ p {
 
 .home-hero {
   display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-1) var(--space-2);
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-1) var(--space-1);
+  text-align: center;
 }
 
 .logo-mark {
@@ -188,12 +196,23 @@ p {
   letter-spacing: 0.04em;
 }
 
-.home-hero h1 {
-  max-width: 11ch;
+.home-wordmark {
+  margin: 0;
+  color: var(--color-accent);
   font-family: var(--font-logo);
-  font-size: clamp(2.25rem, 12vw, 4.75rem);
+  font-size: clamp(2rem, 10vw, 3.4rem);
   font-weight: 500;
+  letter-spacing: 0.02em;
   line-height: 0.95;
+}
+
+.home-tagline {
+  justify-self: center;
+  max-width: 20ch;
+  font-family: var(--font-logo);
+  font-size: clamp(1.35rem, 6vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.08;
 }
 
 .home-hero p:last-child {
@@ -211,7 +230,7 @@ p {
 .method-card {
   display: grid;
   min-width: 0;
-  min-height: 166px;
+  min-height: 158px;
   gap: var(--space-2);
   align-content: start;
   padding: var(--space-3);
@@ -245,6 +264,7 @@ p {
 .method-card__name {
   font-weight: 800;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .method-card__description {
@@ -356,11 +376,19 @@ p {
   padding: var(--space-3) var(--space-5);
   border: 0;
   border-radius: var(--radius-button);
-  color: var(--color-surface);
-  background: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
   font-weight: 900;
   text-decoration: none;
   box-shadow: var(--shadow-soft);
+}
+
+.brew-home > .primary-cta,
+.setup-form > .primary-cta {
+  position: sticky;
+  bottom: calc(var(--bottom-tabs-height) + var(--space-3) + env(safe-area-inset-bottom));
+  z-index: 5;
+  box-shadow: 0 0 0 12px var(--color-bg), var(--shadow-soft);
 }
 
 .primary-cta--disabled {
@@ -371,7 +399,7 @@ p {
 .setup-form {
   display: grid;
   gap: var(--space-4);
-  padding-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
 }
 
 .finish-form,
@@ -451,7 +479,7 @@ p {
 }
 
 .text-field textarea {
-  min-height: 92px;
+  min-height: 84px;
   resize: vertical;
 }
 
@@ -536,8 +564,8 @@ p {
 
 .timer-core {
   display: grid;
-  gap: var(--space-4);
-  padding-bottom: var(--space-5);
+  gap: var(--space-3);
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
 }
 
 .timer-method-summary,
@@ -545,7 +573,7 @@ p {
 .timer-next-preview {
   display: grid;
   gap: var(--space-2);
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
@@ -574,12 +602,12 @@ p {
 
 .timer-display {
   display: block;
-  padding: var(--space-5);
+  padding: var(--space-5) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: 28px;
   background: var(--color-text);
   color: var(--color-surface);
-  font-size: clamp(4rem, 20vw, 7.5rem);
+  font-size: clamp(4.35rem, 21vw, 7.5rem);
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.06em;
@@ -606,7 +634,7 @@ p {
 
 .timer-target-card strong {
   color: var(--color-accent);
-  font-size: clamp(2.3rem, 12vw, 4.1rem);
+  font-size: clamp(2.45rem, 12.5vw, 4.1rem);
   line-height: 1.05;
 }
 
@@ -631,7 +659,7 @@ p {
 }
 
 .timer-step-card h3 {
-  font-size: clamp(1.5rem, 8vw, 2.5rem);
+  font-size: clamp(1.35rem, 7vw, 2.25rem);
   line-height: 1.1;
 }
 
@@ -643,7 +671,7 @@ p {
 
 .timer-next-preview {
   color: var(--color-text);
-  font-size: clamp(1.2rem, 6vw, 2rem);
+  font-size: clamp(1.08rem, 5.4vw, 1.8rem);
   font-weight: 900;
   line-height: 1.2;
 }
@@ -664,6 +692,9 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
+  padding-block: var(--space-1);
+  background: var(--color-bg);
+  box-shadow: 0 0 0 12px var(--color-bg);
 }
 
 .timer-control-button {
@@ -683,8 +714,8 @@ p {
 
 .timer-control-button--finish {
   border-color: var(--color-text);
-  color: var(--color-surface);
-  background: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
 }
 
 .timer-control-button:disabled {
@@ -708,6 +739,11 @@ p {
 .history-card {
   color: inherit;
   text-decoration: none;
+}
+
+.finish-form .cta-stack,
+.page > .primary-cta {
+  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
 }
 
 .history-card h2,
@@ -987,7 +1023,12 @@ p {
 
 @media (min-width: 600px) {
   .app-content {
-    padding: var(--space-6) var(--space-5) calc(96px + env(safe-area-inset-bottom));
+    padding: var(--space-6) var(--space-5)
+      calc(var(--bottom-tabs-height) + var(--space-6) + env(safe-area-inset-bottom));
+  }
+
+  .app-content--full {
+    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
   }
 
   .choice-row--wrap {
@@ -996,21 +1037,67 @@ p {
 }
 
 @media (max-width: 390px) {
+  :root {
+    --radius-card: 18px;
+  }
+
   .app-content {
-    padding-top: var(--space-4);
+    padding: var(--space-4) var(--space-3)
+      calc(var(--bottom-tabs-height) + var(--space-5) + env(safe-area-inset-bottom));
+  }
+
+  .app-content--full {
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+  }
+
+  .page-header {
+    padding: var(--space-4);
+  }
+
+  .page-header h1 {
+    font-size: clamp(1.75rem, 8vw, 2.4rem);
+  }
+
+  .home-wordmark {
+    font-size: clamp(2rem, 10vw, 2.7rem);
+  }
+
+  .home-tagline {
+    font-size: 1.28rem;
+  }
+
+  .method-grid {
+    gap: var(--space-2);
   }
 
   .method-card {
-    min-height: 154px;
-    padding: var(--space-3);
+    min-height: 146px;
+    padding: var(--space-2);
   }
 
   .method-card__description {
-    font-size: 0.74rem;
+    font-size: 0.73rem;
   }
 
   .timer-display {
-    padding: var(--space-4);
+    padding: var(--space-4) var(--space-3);
+    font-size: clamp(4rem, 21vw, 5.1rem);
+  }
+
+  .timer-target-card strong {
+    font-size: clamp(2.25rem, 12vw, 3rem);
+  }
+
+  .timer-target-card p {
+    font-size: 1rem;
+  }
+
+  .timer-step-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .timer-step-card p:last-child {
+    font-size: 0.95rem;
   }
 
   .timer-method-summary {
