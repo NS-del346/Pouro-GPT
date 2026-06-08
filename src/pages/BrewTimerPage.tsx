@@ -24,7 +24,11 @@ function formatStepTime(sec: number | null): string {
   return formatTimerMs(sec * 1000);
 }
 
-function formatPourTarget(totalWaterGrams: number | null): string {
+function hasRecipeGramValue(value: number | null): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function formatPourTarget(totalWaterGrams: number): string {
   return `${formatRecipeGrams(totalWaterGrams)}まで注ぐ`;
 }
 
@@ -196,9 +200,11 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   };
 
   const nextPreview = nextStep
-    ? `Next ${formatStepTime(nextStep.startSec)} / ${formatRecipeGrams(
-        nextStep.totalWaterGrams,
-      )}まで`
+    ? `Next ${formatStepTime(nextStep.startSec)} / ${
+        hasRecipeGramValue(nextStep.totalWaterGrams)
+          ? `${formatRecipeGrams(nextStep.totalWaterGrams)}まで`
+          : "注湯量確認中"
+      }`
     : "Finish へ進む";
 
   return (
@@ -219,13 +225,22 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
 
         <div className="timer-target-card" aria-label="注湯の累計目標">
           <span>累計目標</span>
-          <strong>{formatPourTarget(currentStep.totalWaterGrams)}</strong>
-          <p>
-            {formatPourSummary(
-              currentStep.pourGrams,
-              currentStep.totalWaterGrams,
-            )}
-          </p>
+          {hasRecipeGramValue(currentStep.totalWaterGrams) ? (
+            <>
+              <strong>{formatPourTarget(currentStep.totalWaterGrams)}</strong>
+              <p>
+                {formatPourSummary(
+                  currentStep.pourGrams,
+                  currentStep.totalWaterGrams,
+                )}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="timer-target-fallback-title">注湯量は確認中</p>
+              <p className="timer-target-fallback-note">確認中のレシピ値です</p>
+            </>
+          )}
         </div>
 
         {semanticChip && <p className="timer-semantic-chip">{semanticChip}</p>}

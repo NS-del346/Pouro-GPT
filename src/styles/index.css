@@ -645,6 +645,19 @@ p {
   line-height: 1.25;
 }
 
+.timer-target-card .timer-target-fallback-title {
+  color: var(--color-text);
+  font-size: clamp(1.15rem, 5.5vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.timer-target-card .timer-target-fallback-note {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
 .timer-semantic-chip {
   width: fit-content;
   max-width: 100%;
