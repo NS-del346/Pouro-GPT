@@ -1,0 +1,113 @@
+/* PR-008F: compact Recipe Setup spacing for iPhone SE without changing setup semantics. */
+.setup-form {
+  gap: var(--space-3);
+  padding-bottom: var(--space-6);
+}
+
+.setup-form .setup-method-summary,
+.setup-form .setup-card,
+.setup-form .text-field {
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: 18px;
+}
+
+.setup-form .section-heading {
+  gap: 2px;
+}
+
+.setup-form .section-heading h2,
+.setup-form .setup-card--variant strong {
+  font-size: 1.18rem;
+  line-height: 1.18;
+}
+
+.setup-form .setup-method-summary p,
+.setup-form .setup-card--variant p,
+.setup-form .setup-card--result p,
+.setup-form .notice-text {
+  font-size: 0.9rem;
+  line-height: 1.42;
+}
+
+.setup-form .status-row,
+.setup-form .variant-chip-grid,
+.setup-form .choice-row {
+  gap: var(--space-1);
+}
+
+.setup-form .status-pill {
+  min-height: 24px;
+  padding: 2px var(--space-2);
+  font-size: 0.7rem;
+}
+
+.setup-form .status-note {
+  font-size: 0.76rem;
+}
+
+.setup-form .variant-chip {
+  min-height: 38px;
+  padding: 6px 10px;
+  font-size: 0.86rem;
+}
+
+.setup-form .advanced-badge {
+  padding: 1px 6px;
+  font-size: 0.62rem;
+}
+
+.setup-form .choice-row {
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+}
+
+.setup-form .choice-button {
+  min-height: 40px;
+  padding-inline: var(--space-2);
+}
+
+.setup-form .inline-input {
+  gap: var(--space-2);
+}
+
+.setup-form .setup-card input,
+.setup-form .text-field input,
+.setup-form .text-field textarea {
+  min-height: 42px;
+  padding: 10px var(--space-3);
+}
+
+.setup-form .text-field textarea {
+  min-height: 68px;
+}
+
+.setup-form .setup-card--result strong {
+  font-size: 1.55rem;
+}
+
+.setup-form .recommendation-note {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.setup-form > .primary-cta {
+  min-height: 48px;
+}
+
+@media (max-width: 430px) {
+  .setup-form {
+    gap: 10px;
+  }
+
+  .setup-form .setup-method-summary,
+  .setup-form .setup-card,
+  .setup-form .text-field {
+    padding: 10px 12px;
+  }
+
+  .setup-form .choice-button,
+  .setup-form .variant-chip {
+    min-height: 38px;
+  }
+}
