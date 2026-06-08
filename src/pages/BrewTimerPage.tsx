@@ -3,7 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { visiblePlaceholderMethods } from "../data";
 import type { BrewSession, BrewSetup, TimerStatus } from "../types";
-import { createId, formatPourGrams, formatRecipeGrams } from "../utils";
+import { createId, formatRecipeGrams } from "../utils";
 
 interface BrewTimerPageProps {
   activeSetup: BrewSetup | null;
@@ -22,6 +22,19 @@ function formatStepTime(sec: number | null): string {
   if (sec === null) return "--:--";
 
   return formatTimerMs(sec * 1000);
+}
+
+function formatPourTarget(totalWaterGrams: number | null): string {
+  return `${formatRecipeGrams(totalWaterGrams)}まで注ぐ`;
+}
+
+function formatPourSummary(
+  pourGrams: number | null,
+  totalWaterGrams: number | null,
+): string {
+  return `+${formatRecipeGrams(pourGrams)} / Total ${formatRecipeGrams(
+    totalWaterGrams,
+  )}`;
 }
 
 export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps) {
@@ -80,6 +93,11 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const nextStep = steps[currentStepIndex + 1] ?? null;
   const isLastStep = currentStepIndex >= steps.length - 1;
   const canMoveBack = currentStepIndex > 0 && timerStatus !== "finished";
+  const semanticChip = getTimerSemanticChip(
+    currentSetup,
+    currentStep.order,
+    steps.length,
+  );
 
   function calculateElapsedMs(finishedAtMs: number): number {
     if (startedAtMs === null) return 0;
@@ -178,9 +196,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   };
 
   const nextPreview = nextStep
-    ? `Next ${formatStepTime(nextStep.startSec)} / ${formatPourGrams(
-        nextStep.pourGrams,
-      )}`
+    ? `Next ${formatStepTime(nextStep.startSec)} / ${formatRecipeGrams(
+        nextStep.totalWaterGrams,
+      )}まで`
     : "Finish へ進む";
 
   return (
@@ -199,16 +217,18 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           {formatTimerMs(elapsedMs)}
         </output>
 
-        <div className="timer-metrics" aria-label="注湯量">
-          <div>
-            <span>Pour</span>
-            <strong>{formatRecipeGrams(currentStep.pourGrams)}</strong>
-          </div>
-          <div>
-            <span>Total</span>
-            <strong>{formatRecipeGrams(currentStep.totalWaterGrams)}</strong>
-          </div>
+        <div className="timer-target-card" aria-label="注湯の累計目標">
+          <span>累計目標</span>
+          <strong>{formatPourTarget(currentStep.totalWaterGrams)}</strong>
+          <p>
+            {formatPourSummary(
+              currentStep.pourGrams,
+              currentStep.totalWaterGrams,
+            )}
+          </p>
         </div>
+
+        {semanticChip && <p className="timer-semantic-chip">{semanticChip}</p>}
 
         <article className="timer-step-card">
           <p className="eyebrow">
@@ -263,4 +283,32 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
       </section>
     </Page>
   );
+}
+
+function getTimerSemanticChip(
+  setup: BrewSetup,
+  currentStepOrder: number,
+  stepsLength: number,
+): string | null {
+  if (setup.methodId === "four-six" && setup.variantId?.startsWith("R-0")) {
+    return currentStepOrder <= 2 ? "前半40% / 味づくり" : "後半60% / 濃度調整";
+  }
+
+  if (setup.methodId === "hybrid" && setup.variantId === "R-08") {
+    return "Switch状態確認";
+  }
+
+  if (setup.methodId === "ten-pour" && setup.variantId === "R-09") {
+    return `Step ${currentStepOrder} / ${stepsLength}`;
+  }
+
+  if (setup.methodId === "ice-brew" && setup.variantId === "R-10") {
+    if (typeof setup.iceGrams === "number") {
+      return `氷 ${setup.iceGrams}g set`;
+    }
+
+    return "氷量 未記録";
+  }
+
+  return null;
 }
