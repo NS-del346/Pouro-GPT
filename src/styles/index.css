@@ -402,6 +402,73 @@ p {
   padding-bottom: var(--space-2);
 }
 
+/* PR-008F: Recipe Setup density only; keep data and other screens unchanged. */
+.setup-form {
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+}
+
+.setup-form .setup-method-summary,
+.setup-form .setup-card,
+.setup-form .text-field {
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.setup-form .setup-method-summary p,
+.setup-form .setup-card--variant p,
+.setup-form .setup-card--result p,
+.setup-form .notice-text {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.setup-form .status-row,
+.setup-form .choice-row,
+.setup-form .variant-chip-grid {
+  gap: var(--space-1);
+}
+
+.setup-form .choice-row {
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+}
+
+.setup-form .choice-button {
+  min-height: 42px;
+  padding-inline: var(--space-2);
+}
+
+.setup-form .variant-chip {
+  min-height: 40px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+.setup-form .inline-input {
+  gap: var(--space-2);
+}
+
+.setup-form .setup-card input,
+.setup-form .text-field input,
+.setup-form .text-field textarea {
+  min-height: 44px;
+  padding: 10px var(--space-3);
+}
+
+.setup-form .text-field textarea {
+  min-height: 72px;
+}
+
+.setup-form .setup-card--result strong {
+  font-size: 1.62rem;
+}
+
+.setup-form > .primary-cta {
+  min-height: 48px;
+  padding-block: 10px;
+  box-shadow: 0 0 0 8px var(--color-bg), var(--shadow-soft);
+}
+
 .finish-form,
 .history-list {
   display: grid;
@@ -1090,6 +1157,42 @@ p {
 
   .method-card__description {
     font-size: 0.73rem;
+  }
+
+  .setup-form {
+    gap: 10px;
+  }
+
+  .setup-form .setup-method-summary,
+  .setup-form .setup-card,
+  .setup-form .text-field {
+    padding: 10px 12px;
+  }
+
+  .setup-form .section-heading h2 {
+    font-size: 1.22rem;
+  }
+
+  .setup-form .field-heading {
+    gap: var(--space-2);
+  }
+
+  .setup-form .choice-button {
+    min-height: 40px;
+  }
+
+  .setup-form .variant-chip {
+    min-height: 38px;
+  }
+
+  .setup-form .setup-card input,
+  .setup-form .text-field input,
+  .setup-form .text-field textarea {
+    min-height: 42px;
+  }
+
+  .setup-form .text-field textarea {
+    min-height: 68px;
   }
 
   .timer-display {
