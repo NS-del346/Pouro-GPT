@@ -1,5 +1,6 @@
 const BASE_PATH = "/Pouro-GPT/";
-const CACHE_NAME = "pouro-gpt-pr-008b";
+const CACHE_PREFIX = "pouro-gpt-";
+const CACHE_NAME = `${CACHE_PREFIX}pr-008b`;
 const INDEX_URL = `${BASE_PATH}index.html`;
 
 const PRECACHE_URLS = [
@@ -26,7 +27,11 @@ self.addEventListener("activate", (event) => {
       .then((cacheNames) =>
         Promise.all(
           cacheNames
-            .filter((cacheName) => cacheName !== CACHE_NAME)
+            .filter(
+              (cacheName) =>
+                cacheName.startsWith(CACHE_PREFIX) &&
+                cacheName !== CACHE_NAME,
+            )
             .map((cacheName) => caches.delete(cacheName)),
         ),
       )
