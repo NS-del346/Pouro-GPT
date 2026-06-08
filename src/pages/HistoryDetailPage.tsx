@@ -2,7 +2,13 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { getBrewSessionById } from "../repositories";
 import type { BrewSetup, TasteNote } from "../types";
-import { formatDateTime, formatElapsedMs } from "../utils";
+import {
+  formatDateTime,
+  formatElapsedMs,
+  getSessionMethodLabel,
+  getSessionSetupFields,
+  getSessionVariantLabel,
+} from "../utils";
 import { getRecipeStatusLabel, requiresReviewLabel } from "../utils/sourceStatus";
 
 interface HistoryDetailPageProps {
@@ -32,7 +38,8 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
   const currentSession = session;
   const { methodSnapshot, setupSnapshot, result } = currentSession;
   const needsReview = requiresReviewLabel(methodSnapshot);
-  const isIceBrew = setupSnapshot.methodId === "ice-brew";
+  const variantLabel = getSessionVariantLabel(currentSession);
+  const setupFields = getSessionSetupFields(currentSession);
 
   function handleReplay() {
     onReplayBrew({
@@ -51,8 +58,20 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
       <section className="record-card">
         <div className="section-heading">
           <p className="eyebrow">{formatDateTime(session.finishedAtIso)}</p>
-          <h2>{methodSnapshot.displayName}</h2>
+          <h2>抽出概要</h2>
         </div>
+        <dl className="detail-list detail-list--compact">
+          <div>
+            <dt>メソッド</dt>
+            <dd>{getSessionMethodLabel(currentSession)}</dd>
+          </div>
+          {variantLabel && (
+            <div>
+              <dt>Variant</dt>
+              <dd>{variantLabel}</dd>
+            </div>
+          )}
+        </dl>
         <span className="status-pill">{getRecipeStatusLabel(methodSnapshot)}</span>
         {needsReview && (
           <p className="notice-text">
@@ -67,41 +86,12 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
           <h2>入力条件</h2>
         </div>
         <dl className="record-list">
-          <div>
-            <dt>コーヒー</dt>
-            <dd>{setupSnapshot.coffeeGrams}g</dd>
-          </div>
-          {isIceBrew ? (
-            <>
-              <div>
-                <dt>注湯量</dt>
-                <dd>{setupSnapshot.hotWaterGrams ?? "--"}g</dd>
-              </div>
-              <div>
-                <dt>氷量</dt>
-                <dd>{setupSnapshot.iceGrams ?? "--"}g</dd>
-              </div>
-              <div>
-                <dt>完成量</dt>
-                <dd>
-                  {setupSnapshot.finalYieldGrams
-                    ? `${setupSnapshot.finalYieldGrams}g`
-                    : "未記録"}
-                </dd>
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <dt>湯量</dt>
-                <dd>{setupSnapshot.waterGrams ?? "--"}g</dd>
-              </div>
-              <div>
-                <dt>比率</dt>
-                <dd>{setupSnapshot.ratio ? `1:${setupSnapshot.ratio}` : "未記録"}</dd>
-              </div>
-            </>
-          )}
+          {setupFields.map((field) => (
+            <div key={field.label}>
+              <dt>{field.label}</dt>
+              <dd>{field.value}</dd>
+            </div>
+          ))}
           <div>
             <dt>抽出時間</dt>
             <dd>{formatElapsedMs(session.elapsedMsAtFinish)}</dd>
