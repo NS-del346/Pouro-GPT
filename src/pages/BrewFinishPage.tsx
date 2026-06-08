@@ -3,7 +3,11 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { saveBrewSession } from "../repositories";
 import type { BrewResult, BrewSession, TasteNote } from "../types";
-import { formatElapsedMs } from "../utils";
+import {
+  formatElapsedMs,
+  getSessionSetupFields,
+  getSessionVariantLabel,
+} from "../utils";
 import { getRecipeStatusLabel, requiresReviewLabel } from "../utils/sourceStatus";
 
 interface BrewFinishPageProps {
@@ -40,7 +44,8 @@ export function BrewFinishPage({
   const sessionDraft = finishedSessionDraft;
   const { methodSnapshot, setupSnapshot } = sessionDraft;
   const needsReview = requiresReviewLabel(methodSnapshot);
-  const isIceBrew = setupSnapshot.methodId === "ice-brew";
+  const variantLabel = getSessionVariantLabel(sessionDraft);
+  const setupFields = getSessionSetupFields(sessionDraft);
 
   function toggleTasteNote(note: TasteNote) {
     setTasteNotes((currentNotes) =>
@@ -88,6 +93,9 @@ export function BrewFinishPage({
           <div className="section-heading">
             <p className="eyebrow">今回の抽出</p>
             <h2>{methodSnapshot.displayName}</h2>
+            {variantLabel && (
+              <p className="session-variant-label">{variantLabel}</p>
+            )}
           </div>
           <span className="status-pill">{getRecipeStatusLabel(methodSnapshot)}</span>
           {needsReview && (
@@ -96,41 +104,12 @@ export function BrewFinishPage({
             </p>
           )}
           <dl className="record-list">
-            <div>
-              <dt>コーヒー</dt>
-              <dd>{setupSnapshot.coffeeGrams}g</dd>
-            </div>
-            {isIceBrew ? (
-              <>
-                <div>
-                  <dt>注湯量</dt>
-                  <dd>{setupSnapshot.hotWaterGrams ?? "--"}g</dd>
-                </div>
-                <div>
-                  <dt>氷量</dt>
-                  <dd>{setupSnapshot.iceGrams ?? "--"}g</dd>
-                </div>
-                <div>
-                  <dt>完成量</dt>
-                  <dd>
-                    {setupSnapshot.finalYieldGrams
-                      ? `${setupSnapshot.finalYieldGrams}g`
-                      : "未記録"}
-                  </dd>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <dt>湯量</dt>
-                  <dd>{setupSnapshot.waterGrams ?? "--"}g</dd>
-                </div>
-                <div>
-                  <dt>比率</dt>
-                  <dd>{setupSnapshot.ratio ? `1:${setupSnapshot.ratio}` : "未記録"}</dd>
-                </div>
-              </>
-            )}
+            {setupFields.map((field) => (
+              <div key={field.label}>
+                <dt>{field.label}</dt>
+                <dd>{field.value}</dd>
+              </div>
+            ))}
             <div>
               <dt>抽出時間</dt>
               <dd>{formatElapsedMs(sessionDraft.elapsedMsAtFinish)}</dd>

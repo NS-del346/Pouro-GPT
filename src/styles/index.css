@@ -717,11 +717,46 @@ p {
   line-height: 1.25;
 }
 
+.session-variant-label {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.session-variant-label--compact {
+  font-size: 0.84rem;
+}
+
 .empty-state p,
 .notice-text,
 .history-memo {
   color: var(--color-text-muted);
   line-height: 1.6;
+}
+
+.history-setup-summary {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.history-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.history-card-meta span {
+  min-width: 0;
 }
 
 .record-list,
@@ -757,6 +792,10 @@ p {
 
 .detail-list {
   grid-template-columns: 1fr;
+}
+
+.detail-list--compact {
+  gap: var(--space-2);
 }
 
 .detail-list dd {
