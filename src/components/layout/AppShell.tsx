@@ -7,7 +7,9 @@ export function AppShell() {
 
   return (
     <div className="app-shell">
-      <main className="app-content">
+      <main
+        className={`app-content${hideBottomTabs ? " app-content--full" : ""}`}
+      >
         <Outlet />
       </main>
       {!hideBottomTabs && <BottomTabs />}
