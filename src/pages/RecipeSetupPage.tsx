@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import {
@@ -61,9 +61,15 @@ export function RecipeSetupPage({
   const [waterTempMemo, setWaterTempMemo] = useState("");
   const [grindMemo, setGrindMemo] = useState("");
   const [freeMemo, setFreeMemo] = useState("");
+  const replayMethodDefaultSuppressedForRef = useRef<BrewMethodId | null>(null);
+  const replayVariantDefaultSuppressedForRef = useRef<BrewVariantId | null>(null);
 
   useEffect(() => {
     if (!currentMethodId || replaySetupDraft?.methodId === currentMethodId) return;
+    if (replayMethodDefaultSuppressedForRef.current === currentMethodId) {
+      replayMethodDefaultSuppressedForRef.current = null;
+      return;
+    }
 
     const defaultVariant = getDefaultVariantForMethod(currentMethodId);
     setVariantId(defaultVariant?.id);
@@ -81,6 +87,8 @@ export function RecipeSetupPage({
       getVariantById(replaySetupDraft.variantId) ??
       getDefaultVariantForMethod(replaySetupDraft.methodId);
 
+    replayMethodDefaultSuppressedForRef.current = replaySetupDraft.methodId;
+    replayVariantDefaultSuppressedForRef.current = replayVariant?.id ?? null;
     setVariantId(replayVariant?.id);
     setCoffeeGrams(replaySetupDraft.coffeeGrams);
     setRatio(replaySetupDraft.ratio ?? replayVariant?.recommendedRatio ?? 15);
@@ -103,6 +111,10 @@ export function RecipeSetupPage({
 
   useEffect(() => {
     if (!selectedVariant || replaySetupDraft?.methodId === currentMethodId) return;
+    if (replayVariantDefaultSuppressedForRef.current === selectedVariant.id) {
+      replayVariantDefaultSuppressedForRef.current = null;
+      return;
+    }
 
     setCoffeeGrams(selectedVariant.recommendedCoffeeGrams ?? 20);
     setRatio(selectedVariant.recommendedRatio ?? 15);
