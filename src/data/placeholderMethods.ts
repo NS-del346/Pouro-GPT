@@ -1,11 +1,18 @@
-import type { BrewMethod, BrewRecipe, BrewStep } from "../types";
+import type {
+  BrewMethod,
+  BrewMethodId,
+  BrewRecipe,
+  BrewStep,
+  BrewVariant,
+  BrewVariantId,
+} from "../types";
 import {
   formatPourGrams,
   formatTotalWaterGrams,
 } from "../utils/formatBrewValue";
 
 type PlaceholderMethodSeed = {
-  id: string;
+  id: BrewMethodId;
   displayName: string;
   shortName: string;
   shortDescription: string;
@@ -22,7 +29,7 @@ const commonNeedsReviewReason =
 const commonLegalNote =
   "このメソッド情報はUI確認用の未確定データです。特定の個人、団体、メーカーによる確認済みデータとして扱わないでください。";
 
-function createPlaceholderSteps(methodId: string): BrewStep[] {
+function createPlaceholderSteps(methodId: BrewMethodId): BrewStep[] {
   const steps: BrewStep[] = [
     {
       id: `${methodId}-placeholder-step-1`,
@@ -59,7 +66,7 @@ function createPlaceholderSteps(methodId: string): BrewStep[] {
   return steps;
 }
 
-function createPlaceholderRecipe(methodId: string): BrewRecipe {
+function createPlaceholderRecipe(methodId: BrewMethodId): BrewRecipe {
   return {
     recipeId: `${methodId}-placeholder-recipe`,
     methodId,
@@ -141,3 +148,152 @@ export const placeholderMethods: BrewMethod[] = [
 ];
 
 export const visiblePlaceholderMethods = placeholderMethods;
+
+export const brewVariants: BrewVariant[] = [
+  {
+    id: "R-01",
+    methodId: "four-six",
+    displayName: "4:6 Method 基本形",
+    shortLabel: "基本形",
+    shortDescription: "4:6 Methodの基本variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-02",
+    methodId: "four-six",
+    displayName: "4:6 Method 甘み重視",
+    shortLabel: "甘み重視",
+    shortDescription: "甘みを意識する4:6 variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-03",
+    methodId: "four-six",
+    displayName: "4:6 Method 酸味・明るさ重視",
+    shortLabel: "明るさ重視",
+    shortDescription: "酸味と明るさを意識する4:6 variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-04",
+    methodId: "four-six",
+    displayName: "4:6 Method 軽め 4投",
+    shortLabel: "軽め 4投",
+    shortDescription: "軽めの4投variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-05",
+    methodId: "four-six",
+    displayName: "4:6 Method すっきり 3投",
+    shortLabel: "すっきり 3投",
+    shortDescription: "すっきりした3投variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-06",
+    methodId: "four-six",
+    displayName: "世界大会仕様 4:6レシピ",
+    shortLabel: "世界大会仕様",
+    shortDescription: "Advanced扱いの4:6 variantとして参考表示します。",
+    isAdvanced: true,
+    recommendedCoffeeGrams: 25,
+    recommendedRatio: 12,
+    recommendedWaterGrams: 300,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-08",
+    methodId: "hybrid",
+    displayName: "NEWハイブリッド / HARIO Switch",
+    shortLabel: "NEWハイブリッド",
+    shortDescription: "Hybrid Methodの独立variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-09",
+    methodId: "ten-pour",
+    displayName: "THE NEO BREW / 10投式",
+    shortLabel: "THE NEO BREW",
+    shortDescription: "10 Pour Methodの独立variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: 15,
+    recommendedWaterGrams: 300,
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    valuesArePlaceholder: true,
+  },
+  {
+    id: "R-10",
+    methodId: "ice-brew",
+    displayName: "急冷式アイス4:6 標準",
+    shortLabel: "急冷式アイス",
+    shortDescription: "Ice Brewの独立variantとして参考表示します。",
+    isAdvanced: false,
+    recommendedCoffeeGrams: 20,
+    recommendedRatio: null,
+    recommendedWaterGrams: null,
+    recommendedHotWaterGrams: 150,
+    recommendedIceGrams: 80,
+    sourceStatus: "placeholder",
+    verificationLevel: "placeholder",
+    valuesArePlaceholder: true,
+  },
+];
+
+export function getVariantsByMethodId(methodId: BrewMethodId): BrewVariant[] {
+  return brewVariants.filter((variant) => variant.methodId === methodId);
+}
+
+export function getVariantById(
+  variantId: BrewVariantId | undefined,
+): BrewVariant | undefined {
+  if (!variantId) return undefined;
+
+  return brewVariants.find((variant) => variant.id === variantId);
+}
+
+export function getDefaultVariantForMethod(
+  methodId: BrewMethodId,
+): BrewVariant | undefined {
+  return getVariantsByMethodId(methodId)[0];
+}

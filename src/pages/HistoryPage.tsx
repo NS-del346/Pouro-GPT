@@ -21,6 +21,26 @@ function truncateMemo(memo: string): string {
   return `${memo.slice(0, 42)}...`;
 }
 
+function getSetupWaterLabel(session: ReturnType<typeof getBrewHistory>[number]): string {
+  const setup = session.setupSnapshot;
+
+  if (setup.methodId === "ice-brew") {
+    return setup.hotWaterGrams ? `${setup.hotWaterGrams}g 注湯` : "未記録";
+  }
+
+  return setup.waterGrams ? `${setup.waterGrams}g` : "未記録";
+}
+
+function getSetupRatioLabel(session: ReturnType<typeof getBrewHistory>[number]): string {
+  const setup = session.setupSnapshot;
+
+  if (setup.methodId === "ice-brew") {
+    return setup.iceGrams ? `${setup.iceGrams}g 氷` : "未記録";
+  }
+
+  return setup.ratio ? `1:${setup.ratio}` : "未記録";
+}
+
 export function HistoryPage() {
   const history = useMemo(() => getBrewHistory(), []);
 
@@ -59,12 +79,12 @@ export function HistoryPage() {
                     <dd>{session.setupSnapshot.coffeeGrams}g</dd>
                   </div>
                   <div>
-                    <dt>湯量</dt>
-                    <dd>{session.setupSnapshot.waterGrams}g</dd>
+                    <dt>{session.setupSnapshot.methodId === "ice-brew" ? "注湯量" : "湯量"}</dt>
+                    <dd>{getSetupWaterLabel(session)}</dd>
                   </div>
                   <div>
-                    <dt>比率</dt>
-                    <dd>1:{session.setupSnapshot.ratio}</dd>
+                    <dt>{session.setupSnapshot.methodId === "ice-brew" ? "氷量" : "比率"}</dt>
+                    <dd>{getSetupRatioLabel(session)}</dd>
                   </div>
                   <div>
                     <dt>時間</dt>

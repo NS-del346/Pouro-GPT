@@ -40,6 +40,7 @@ export function BrewFinishPage({
   const sessionDraft = finishedSessionDraft;
   const { methodSnapshot, setupSnapshot } = sessionDraft;
   const needsReview = requiresReviewLabel(methodSnapshot);
+  const isIceBrew = setupSnapshot.methodId === "ice-brew";
 
   function toggleTasteNote(note: TasteNote) {
     setTasteNotes((currentNotes) =>
@@ -99,14 +100,37 @@ export function BrewFinishPage({
               <dt>コーヒー</dt>
               <dd>{setupSnapshot.coffeeGrams}g</dd>
             </div>
-            <div>
-              <dt>湯量</dt>
-              <dd>{setupSnapshot.waterGrams}g</dd>
-            </div>
-            <div>
-              <dt>比率</dt>
-              <dd>1:{setupSnapshot.ratio}</dd>
-            </div>
+            {isIceBrew ? (
+              <>
+                <div>
+                  <dt>注湯量</dt>
+                  <dd>{setupSnapshot.hotWaterGrams ?? "--"}g</dd>
+                </div>
+                <div>
+                  <dt>氷量</dt>
+                  <dd>{setupSnapshot.iceGrams ?? "--"}g</dd>
+                </div>
+                <div>
+                  <dt>完成量</dt>
+                  <dd>
+                    {setupSnapshot.finalYieldGrams
+                      ? `${setupSnapshot.finalYieldGrams}g`
+                      : "未記録"}
+                  </dd>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <dt>湯量</dt>
+                  <dd>{setupSnapshot.waterGrams ?? "--"}g</dd>
+                </div>
+                <div>
+                  <dt>比率</dt>
+                  <dd>{setupSnapshot.ratio ? `1:${setupSnapshot.ratio}` : "未記録"}</dd>
+                </div>
+              </>
+            )}
             <div>
               <dt>抽出時間</dt>
               <dd>{formatElapsedMs(sessionDraft.elapsedMsAtFinish)}</dd>
