@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { visiblePlaceholderMethods } from "../data";
+import { getVariantsByMethodId, visiblePlaceholderMethods } from "../data";
 import {
   getRecipeStatusLabel,
   getSourceStatusLabel,
@@ -33,6 +33,7 @@ export function BrewHomePage() {
         {visiblePlaceholderMethods.map((method) => {
           const isSelected = method.id === selectedMethod?.id;
           const statusLabel = getRecipeStatusLabel(method);
+          const variantCount = getVariantsByMethodId(method.id).length;
 
           return (
             <button
@@ -49,6 +50,9 @@ export function BrewHomePage() {
               <span className="method-card__description">
                 {method.shortDescription}
               </span>
+              {variantCount > 1 && (
+                <span className="method-card__meta">{variantCount} variants</span>
+              )}
               <span className="status-pill">{statusLabel}</span>
             </button>
           );
