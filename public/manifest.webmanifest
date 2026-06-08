@@ -1,0 +1,12 @@
+{
+  "name": "Pourō",
+  "short_name": "Pourō",
+  "description": "A quiet hand-drip coffee brew guide and timer.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101010",
+  "theme_color": "#101010",
+  "lang": "ja"
+}
