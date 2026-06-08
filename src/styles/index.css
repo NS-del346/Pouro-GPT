@@ -157,7 +157,8 @@ p {
   margin: 0 auto;
   padding: var(--space-2) var(--space-3) calc(var(--space-2) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  background: var(--color-bg);
+  box-shadow: 0 -14px 28px var(--color-bg);
 }
 
 .bottom-tab {
@@ -185,6 +186,7 @@ p {
   display: grid;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-1) var(--space-1);
+  text-align: center;
 }
 
 .logo-mark {
@@ -198,13 +200,14 @@ p {
   margin: 0;
   color: var(--color-accent);
   font-family: var(--font-logo);
-  font-size: clamp(2.4rem, 13vw, 4.25rem);
+  font-size: clamp(2rem, 10vw, 3.4rem);
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 0.95;
 }
 
 .home-tagline {
+  justify-self: center;
   max-width: 20ch;
   font-family: var(--font-logo);
   font-size: clamp(1.35rem, 6vw, 2.1rem);
@@ -373,8 +376,8 @@ p {
   padding: var(--space-3) var(--space-5);
   border: 0;
   border-radius: var(--radius-button);
-  color: var(--color-surface);
-  background: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
   font-weight: 900;
   text-decoration: none;
   box-shadow: var(--shadow-soft);
@@ -385,6 +388,7 @@ p {
   position: sticky;
   bottom: calc(var(--bottom-tabs-height) + var(--space-3) + env(safe-area-inset-bottom));
   z-index: 5;
+  box-shadow: 0 0 0 12px var(--color-bg), var(--shadow-soft);
 }
 
 .primary-cta--disabled {
@@ -688,6 +692,9 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
+  padding-block: var(--space-1);
+  background: var(--color-bg);
+  box-shadow: 0 0 0 12px var(--color-bg);
 }
 
 .timer-control-button {
@@ -707,8 +714,8 @@ p {
 
 .timer-control-button--finish {
   border-color: var(--color-text);
-  color: var(--color-surface);
-  background: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
 }
 
 .timer-control-button:disabled {
@@ -1052,7 +1059,7 @@ p {
   }
 
   .home-wordmark {
-    font-size: clamp(2.25rem, 12vw, 3.1rem);
+    font-size: clamp(2rem, 10vw, 2.7rem);
   }
 
   .home-tagline {
