@@ -1778,3 +1778,521 @@ body:has(.visual-polish-page),
     padding: 0;
   }
 }
+
+/* PR-008H: extend the approved matte-dark system to Home, Timer, and History. */
+.visual-polish-page--home {
+  gap: 18px;
+}
+
+.visual-polish-page--home .home-hero {
+  gap: 8px;
+  padding: 6px 2px 2px;
+  text-align: center;
+}
+
+.visual-polish-page--home .home-wordmark {
+  justify-self: center;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: clamp(2.55rem, 12vw, 3.6rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.visual-polish-page--home .home-tagline {
+  justify-self: center;
+  max-width: none;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+}
+
+.visual-polish-page--home .home-hero p:last-child {
+  display: none;
+}
+
+.visual-polish-page--home .method-grid {
+  gap: 10px;
+}
+
+.visual-polish-page--home .method-card {
+  min-height: 148px;
+  gap: 7px;
+  align-content: center;
+  justify-items: center;
+  padding: 13px;
+  border-color: #48443e;
+  border-radius: 18px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  box-shadow: none;
+  text-align: center;
+}
+
+.visual-polish-page--home .method-card--selected {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  outline: none;
+}
+
+.visual-polish-page--home .method-glyph {
+  width: 50px;
+  height: 50px;
+  border-color: #4b4640;
+  color: var(--color-accent);
+  background: #181818;
+  font-size: 0.86rem;
+}
+
+.visual-polish-page--home .method-card--selected .method-glyph {
+  border-color: var(--color-accent);
+  color: #17130e;
+  background: var(--color-accent);
+}
+
+.visual-polish-page--home .method-card__name {
+  color: var(--color-text);
+  font-size: 0.96rem;
+  letter-spacing: -0.01em;
+}
+
+.visual-polish-page--home .method-card__description {
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.visual-polish-page--home .method-card__meta {
+  display: none;
+}
+
+.visual-polish-page--home .method-card .status-pill {
+  display: none;
+}
+
+.visual-polish-page--home .selected-method-card {
+  gap: 12px;
+  padding: 16px;
+  border-color: #48443e;
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.visual-polish-page--home .selected-method-card .section-heading h2 {
+  font-size: 1.45rem;
+}
+
+.visual-polish-page--home .selected-method-card p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--home .selected-method-card .status-pill {
+  display: inline-flex;
+  min-height: 30px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+}
+
+.visual-polish-page--home .source-status-list {
+  display: none;
+}
+
+.visual-polish-page--home .status-note {
+  display: none;
+}
+
+.visual-polish-page--home > .primary-cta {
+  bottom: calc(var(--bottom-tabs-height) + 12px + env(safe-area-inset-bottom));
+  min-height: 52px;
+  border-radius: 16px;
+  color: #17130e;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 10px var(--color-bg);
+}
+
+.visual-polish-page--timer {
+  gap: 14px;
+}
+
+.visual-polish-page--timer .timer-core {
+  gap: 12px;
+  padding-bottom: 0;
+}
+
+.visual-polish-page--timer .timer-method-summary {
+  order: 0;
+  gap: 4px 10px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+}
+
+.visual-polish-page--timer .timer-method-summary h2 {
+  color: var(--color-text);
+  font-size: 1.25rem;
+}
+
+.visual-polish-page--timer .timer-method-summary .status-pill {
+  min-height: 30px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-bg));
+}
+
+.visual-polish-page--timer .timer-display {
+  order: 1;
+  min-width: 0;
+  padding: 16px 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--color-text);
+  background: transparent;
+  font-size: clamp(5rem, 25vw, 7.25rem);
+  font-weight: 800;
+  letter-spacing: -0.075em;
+  line-height: 0.92;
+  box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-step-card {
+  order: 2;
+  gap: 8px;
+  padding: 16px;
+  border-color: var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface-muted);
+  box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-step-card h3 {
+  color: var(--color-text);
+  font-size: clamp(1.55rem, 7.5vw, 2.25rem);
+  letter-spacing: -0.025em;
+}
+
+.visual-polish-page--timer .timer-step-card p:last-child {
+  color: var(--color-text-muted);
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+.visual-polish-page--timer .timer-target-card {
+  order: 3;
+  gap: 5px;
+  padding: 15px 16px;
+  border-color: var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-target-card:has(strong) {
+  border-color: #5a5146;
+}
+
+.visual-polish-page--timer .timer-target-card span {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+}
+
+.visual-polish-page--timer .timer-target-card strong {
+  color: var(--color-text);
+  font-size: clamp(2rem, 9.5vw, 3.2rem);
+  letter-spacing: -0.035em;
+}
+
+.visual-polish-page--timer .timer-target-card p {
+  color: var(--color-accent);
+  font-size: 0.94rem;
+}
+
+.visual-polish-page--timer .timer-target-card .timer-target-fallback-title {
+  color: var(--color-text);
+  font-size: 1.15rem;
+}
+
+.visual-polish-page--timer .timer-target-card .timer-target-fallback-note {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.visual-polish-page--timer .timer-semantic-chip {
+  order: 4;
+  min-height: 36px;
+  margin: 0;
+  padding: 7px 12px;
+  border-color: #4b4640;
+  color: var(--color-text-muted);
+  background: transparent;
+}
+
+.visual-polish-page--timer .timer-next-preview {
+  order: 5;
+  padding: 12px 14px;
+  border-color: var(--color-border);
+  border-radius: 16px;
+  color: var(--color-text-muted);
+  background: #191919;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-finish-note {
+  order: 6;
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
+}
+
+.visual-polish-page--timer .timer-controls {
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  order: 7;
+  grid-template-columns: 1fr 72px 1fr;
+  gap: 8px;
+  padding-block: 2px;
+  background: var(--color-bg);
+  box-shadow: 0 0 0 10px var(--color-bg);
+}
+
+.visual-polish-page--timer .timer-control-button {
+  min-width: 0;
+  min-height: 54px;
+  padding: 8px;
+  border-color: var(--color-border);
+  border-radius: 16px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-control-button--primary {
+  width: 72px;
+  min-height: 64px;
+  justify-self: center;
+  border-color: var(--color-accent);
+  border-radius: 999px;
+  color: #17130e;
+  background: var(--color-accent);
+}
+
+.visual-polish-page--timer .timer-control-button--finish {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.visual-polish-page--timer .timer-control-button:disabled {
+  border-color: #2b2b2b;
+  color: #706b66;
+  background: #181818;
+  opacity: 1;
+}
+
+.visual-polish-page--history > .page-header {
+  position: static;
+  width: auto;
+  height: auto;
+  gap: 6px;
+  padding: 4px 2px 8px;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.visual-polish-page--history > .page-header .eyebrow {
+  display: none;
+}
+
+.visual-polish-page--history > .page-header h1 {
+  color: var(--color-text);
+  font-size: clamp(2.15rem, 10vw, 3rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.visual-polish-page--history > .page-header p:last-child {
+  justify-self: center;
+  max-width: 34rem;
+  color: var(--color-text-muted);
+  font-size: 0.87rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--history .history-list {
+  gap: 10px;
+}
+
+.visual-polish-page--history .history-card {
+  position: relative;
+  gap: 9px;
+  padding: 14px 15px;
+  border-color: #48443e;
+  border-radius: 18px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.visual-polish-page--history .history-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.visual-polish-page--history .history-card .section-heading {
+  gap: 3px;
+}
+
+.visual-polish-page--history .history-card .section-heading h2 {
+  color: var(--color-text);
+  font-size: 1.3rem;
+}
+
+.visual-polish-page--history .history-card .eyebrow {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+}
+
+.visual-polish-page--history .session-variant-label {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.visual-polish-page--history .history-setup-summary {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.visual-polish-page--history .history-card-meta {
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.73rem;
+}
+
+.visual-polish-page--history .history-card-meta span {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.visual-polish-page--history .history-card-meta span:last-child {
+  margin-left: auto;
+  color: var(--color-accent);
+}
+
+.visual-polish-page--history .tag-row {
+  gap: 6px;
+}
+
+.visual-polish-page--history .mini-tag {
+  min-width: 0;
+  min-height: 28px;
+  padding: 4px 9px;
+  color: var(--color-text-muted);
+  border-color: #4b4640;
+  font-size: 0.72rem;
+}
+
+.visual-polish-page--history .history-memo {
+  padding-top: 9px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.visual-polish-page--history .empty-state {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .visual-polish-page--home .method-card:hover,
+  .visual-polish-page--history .history-card:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 64%, var(--color-border));
+  }
+}
+
+@media (max-width: 390px) {
+  .visual-polish-page--home {
+    gap: 14px;
+  }
+
+  .visual-polish-page--home .home-wordmark {
+    font-size: 2.55rem;
+  }
+
+  .visual-polish-page--home .method-card {
+    min-height: 142px;
+    padding: 10px;
+  }
+
+  .visual-polish-page--home .method-card__description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .visual-polish-page--home .selected-method-card {
+    padding: 14px;
+  }
+
+  .visual-polish-page--timer,
+  .visual-polish-page--timer .timer-core {
+    gap: 10px;
+  }
+
+  .visual-polish-page--timer .timer-method-summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .visual-polish-page--timer .timer-method-summary .status-pill {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .visual-polish-page--timer .timer-display {
+    padding: 12px 0;
+    font-size: clamp(4.75rem, 24vw, 5.6rem);
+  }
+
+  .visual-polish-page--timer .timer-step-card,
+  .visual-polish-page--timer .timer-target-card {
+    padding: 13px 14px;
+  }
+
+  .visual-polish-page--timer .timer-step-card h3 {
+    font-size: 1.45rem;
+  }
+
+  .visual-polish-page--timer .timer-control-button {
+    min-height: 52px;
+    font-size: 0.86rem;
+  }
+
+  .visual-polish-page--timer .timer-control-button--primary {
+    min-height: 64px;
+  }
+
+  .visual-polish-page--history {
+    gap: 14px;
+  }
+
+  .visual-polish-page--history .history-card {
+    padding: 13px 14px;
+  }
+}

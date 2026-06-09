@@ -20,7 +20,10 @@ export function BrewHomePage() {
   );
 
   return (
-    <section className="brew-home" aria-labelledby="brew-home-title">
+    <section
+      className="brew-home visual-polish-page visual-polish-page--home"
+      aria-labelledby="brew-home-title"
+    >
       <header className="home-hero">
         <h1 className="home-wordmark" id="brew-home-title">
           pourō
