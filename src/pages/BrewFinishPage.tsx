@@ -87,12 +87,16 @@ export function BrewFinishPage({
       title="Brew Finish"
       description="抽出後の印象を短く残します。保存操作をするまで履歴には入りません。"
       backTo="/"
+      className="visual-polish-page visual-polish-page--finish"
     >
       <form className="finish-form" onSubmit={handleSave}>
-        <section className="record-card">
+        <section className="record-card record-card--summary">
           <div className="section-heading">
             <p className="eyebrow">今回の抽出</p>
-            <h2>{methodSnapshot.displayName}</h2>
+            <h2>
+              {methodSnapshot.displayName}
+              {variantLabel ? ` ・ ${variantLabel}` : ""}
+            </h2>
             {variantLabel && (
               <p className="session-variant-label">{variantLabel}</p>
             )}
@@ -175,14 +179,15 @@ export function BrewFinishPage({
             <span>評価</span>
             <span>{rating ? `${rating}/5` : "未選択"}</span>
           </div>
-          <div className="choice-row" aria-label="評価">
+          <div className="choice-row choice-row--rating" aria-label="評価">
             {[1, 2, 3, 4, 5].map((value) => (
               <button
                 className={`choice-button${
-                  rating === value ? " choice-button--selected" : ""
+                  rating !== null && rating >= value ? " choice-button--selected" : ""
                 }`}
                 key={value}
                 onClick={() => setRating(value as BrewResult["rating"])}
+                aria-label={`${value} / 5`}
                 type="button"
               >
                 {value}

@@ -169,12 +169,15 @@ export function RecipeSetupPage({
       title="Recipe Setup"
       description="抽出開始前に、今回使う条件だけを設定します。ここで入力する値は、確認中のレシピ値とは別に扱われます。"
       backTo="/"
+      className="visual-polish-page visual-polish-page--setup"
     >
       <form className="setup-form" onSubmit={handleSubmit}>
         <section className="setup-method-summary">
           <div className="section-heading">
             <p className="eyebrow">選択中メソッド</p>
-            <h2>{method.displayName}</h2>
+            <h2>
+              {method.displayName} ・ {selectedVariant.shortLabel}
+            </h2>
           </div>
           <div className="status-row">
             <span className="status-pill">{getRecipeStatusLabel(method)}</span>
@@ -188,7 +191,7 @@ export function RecipeSetupPage({
         {showsFourSixVariantSelector && (
           <section className="setup-card" aria-labelledby="variant-label">
             <div className="field-heading">
-              <span id="variant-label">4:6 Method</span>
+              <span id="variant-label">バリエーション</span>
               <span>{selectedVariant.shortLabel}</span>
             </div>
             <div
