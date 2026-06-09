@@ -6,6 +6,7 @@ interface PageProps {
   eyebrow?: string;
   description: string;
   backTo?: string;
+  className?: string;
   children?: ReactNode;
 }
 
@@ -14,10 +15,11 @@ export function Page({
   eyebrow = "pourō",
   description,
   backTo,
+  className,
   children,
 }: PageProps) {
   return (
-    <section className="page">
+    <section className={`page${className ? ` ${className}` : ""}`}>
       {backTo && (
         <Link className="back-link" to={backTo}>
           戻る

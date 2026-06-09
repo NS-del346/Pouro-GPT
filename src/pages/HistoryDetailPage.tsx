@@ -54,11 +54,15 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
       title="History Detail"
       description="1回分の抽出条件、味の印象、次回メモを確認します。"
       backTo="/history"
+      className="visual-polish-page visual-polish-page--history-detail"
     >
-      <section className="record-card">
+      <section className="record-card record-card--summary">
         <div className="section-heading">
           <p className="eyebrow">{formatDateTime(session.finishedAtIso)}</p>
-          <h2>抽出概要</h2>
+          <h2>
+            {getSessionMethodLabel(currentSession)}
+            {variantLabel ? ` ・ ${variantLabel}` : ""}
+          </h2>
         </div>
         <dl className="detail-list detail-list--compact">
           <div>
