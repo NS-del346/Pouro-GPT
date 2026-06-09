@@ -211,6 +211,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
     <Page
       title="Brew Timer"
       description="抽出中の経過時間、現在のステップ、次の操作を確認します。記録はFinish後の画面で保存できます。"
+      className="visual-polish-page visual-polish-page--timer"
     >
       <section className="timer-core" aria-labelledby="timer-method-title">
         <div className="timer-method-summary">

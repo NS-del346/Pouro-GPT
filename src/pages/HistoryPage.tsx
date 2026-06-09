@@ -34,6 +34,7 @@ export function HistoryPage() {
     <Page
       title="History"
       description="抽出の記録を研究ノートのように残します。統計ではなく、次の一杯のための履歴です。"
+      className="visual-polish-page visual-polish-page--history"
     >
       {history.length === 0 ? (
         <section className="empty-state">
