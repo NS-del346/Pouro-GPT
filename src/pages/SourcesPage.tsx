@@ -5,21 +5,23 @@ export function SourcesPage() {
   return (
     <Page
       title="出典・確認状況"
-      description="Pourōで扱う抽出メソッド情報の出典確認状況と、仮データの扱いについて説明します。"
+      description="Pourōで扱う抽出メソッド情報の出典・確認状況と、データの信頼度を示すメタデータについて説明します。"
       backTo="/settings"
     >
       <section className="content-card">
         <h2>現在のデータについて</h2>
         <p>
-          現在のメソッドデータは確認中・未確定の情報を含みます。抽出手順、
-          湯量、時間、説明文は、確定レシピとして扱わないでください。
+          現在のメソッドデータには、仮データ、確認中、第三者情報、調査・要約した
+          情報、Pourō向けに整理した案内が含まれる場合があります。
         </p>
         <p>
-          内部分類として verified / official は存在しますが、現在の確認中データは
-          verified / official ではありません。
+          sourceStatus、verificationLevel、valuesArePlaceholderは、データの
+          信頼度と確認状況を示すためのメタデータです。実際のメタデータが示さない
+          限り、確認済み・公式の情報として扱いません。
         </p>
         <p>
-          出典状態と確認段階は、将来の原典確認に応じて情報を更新するための分類です。
+          未確認または仮の値は、公式の原典レシピや完全な再現手順ではありません。
+          正確さや忠実な再現が重要な場合は、原典を確認してください。
         </p>
       </section>
 
@@ -81,6 +83,14 @@ export function SourcesPage() {
             <dd>公式情報</dd>
           </div>
         </dl>
+      </section>
+
+      <section className="content-card">
+        <h2>仮の値（valuesArePlaceholder）</h2>
+        <p>
+          trueの場合、レシピ値に確認用の仮データが含まれます。公式の値や確認済みの
+          原典レシピとして扱わないでください。
+        </p>
       </section>
 
       <section className="content-card">

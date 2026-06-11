@@ -4,7 +4,7 @@ export function AboutPage() {
   return (
     <Page
       title="Pourōについて"
-      description="Pourōは、ハンドドリップコーヒー専用のブリューガイド＆タイマーPWAです。"
+      description="Pourōは、静かに使えるモバイルファーストのハンドドリップコーヒー用ブリューガイド＆タイマーPWAです。"
       backTo="/settings"
     >
       <section className="content-card">
@@ -12,28 +12,33 @@ export function AboutPage() {
         <h2>Pourō</h2>
         <p>Pour slowly. Brew deeply.</p>
         <p>
-          Pourōは、抽出中に迷いやすい手順、時間、湯量、記録を整理するための
-          静かな抽出補助ツールです。
+          Pourōは、抽出中の手順、時間、湯量、記録を整理するための、個人制作の
+          非公式な抽出補助ツールです。
         </p>
       </section>
 
       <section className="content-card">
-        <h2>できること</h2>
-        <p>
-          抽出メソッドの選択、豆量・比率・湯量などの抽出条件入力、タイマーによる
-          抽出補助、抽出後の記録、履歴からの再抽出を行えます。
-        </p>
-        <p>
-          MVP時点では、入力内容と履歴はブラウザ内に保存され、ログインや
-          クラウド同期を前提にしない構成です。
-        </p>
+        <h2>現在のMVPでできること</h2>
+        <ul className="content-list">
+          <li>抽出メソッドの選択</li>
+          <li>レシピ設定</li>
+          <li>抽出タイマー</li>
+          <li>抽出完了時のメモ</li>
+          <li>抽出履歴と履歴詳細</li>
+          <li>Rebrew</li>
+          <li>Settings</li>
+        </ul>
       </section>
 
       <section className="content-card">
-        <h2>意図していないこと</h2>
+        <h2>保存と位置づけ</h2>
         <p>
-          Pourōは、美味しさの保証、公式レシピの完全再現、公式・公認・監修
-          アプリとしての表示、AI診断、コミュニティ機能を意図していません。
+          現在のMVPにはログインやクラウド同期はありません。抽出履歴と設定は、
+          このブラウザのlocalStorageに保存されます。
+        </p>
+        <p>
+          Pourōは公式レシピの完全再現を目的とするものではなく、公式・公認・監修
+          アプリでもありません。
         </p>
       </section>
     </Page>
