@@ -1,78 +1,57 @@
-# Pouro-GPT
+# Pourō
 
-Pourō is a quiet pour-over coffee brew guide and timer PWA.
+A quiet, mobile-first pour-over coffee brewing guide and timer PWA.
 
-## PR-001 Project Foundation
+Public app: <https://ns-del346.github.io/Pouro-GPT/>
 
-This repository currently contains the application foundation:
+Pourō is a personal, unofficial brewing aid. It is not affiliated with,
+endorsed by, supervised by, sponsored by, or officially approved by 粕谷哲氏,
+PHILOCOFFEA, HARIO, or any referenced person, company, maker, or brand.
 
-- Vite + React + TypeScript
-- React Router-based page routing
-- App Shell and Brew / History / Settings Bottom Tabs
-- Empty foundations for the seven MVP screens
-- Minimal About / Sources / Legal / Privacy pages
-- Shared CSS variables and responsive base styles
+## Current MVP Scope
 
-Recipe data, timer logic, local storage, PWA files, and finished screen UI are intentionally deferred to later PRs.
+- Brew method selection
+- Recipe setup
+- Brew timer
+- Brew finish note
+- Brew history
+- History detail
+- Rebrew
+- Settings
+- PWA deployment on GitHub Pages
 
-## PR-002 Types and Placeholder Data
+## Current Methods
 
-PR-002 adds the domain model and placeholder method data used by later UI work:
+- 4:6 Method
+- Hybrid
+- 10 Pour Method
+- Ice Brew
 
-- `SourceStatus` and `VerificationLevel` for source and verification state
-- Brew domain types for methods, recipes, steps, setup, sessions, settings, and taste notes
-- Four placeholder methods: `4:6 Method`, `Hybrid Method`, `10 Pour Method`, and `Ice Brew`
-- Review labels such as `レシピ確認中`, `出典確認中`, `参考表示`, and `未確定`
-- Formatting helpers that can render unknown pour values as `Pour --g` and `Total --g`
+Method names describe brewing approaches and user-facing categories. Some
+method data is researched, summarized, app-guided, or placeholder. The app may
+include metadata such as `sourceStatus`, `verificationLevel`, and
+`valuesArePlaceholder` to describe the status of its data. Unverified or
+placeholder values should not be treated as official original recipes or as a
+complete reproduction of an original method. See [NOTICE.md](NOTICE.md) for
+additional details.
 
-The placeholder methods are not confirmed recipes. Their recipe values, pour amounts, timings, and step text are intentionally nullable or marked as placeholder data until source review is complete.
+## Data Storage
 
-## Getting Started
+Brew history and settings are stored locally in the browser via
+`localStorage`. The current MVP has no account system, cloud sync, backend
+server, dedicated analytics tracking, subscription, or advertising. Clearing
+browser or site data may delete saved brew history and settings. See
+[PRIVACY.md](PRIVACY.md) for details.
 
-```bash
+## PWA Usage
+
+On iPhone Safari, users can install Pourō with **Add to Home Screen**. Offline
+behavior may depend on browser cache and Service Worker state.
+
+## Development
+
+```powershell
 npm install
-npm run dev
+npm.cmd run build
+npm.cmd run dev
 ```
-
-Create a production build:
-
-```bash
-npm run build
-npm run preview
-```
-
-## Routes
-
-- `/` - Brew Home
-- `/setup/:methodId` - Recipe Setup
-- `/timer` - Brew Timer
-- `/finish` - Brew Finish
-- `/history` - History
-- `/history/:sessionId` - History Detail
-- `/settings` - Settings
-- `/settings/about` - About
-- `/settings/sources` - Sources
-- `/settings/legal` - Legal
-- `/settings/privacy` - Privacy
-
-## Project Structure
-
-```text
-src/
-├── components/
-│   ├── layout/
-│   └── navigation/
-├── data/
-├── hooks/
-├── pages/
-├── repositories/
-├── styles/
-└── types/
-```
-
-## Product Constraints
-
-- No login, external API, advertising, analytics, or cloud sync
-- Brew Home remains focused on method selection
-- Brew Timer does not display Bottom Tabs
-- iPhone SE equivalent `375 × 667 CSS px` is the minimum layout baseline
