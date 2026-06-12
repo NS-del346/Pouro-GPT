@@ -96,8 +96,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const isPlaceholderSchedule =
     currentRecipe.valuesArePlaceholder ||
     steps.some((step) => step.isPlaceholder);
-  const isR01BasicCandidate =
-    currentSetup.variantId === "R-01" && !isPlaceholderSchedule;
+  const isFourSixR01 =
+    currentSetup.methodId === "four-six" && currentSetup.variantId === "R-01";
+  const isR01BasicCandidate = isFourSixR01 && !isPlaceholderSchedule;
   const semanticChip = isPlaceholderSchedule
     ? null
     : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
@@ -209,20 +210,27 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p className="eyebrow">{statusLabel[timerStatus]}</p>
           <h2 id="timer-method-title">{method.displayName}</h2>
           <span className="status-pill">
-            {isR01BasicCandidate ? "出典付き R-01 基本候補" : "レシピ値確認中"}
+            {isR01BasicCandidate ? "R-01 基本候補" : "レシピ値確認中"}
           </span>
         </div>
 
         {isR01BasicCandidate && (
           <p className="timer-schedule-note">
-            <strong>20g / 300g / 1:15 の基本例</strong>
+            <strong>20g / 300g / 1:15 の出典付き候補</strong>
             <span>
-              03:30 はドリッパーを外す操作です。自然な落ち切り完了を保証する時刻ではありません。
+              03:30 はドリッパーを外す操作です。自然な落ち切り完了を保証する時刻ではありません。ほかの 4:6 派生は確認中です。
             </span>
           </p>
         )}
 
-        {isPlaceholderSchedule && (
+        {isFourSixR01 && isPlaceholderSchedule && (
+          <p className="timer-schedule-note">
+            <strong>R-01 の出典付き候補は 20g / 300g / 1:15 のみです</strong>
+            <span>この設定の詳細スケジュールは確認中です。</span>
+          </p>
+        )}
+
+        {!isFourSixR01 && isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>このメソッドの詳細スケジュールは確認中です</strong>
             <span>現在はplaceholder手順で表示しています</span>
