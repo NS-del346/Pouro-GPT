@@ -8,6 +8,13 @@ import {
   requiresReviewLabel,
 } from "../utils/sourceStatus";
 
+const methodGlyphLabels: Record<string, string> = {
+  "four-six": "4:6",
+  hybrid: "Hy",
+  "ten-pour": "10",
+  "ice-brew": "Ice",
+};
+
 export function BrewHomePage() {
   const firstMethodId = visiblePlaceholderMethods[0]?.id ?? "";
   const [selectedMethodId, setSelectedMethodId] = useState(firstMethodId);
@@ -25,8 +32,13 @@ export function BrewHomePage() {
       aria-labelledby="brew-home-title"
     >
       <header className="home-hero">
-        <h1 className="home-wordmark" id="brew-home-title">
-          pourō
+        <h1 aria-label="pourō" className="home-wordmark" id="brew-home-title">
+          <span aria-hidden="true">
+            pour
+            <span className="wordmark-o">
+              o<span className="wordmark-macron" />
+            </span>
+          </span>
         </h1>
         <p className="home-tagline">Pour slowly. Brew deeply.</p>
         <p>
@@ -49,7 +61,7 @@ export function BrewHomePage() {
               type="button"
             >
               <span className="method-glyph" aria-hidden="true">
-                {method.shortName.slice(0, 2)}
+                {methodGlyphLabels[method.id] ?? method.shortName.slice(0, 2)}
               </span>
               <span className="method-card__name">{method.displayName}</span>
               <span className="method-card__description">
