@@ -34,6 +34,52 @@ export type BrewStepType =
   | "finish"
   | "note";
 
+export type BrewMeasurementUnit = "grams" | "seconds" | "celsius";
+
+export interface BrewNumericRange {
+  min: number;
+  max: number;
+  unit: BrewMeasurementUnit;
+  label?: string;
+  note?: string;
+}
+
+export type BrewValuePrecision =
+  | "exact"
+  | "range"
+  | "approximate"
+  | "observed"
+  | "unresolved";
+
+export type BrewTimeReferenceKind =
+  | "instruction_target"
+  | "observed_example"
+  | "finish_target"
+  | "dripper_removal"
+  | "display_guidance";
+
+export interface BrewTimeReference {
+  seconds: number;
+  precision: BrewValuePrecision;
+  kind: BrewTimeReferenceKind;
+  label?: string;
+  note?: string;
+}
+
+export type BrewUnsupportedSetupBehavior =
+  | "placeholder_fallback"
+  | "show_caution_only"
+  | "not_supported";
+
+export interface BrewFixedSetupGate {
+  coffeeGrams: number;
+  waterGrams: number;
+  ratio: number;
+  scalingSupported: boolean;
+  unsupportedSetupBehavior: BrewUnsupportedSetupBehavior;
+  note?: string;
+}
+
 export type TasteNote =
   | "clear"
   | "sweet"
@@ -104,6 +150,10 @@ export interface BrewRecipe {
   grindSizeLabel: string | null;
   totalTimeSec: number | null;
 
+  waterTempCelsiusRange?: BrewNumericRange | null;
+  totalTimeReferences?: BrewTimeReference[];
+  fixedSetupGate?: BrewFixedSetupGate | null;
+
   valuesArePlaceholder: boolean;
   needsReviewReason: string;
   fieldEvidence?: FieldEvidenceMap;
@@ -122,10 +172,14 @@ export interface BrewStep {
   actionLabel: string;
 
   pourGrams: number | null;
+  pourGramsRange?: BrewNumericRange | null;
   totalWaterGrams: number | null;
   cumulativeWaterGrams?: number | null;
   nextStepTimeSec?: number | null;
   nextPourGrams?: number | null;
+  nextPourGramsRange?: BrewNumericRange | null;
+  timeReferences?: BrewTimeReference[];
+  timingNote?: string;
   stepType?: BrewStepType;
 
   instruction: string;
