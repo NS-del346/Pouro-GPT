@@ -61,6 +61,8 @@ export function RecipeSetupPage({
   const [waterTempMemo, setWaterTempMemo] = useState("");
   const [grindMemo, setGrindMemo] = useState("");
   const [freeMemo, setFreeMemo] = useState("");
+  const [showCustomCoffeeGrams, setShowCustomCoffeeGrams] = useState(false);
+  const [showCustomRatio, setShowCustomRatio] = useState(false);
   const replayMethodDefaultSuppressedForRef = useRef<BrewMethodId | null>(null);
   const replayVariantDefaultSuppressedForRef = useRef<BrewVariantId | null>(null);
 
@@ -78,6 +80,8 @@ export function RecipeSetupPage({
     setHotWaterGrams(defaultVariant?.recommendedHotWaterGrams ?? 150);
     setIceGrams(defaultVariant?.recommendedIceGrams ?? 80);
     setFinalYieldGrams("");
+    setShowCustomCoffeeGrams(false);
+    setShowCustomRatio(false);
   }, [currentMethodId, replaySetupDraft?.methodId]);
 
   useEffect(() => {
@@ -106,6 +110,13 @@ export function RecipeSetupPage({
     setWaterTempMemo(replaySetupDraft.waterTempMemo);
     setGrindMemo(replaySetupDraft.grindMemo);
     setFreeMemo(replaySetupDraft.freeMemo);
+    setShowCustomCoffeeGrams(
+      !coffeeGramOptions.includes(replaySetupDraft.coffeeGrams),
+    );
+    setShowCustomRatio(
+      replaySetupDraft.ratio !== undefined &&
+        !ratioOptions.includes(replaySetupDraft.ratio),
+    );
     onReplaySetupConsumed();
   }, [currentMethodId, onReplaySetupConsumed, replaySetupDraft]);
 
@@ -175,13 +186,17 @@ export function RecipeSetupPage({
         <section className="setup-method-summary">
           <div className="section-heading">
             <p className="eyebrow">選択中メソッド</p>
-            <h2>
-              {method.displayName} ・ {selectedVariant.shortLabel}
-            </h2>
+            <div className="setup-method-title-row">
+              <h2>{method.displayName}</h2>
+              <span className="selected-variant-badge">
+                {selectedVariant.shortLabel}
+              </span>
+            </div>
           </div>
           <div className="status-row">
-            <span className="status-pill">{getRecipeStatusLabel(method)}</span>
-            <span className="status-note">{selectedVariant.id}</span>
+            <span className="status-pill status-pill--compact">
+              {getRecipeStatusLabel(method)}
+            </span>
           </div>
           <p>
             {method.needsReviewReason} この画面で設定する値は、今回の抽出用の入力値です。確認中のレシピ値とは別に扱われます。
@@ -192,7 +207,6 @@ export function RecipeSetupPage({
           <section className="setup-card" aria-labelledby="variant-label">
             <div className="field-heading">
               <span id="variant-label">バリエーション</span>
-              <span>{selectedVariant.shortLabel}</span>
             </div>
             <div
               className="variant-chip-grid"
@@ -220,8 +234,10 @@ export function RecipeSetupPage({
 
         <section className="setup-card setup-card--variant">
           <div className="field-heading">
-            <span>選択中variant</span>
-            <span>{getVariantStatusLabel(selectedVariant)}</span>
+            <span>選択中バリエーション</span>
+            <span className="status-pill status-pill--compact">
+              {getVariantStatusLabel(selectedVariant)}
+            </span>
           </div>
           <strong>{selectedVariant.displayName}</strong>
           <p>{selectedVariant.shortDescription}</p>
@@ -235,10 +251,23 @@ export function RecipeSetupPage({
 
         <section className="setup-card" aria-labelledby="coffee-grams-label">
           <div className="field-heading">
-            <label id="coffee-grams-label" htmlFor="coffee-grams">
-              豆量
-            </label>
-            <span>{coffeeGrams}g</span>
+            <span id="coffee-grams-label">豆量</span>
+            <button
+              aria-controls="coffee-grams-custom-row"
+              aria-expanded={showCustomCoffeeGrams}
+              aria-label={
+                showCustomCoffeeGrams
+                  ? "豆量のカスタム入力を閉じる"
+                  : "豆量をカスタム入力する"
+              }
+              className={`custom-input-trigger${
+                showCustomCoffeeGrams ? " custom-input-trigger--active" : ""
+              }`}
+              onClick={() => setShowCustomCoffeeGrams((isVisible) => !isVisible)}
+              type="button"
+            >
+              Custom <span aria-hidden="true">⚙</span>
+            </button>
           </div>
           <div className="choice-row" role="group" aria-labelledby="coffee-grams-label">
             {coffeeGramOptions.map((value) => (
@@ -247,26 +276,35 @@ export function RecipeSetupPage({
                   coffeeGrams === value ? " choice-button--selected" : ""
                 }`}
                 key={value}
-                onClick={() => setCoffeeGrams(value)}
+                onClick={() => {
+                  setCoffeeGrams(value);
+                  setShowCustomCoffeeGrams(false);
+                }}
                 type="button"
               >
                 {value}g
               </button>
             ))}
           </div>
-          <label className="inline-input" htmlFor="coffee-grams">
-            <span>Custom</span>
-            <input
-              id="coffee-grams"
-              inputMode="numeric"
-              min={1}
-              onChange={(event) =>
-                setCoffeeGrams(Number(event.currentTarget.value) || 1)
-              }
-              type="number"
-              value={coffeeGrams}
-            />
-          </label>
+          {showCustomCoffeeGrams && (
+            <label
+              className="inline-input custom-input-row"
+              htmlFor="coffee-grams"
+              id="coffee-grams-custom-row"
+            >
+              <span>豆量 (g)</span>
+              <input
+                id="coffee-grams"
+                inputMode="numeric"
+                min={1}
+                onChange={(event) =>
+                  setCoffeeGrams(Number(event.currentTarget.value) || 1)
+                }
+                type="number"
+                value={coffeeGrams}
+              />
+            </label>
+          )}
         </section>
 
         {isIceBrew ? (
@@ -334,10 +372,23 @@ export function RecipeSetupPage({
           <>
             <section className="setup-card" aria-labelledby="ratio-label">
               <div className="field-heading">
-                <label id="ratio-label" htmlFor="ratio">
-                  比率
-                </label>
-                <span>1:{ratio}</span>
+                <span id="ratio-label">比率</span>
+                <button
+                  aria-controls="ratio-custom-row"
+                  aria-expanded={showCustomRatio}
+                  aria-label={
+                    showCustomRatio
+                      ? "比率のカスタム入力を閉じる"
+                      : "比率をカスタム入力する"
+                  }
+                  className={`custom-input-trigger${
+                    showCustomRatio ? " custom-input-trigger--active" : ""
+                  }`}
+                  onClick={() => setShowCustomRatio((isVisible) => !isVisible)}
+                  type="button"
+                >
+                  Custom <span aria-hidden="true">⚙</span>
+                </button>
               </div>
               <div className="choice-row" role="group" aria-labelledby="ratio-label">
                 {ratioOptions.map((value) => (
@@ -346,39 +397,52 @@ export function RecipeSetupPage({
                       ratio === value ? " choice-button--selected" : ""
                     }`}
                     key={value}
-                    onClick={() => setRatio(value)}
+                    onClick={() => {
+                      setRatio(value);
+                      setShowCustomRatio(false);
+                    }}
                     type="button"
                   >
                     1:{value}
                   </button>
                 ))}
+                {selectedVariant.isAdvanced && (
+                  <button
+                    aria-label={`${selectedVariant.shortLabel}の推奨比率 1:${selectedVariant.recommendedRatio}`}
+                    className={`choice-button choice-button--inline${
+                      ratio === selectedVariant.recommendedRatio
+                        ? " choice-button--selected"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setRatio(selectedVariant.recommendedRatio ?? 12);
+                      setShowCustomRatio(false);
+                    }}
+                    type="button"
+                  >
+                    推奨 1:{selectedVariant.recommendedRatio}
+                  </button>
+                )}
               </div>
-              {selectedVariant.isAdvanced && (
-                <button
-                  className={`choice-button choice-button--inline${
-                    ratio === selectedVariant.recommendedRatio
-                      ? " choice-button--selected"
-                      : ""
-                  }`}
-                  onClick={() => setRatio(selectedVariant.recommendedRatio ?? 12)}
-                  type="button"
+              {showCustomRatio && (
+                <label
+                  className="inline-input custom-input-row"
+                  htmlFor="ratio"
+                  id="ratio-custom-row"
                 >
-                  この派生の推奨: 1:{selectedVariant.recommendedRatio}
-                </button>
+                  <span>比率</span>
+                  <input
+                    id="ratio"
+                    inputMode="numeric"
+                    min={1}
+                    onChange={(event) =>
+                      setRatio(Number(event.currentTarget.value) || 1)
+                    }
+                    type="number"
+                    value={ratio}
+                  />
+                </label>
               )}
-              <label className="inline-input" htmlFor="ratio">
-                <span>Custom</span>
-                <input
-                  id="ratio"
-                  inputMode="numeric"
-                  min={1}
-                  onChange={(event) =>
-                    setRatio(Number(event.currentTarget.value) || 1)
-                  }
-                  type="number"
-                  value={ratio}
-                />
-              </label>
             </section>
 
             <section className="setup-card setup-card--result">
