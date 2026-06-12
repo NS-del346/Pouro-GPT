@@ -98,6 +98,15 @@ const fourSixSources = {
   },
 } as const;
 
+const hybridSources = {
+  S1: {
+    sourceId: "S1",
+    sourceTitle:
+      "TETSU KASUYA: どんなコーヒー豆も「おいしくなる」究極系レシピ、進化しました。",
+    sourceUrl: "https://www.youtube.com/watch?v=4FeUp_zNiiY",
+  },
+} as const;
+
 function sourceOriginalEvidence(
   sourceId: keyof typeof fourSixSources,
   note: string,
@@ -105,6 +114,28 @@ function sourceOriginalEvidence(
   return {
     provenance: "source_original",
     ...fourSixSources[sourceId],
+    note,
+  };
+}
+
+function hybridSourceOriginalEvidence(
+  sourceId: keyof typeof hybridSources,
+  note: string,
+): FieldSourceEvidence {
+  return {
+    provenance: "source_original",
+    ...hybridSources[sourceId],
+    note,
+  };
+}
+
+function appCalculatedEvidence(
+  calculationNote: string,
+  note: string,
+): FieldSourceEvidence {
+  return {
+    provenance: "app_calculated",
+    calculationNote,
     note,
   };
 }
@@ -274,6 +305,363 @@ const fourSixR01BasicRecipe: BrewRecipe = {
     ),
   },
   steps: createFourSixR01BasicSteps(),
+};
+
+type HybridR08FixedStepSeed = {
+  id: string;
+  order: number;
+  startSec: number | null;
+  title: string;
+  actionLabel: string;
+  pourGramsRange?: BrewStep["pourGramsRange"];
+  totalWaterGrams: number | null;
+  cumulativeWaterGrams: number | null;
+  instruction: string;
+  nextPreview: string;
+  stepType: BrewStep["stepType"];
+  timeReferences: NonNullable<BrewStep["timeReferences"]>;
+  timingNote: string;
+};
+
+function createHybridR08FixedStep(seed: HybridR08FixedStepSeed): BrewStep {
+  const hasCumulativeTarget = seed.cumulativeWaterGrams !== null;
+
+  return {
+    ...seed,
+    endSec: null,
+    pourGrams: null,
+    nextStepTimeSec: null,
+    nextPourGrams: null,
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    isPlaceholder: false,
+    fieldEvidence: {
+      id: appGuidanceEvidence("Pourō identifier for the narrow Hybrid R-08 fixed example."),
+      order: appGuidanceEvidence("Pourō ordering for the source-backed fixed example."),
+      startSec:
+        seed.startSec === 0
+          ? hybridSourceOriginalEvidence(
+              "S1",
+              "The demonstrated example starts with the Switch closed at brew start.",
+            )
+          : appGuidanceEvidence(
+              "No exact step start is stored; approximate targets and observed examples remain separate time references.",
+            ),
+      endSec: appGuidanceEvidence(
+        "No exact step duration or completion second is represented.",
+      ),
+      title: appGuidanceEvidence("Pourō phase label for the fixed example."),
+      actionLabel: appGuidanceEvidence(
+        "Pourō action label summarizing the source-backed cumulative target and Switch state.",
+      ),
+      pourGrams: appGuidanceEvidence(
+        "No unsupported exact incremental pour amount is selected.",
+      ),
+      ...(seed.pourGramsRange
+        ? {
+            pourGramsRange: hybridSourceOriginalEvidence(
+              "S1",
+              "The visible creator-source frame directly shows the first pour as 40-50g.",
+            ),
+          }
+        : {}),
+      totalWaterGrams: hasCumulativeTarget
+        ? hybridSourceOriginalEvidence(
+            "S1",
+            "Cumulative target in the demonstrated fixed example.",
+          )
+        : appGuidanceEvidence(
+            "The first pour remains a range, so no single cumulative value is selected.",
+          ),
+      cumulativeWaterGrams: hasCumulativeTarget
+        ? hybridSourceOriginalEvidence(
+            "S1",
+            "Cumulative target in the demonstrated fixed example.",
+          )
+        : appGuidanceEvidence(
+            "The first pour remains a range, so no single cumulative value is selected.",
+          ),
+      nextStepTimeSec: appGuidanceEvidence(
+        "Null prevents approximate guidance from driving exact timer behavior.",
+      ),
+      nextPourGrams: appGuidanceEvidence(
+        "Later source values are cumulative targets, not exact incremental pour amounts.",
+      ),
+      timeReferences: hybridSourceOriginalEvidence(
+        "S1",
+        "Approximate narrated targets and observed example frames remain separately labeled.",
+      ),
+      timingNote: appGuidanceEvidence(
+        "Pourō caution copy explains that step timing is approximate.",
+      ),
+      stepType: appGuidanceEvidence(
+        "Pourō maps the source-backed phase to an existing step type.",
+      ),
+      instruction: hybridSourceOriginalEvidence(
+        "S1",
+        "Instruction paraphrases the reviewed fixed-example action without adding scaling.",
+      ),
+      nextPreview: appGuidanceEvidence(
+        "Pourō preview keeps the next source-backed action visibly approximate.",
+      ),
+      sourceStatus: appGuidanceEvidence(
+        "The candidate step remains needsReview at container level.",
+      ),
+      verificationLevel: appGuidanceEvidence(
+        "The candidate step remains unverified at container level.",
+      ),
+      isPlaceholder: appGuidanceEvidence(
+        "This step contains reviewed candidate data rather than the generic placeholder scaffold.",
+      ),
+    },
+  };
+}
+
+function createHybridR08FixedSteps(): BrewStep[] {
+  return [
+    createHybridR08FixedStep({
+      id: "hybrid-r08-fixed-step-1",
+      order: 1,
+      startSec: 0,
+      title: "第1フェーズ",
+      actionLabel: "40-50g 注ぐ / Close",
+      pourGramsRange: {
+        min: 40,
+        max: 50,
+        unit: "grams",
+        label: "40-50g",
+      },
+      totalWaterGrams: null,
+      cumulativeWaterGrams: null,
+      instruction:
+        "Switchを閉じた状態で40-50g注ぎ、浸漬でしっかり蒸らします。",
+      nextPreview: "約0:45 に Open、120gまで注ぐ",
+      stepType: "bloom",
+      timeReferences: [
+        {
+          seconds: 0,
+          precision: "exact",
+          kind: "instruction_target",
+          label: "開始",
+          note: "The demonstrated example starts with the Switch closed.",
+        },
+      ],
+      timingNote: "時刻は目安です。",
+    }),
+    createHybridR08FixedStep({
+      id: "hybrid-r08-fixed-step-2",
+      order: 2,
+      startSec: null,
+      title: "Open / 120gまで",
+      actionLabel: "120gまで注ぐ / Open",
+      totalWaterGrams: 120,
+      cumulativeWaterGrams: 120,
+      instruction: "Switchを開け、累計120gまで注ぎます。",
+      nextPreview: "約1:30 に 200gまで注ぐ",
+      stepType: "pour",
+      timeReferences: [
+        {
+          seconds: 45,
+          precision: "approximate",
+          kind: "instruction_target",
+          label: "約0:45",
+          note: "Approximate first release and 120g cumulative target.",
+        },
+        {
+          seconds: 46,
+          precision: "observed",
+          kind: "observed_example",
+          label: "約0:46",
+          note: "Observed example frame showing 120g and Open.",
+        },
+      ],
+      timingNote: "目標時刻と確認できた画面時刻には差があります。",
+    }),
+    createHybridR08FixedStep({
+      id: "hybrid-r08-fixed-step-3",
+      order: 3,
+      startSec: null,
+      title: "200gまで",
+      actionLabel: "200gまで注ぐ / Open",
+      totalWaterGrams: 200,
+      cumulativeWaterGrams: 200,
+      instruction: "透過のまま累計200gまで注ぎます。",
+      nextPreview: "約2:10 に 300gまで注ぎ、Close",
+      stepType: "pour",
+      timeReferences: [
+        {
+          seconds: 90,
+          precision: "approximate",
+          kind: "instruction_target",
+          label: "約1:30",
+          note: "Narrated approximate target for reaching 200g.",
+        },
+        {
+          seconds: 97,
+          precision: "observed",
+          kind: "observed_example",
+          label: "約1:37",
+          note: "Observed example frame showing 200g and Open.",
+        },
+      ],
+      timingNote: "目標時刻と確認できた画面時刻には差があります。",
+    }),
+    createHybridR08FixedStep({
+      id: "hybrid-r08-fixed-step-4",
+      order: 4,
+      startSec: null,
+      title: "300gまで / Close",
+      actionLabel: "300gまで注ぐ / Close",
+      totalWaterGrams: 300,
+      cumulativeWaterGrams: 300,
+      instruction:
+        "湯温を下げた湯で累計300gまで注ぎ、Switchを閉じて再び浸漬します。後半の湯温は70-80°C目安です。",
+      nextPreview: "約2:45 に Open",
+      stepType: "pour",
+      timeReferences: [
+        {
+          seconds: 130,
+          precision: "approximate",
+          kind: "instruction_target",
+          label: "約2:10",
+          note: "Narrated approximate target for the lower-temperature final pour.",
+        },
+        {
+          seconds: 140,
+          precision: "observed",
+          kind: "observed_example",
+          label: "約2:20",
+          note: "Observed example frame showing 300g and Close.",
+        },
+      ],
+      timingNote: "目標時刻と確認できた画面時刻には差があります。",
+    }),
+    createHybridR08FixedStep({
+      id: "hybrid-r08-fixed-step-5",
+      order: 5,
+      startSec: null,
+      title: "Open / 仕上げ",
+      actionLabel: "Openして落とす",
+      totalWaterGrams: 300,
+      cumulativeWaterGrams: 300,
+      instruction:
+        "約2:45を目安にSwitchを開けます。約3:30を仕上がり目安とし、確認できた画面では約3:34でドリッパーを外しています。",
+      nextPreview: "約3:30を目安に終了",
+      stepType: "drawdown",
+      timeReferences: [
+        {
+          seconds: 165,
+          precision: "approximate",
+          kind: "instruction_target",
+          label: "約2:45",
+          note: "Narrated approximate final release target.",
+        },
+        {
+          seconds: 169,
+          precision: "observed",
+          kind: "observed_example",
+          label: "約2:49",
+          note: "Observed example frame showing the final Open action.",
+        },
+      ],
+      timingNote: "仕上がり目安と確認できたドリッパー取り外し時刻は別です。",
+    }),
+  ];
+}
+
+const hybridR08FixedExampleRecipe: BrewRecipe = {
+  recipeId: "hybrid-r08-new-hybrid-fixed-example",
+  methodId: "hybrid",
+  coffeeGrams: 20,
+  waterGrams: 300,
+  ratio: 15,
+  waterTempCelsius: null,
+  waterTempCelsiusRange: {
+    min: 70,
+    max: 80,
+    unit: "celsius",
+    label: "70-80°C",
+    note: "Later lower-temperature guidance only; initial temperature remains unresolved.",
+  },
+  grindSizeLabel: "Comandante 28 clicks / やや粗め",
+  totalTimeSec: null,
+  totalTimeReferences: [
+    {
+      seconds: 210,
+      precision: "approximate",
+      kind: "finish_target",
+      label: "約3:30",
+      note: "Creator caption target completion; not a guaranteed natural drawdown completion.",
+    },
+    {
+      seconds: 214,
+      precision: "observed",
+      kind: "dripper_removal",
+      label: "約3:34",
+      note: "Observed dripper removal timing from visible frame; not an instruction target.",
+    },
+  ],
+  fixedSetupGate: {
+    coffeeGrams: 20,
+    waterGrams: 300,
+    ratio: 15,
+    scalingSupported: false,
+    unsupportedSetupBehavior: "placeholder_fallback",
+    note: "Source-backed Hybrid R-08 candidate is limited to exact 20g / 300g / 1:15.",
+  },
+  valuesArePlaceholder: false,
+  needsReviewReason:
+    "New Hybrid の 20g / 300g / 1:15 固定例のみ出典付き候補です。時刻は目安、初期湯温は未解決で、任意換算には対応していません。Pourōは非公式で、出典元との提携・監修関係はありません。",
+  fieldEvidence: {
+    recipeId: appGuidanceEvidence("Pourō identifier for the narrow Hybrid R-08 fixed example."),
+    methodId: appGuidanceEvidence(
+      "PR-012D maps repository variant R-08 to the inspected New Hybrid fixed example.",
+    ),
+    coffeeGrams: hybridSourceOriginalEvidence(
+      "S1",
+      "20g is directly supported for the demonstrated fixed example only.",
+    ),
+    waterGrams: hybridSourceOriginalEvidence(
+      "S1",
+      "300g is directly supported for the demonstrated fixed example only.",
+    ),
+    ratio: appCalculatedEvidence(
+      "300g / 20g = 15",
+      "The New Hybrid 1:15 ratio is calculated by Pourō from source-supported inputs and is not directly stated by the source.",
+    ),
+    waterTempCelsius: unresolvedEvidence(
+      "The initial water temperature is not established by the inspected creator source.",
+    ),
+    waterTempCelsiusRange: hybridSourceOriginalEvidence(
+      "S1",
+      "Later lower-temperature guidance supports about 80°C, with about 70°C as a stronger change.",
+    ),
+    grindSizeLabel: hybridSourceOriginalEvidence(
+      "S1",
+      "Comandante 28 clicks / somewhat coarse is grinder-specific guidance, not a universal grind setting.",
+    ),
+    totalTimeSec: unresolvedEvidence(
+      "No single exact total time is selected because target completion and observed removal differ.",
+    ),
+    totalTimeReferences: hybridSourceOriginalEvidence(
+      "S1",
+      "Approximate finish target and observed dripper removal remain separate.",
+    ),
+    fixedSetupGate: appGuidanceEvidence(
+      "Pourō limits source-backed selection to exact 20g / 300g / 1:15 and falls back otherwise.",
+    ),
+    valuesArePlaceholder: appGuidanceEvidence(
+      "The exact recipe contains reviewed candidate values while method and variant containers retain caution metadata.",
+    ),
+    needsReviewReason: appGuidanceEvidence(
+      "Pourō caution copy states fixed-example scope, approximation, unresolved initial temperature, disabled scaling, and non-affiliation.",
+    ),
+    steps: hybridSourceOriginalEvidence(
+      "S1",
+      "The fixed example preserves the reviewed phase order, first-pour range, cumulative targets, Switch actions, and separate timing semantics.",
+    ),
+  },
+  steps: createHybridR08FixedSteps(),
 };
 
 function createPlaceholderMethod(seed: PlaceholderMethodSeed): BrewMethod {
@@ -482,7 +870,43 @@ export const brewVariants: BrewVariant[] = [
     recommendedWaterGrams: 300,
     sourceStatus: "needsReview",
     verificationLevel: "unverified",
+    sourceTitle: hybridSources.S1.sourceTitle,
+    sourceUrl: hybridSources.S1.sourceUrl,
+    sourceNote:
+      "R-08 は New Hybrid の 20g / 300g / 1:15 固定例のみを出典付き候補として扱います。任意換算には対応せず、Pourōは出典元と提携・監修関係のない非公式ガイドです。",
     valuesArePlaceholder: true,
+    fieldEvidence: {
+      recommendedCoffeeGrams: hybridSourceOriginalEvidence(
+        "S1",
+        "20g is directly supported for the demonstrated fixed example only.",
+      ),
+      recommendedRatio: appCalculatedEvidence(
+        "300g / 20g = 15",
+        "The recommended ratio is app-calculated from source-supported fixed-example inputs.",
+      ),
+      recommendedWaterGrams: hybridSourceOriginalEvidence(
+        "S1",
+        "300g is directly supported for the demonstrated fixed example only.",
+      ),
+      sourceTitle: hybridSourceOriginalEvidence(
+        "S1",
+        "Creator-source metadata for the narrow R-08 fixed example only.",
+      ),
+      sourceUrl: hybridSourceOriginalEvidence(
+        "S1",
+        "Creator-source metadata for the narrow R-08 fixed example only.",
+      ),
+      sourceNote: appGuidanceEvidence(
+        "Pourō note limits source-backed treatment to the exact fixed example and states non-affiliation.",
+      ),
+      valuesArePlaceholder: appGuidanceEvidence(
+        "The R-08 variant container remains caution-protected despite its exact recipe candidate.",
+      ),
+      recipe: appGuidanceEvidence(
+        "The source-backed candidate is selected only by the exact setup gate.",
+      ),
+    },
+    recipe: hybridR08FixedExampleRecipe,
   },
   {
     id: "R-09",
@@ -533,17 +957,28 @@ export function getRecipeForSetup(
   setup: BrewSetup,
 ): BrewRecipe {
   if (
-    method.id !== "four-six" ||
-    setup.methodId !== "four-six" ||
-    setup.variantId !== "R-01" ||
-    setup.coffeeGrams !== 20 ||
-    setup.ratio !== 15 ||
-    setup.waterGrams !== 300
+    method.id === "four-six" &&
+    setup.methodId === "four-six" &&
+    setup.variantId === "R-01" &&
+    setup.coffeeGrams === 20 &&
+    setup.ratio === 15 &&
+    setup.waterGrams === 300
   ) {
-    return method.recipe;
+    return getVariantById("R-01")?.recipe ?? method.recipe;
   }
 
-  return getVariantById("R-01")?.recipe ?? method.recipe;
+  if (
+    method.id === "hybrid" &&
+    setup.methodId === "hybrid" &&
+    setup.variantId === "R-08" &&
+    setup.coffeeGrams === 20 &&
+    setup.ratio === 15 &&
+    setup.waterGrams === 300
+  ) {
+    return getVariantById("R-08")?.recipe ?? method.recipe;
+  }
+
+  return method.recipe;
 }
 
 export function getDefaultVariantForMethod(
