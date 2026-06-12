@@ -145,6 +145,13 @@ export function RecipeSetupPage({
 
   const setupMethodId = currentMethodId;
   const setupVariant = selectedVariant;
+  const isFourSixR01 =
+    setupMethodId === "four-six" && setupVariant.id === "R-01";
+  const isExactFourSixR01Setup =
+    isFourSixR01 &&
+    coffeeGrams === 20 &&
+    ratio === 15 &&
+    waterGrams === 300;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -241,6 +248,13 @@ export function RecipeSetupPage({
           </div>
           <strong>{selectedVariant.displayName}</strong>
           <p>{selectedVariant.shortDescription}</p>
+          {isFourSixR01 && (
+            <p className="recommendation-note">
+              {isExactFourSixR01Setup
+                ? "20g / 300g / 1:15 の R-01 基本候補のみ出典付きです。ほかの 4:6 派生は確認中です。"
+                : "R-01 の出典付き候補は 20g / 300g / 1:15 のみです。この設定では詳細スケジュールを確認中として表示します。"}
+            </p>
+          )}
           {selectedVariant.isAdvanced && (
             <p className="recommendation-note">
               この派生の推奨: {selectedVariant.recommendedCoffeeGrams}g / 1:
