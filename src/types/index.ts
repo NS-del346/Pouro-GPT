@@ -1,5 +1,8 @@
 export type {
+  FieldEvidenceMap,
+  FieldSourceEvidence,
   SourceStatus,
+  ValueProvenance,
   VerificationLevel,
 } from "./source";
 

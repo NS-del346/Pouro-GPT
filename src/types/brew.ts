@@ -1,4 +1,8 @@
-import type { SourceStatus, VerificationLevel } from "./source";
+import type {
+  FieldEvidenceMap,
+  SourceStatus,
+  VerificationLevel,
+} from "./source";
 
 export type MethodStatus = "candidate" | "available" | "disabled" | "needsReview";
 
@@ -55,6 +59,7 @@ export interface BrewMethod {
   sourceTitle?: string;
   sourceUrl?: string;
   sourceNote?: string;
+  fieldEvidence?: FieldEvidenceMap;
 
   valuesArePlaceholder: boolean;
   needsReviewReason: string;
@@ -81,6 +86,7 @@ export interface BrewVariant {
   sourceStatus: SourceStatus;
   verificationLevel: VerificationLevel;
   valuesArePlaceholder: boolean;
+  fieldEvidence?: FieldEvidenceMap;
 }
 
 export interface BrewRecipe {
@@ -96,6 +102,7 @@ export interface BrewRecipe {
 
   valuesArePlaceholder: boolean;
   needsReviewReason: string;
+  fieldEvidence?: FieldEvidenceMap;
 
   steps: BrewStep[];
 }
@@ -123,6 +130,7 @@ export interface BrewStep {
   sourceStatus: SourceStatus;
   verificationLevel: VerificationLevel;
   isPlaceholder: boolean;
+  fieldEvidence?: FieldEvidenceMap;
 }
 
 export interface BrewSetup {

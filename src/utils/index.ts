@@ -14,6 +14,15 @@ export {
 
 export type { RecipeStatusLabel } from "./sourceStatus";
 
+export {
+  getProvenanceLabel,
+  isAppCalculated,
+  isPlaceholderEvidence,
+  isSourceOriginal,
+} from "./provenance";
+
+export type { ProvenanceLabel } from "./provenance";
+
 export { formatDateTime, formatElapsedMs } from "./formatTime";
 export { createId } from "./id";
 export {
