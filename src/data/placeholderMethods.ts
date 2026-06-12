@@ -6,11 +6,6 @@ import type {
   BrewVariant,
   BrewVariantId,
 } from "../types";
-import {
-  formatPourGrams,
-  formatTotalWaterGrams,
-} from "../utils/formatBrewValue";
-
 type PlaceholderMethodSeed = {
   id: BrewMethodId;
   displayName: string;
@@ -37,11 +32,14 @@ function createPlaceholderSteps(methodId: BrewMethodId): BrewStep[] {
       startSec: 0,
       endSec: 30,
       title: "Step 1",
-      actionLabel: formatPourGrams(null),
+      actionLabel: "注湯量は確認中",
       pourGrams: null,
       totalWaterGrams: null,
+      cumulativeWaterGrams: null,
+      nextStepTimeSec: null,
+      nextPourGrams: null,
       instruction: "この手順文は確認中です。",
-      nextPreview: `Next 00:30 / ${formatPourGrams(null)}`,
+      nextPreview: null,
       sourceStatus: "placeholder",
       verificationLevel: "placeholder",
       isPlaceholder: true,
@@ -52,11 +50,14 @@ function createPlaceholderSteps(methodId: BrewMethodId): BrewStep[] {
       startSec: 30,
       endSec: 60,
       title: "Step 2",
-      actionLabel: formatPourGrams(null),
+      actionLabel: "注湯量は確認中",
       pourGrams: null,
       totalWaterGrams: null,
+      cumulativeWaterGrams: null,
+      nextStepTimeSec: null,
+      nextPourGrams: null,
       instruction: "この手順文は確認中です。",
-      nextPreview: `Next 01:00 / ${formatTotalWaterGrams(null)}`,
+      nextPreview: null,
       sourceStatus: "placeholder",
       verificationLevel: "placeholder",
       isPlaceholder: true,

@@ -13,6 +13,7 @@ export type {
   BrewSettings,
   BrewSetup,
   BrewStep,
+  BrewStepType,
   BrewVariant,
   BrewVariantId,
   MethodStatus,

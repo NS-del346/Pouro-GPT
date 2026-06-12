@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { visiblePlaceholderMethods } from "../data";
-import type { BrewSession, BrewSetup, TimerStatus } from "../types";
+import type { BrewSession, BrewSetup, BrewStep, TimerStatus } from "../types";
 import { createId, formatRecipeGrams } from "../utils";
 
 interface BrewTimerPageProps {
@@ -18,27 +18,20 @@ function formatTimerMs(ms: number): string {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-function formatStepTime(sec: number | null): string {
-  if (sec === null) return "--:--";
-
+function formatStepTime(sec: number): string {
   return formatTimerMs(sec * 1000);
 }
 
-function hasRecipeGramValue(value: number | null): value is number {
+function hasScheduleNumber(
+  value: number | null | undefined,
+): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function formatPourTarget(totalWaterGrams: number): string {
-  return `${formatRecipeGrams(totalWaterGrams)}まで注ぐ`;
-}
-
-function formatPourSummary(
-  pourGrams: number | null,
-  totalWaterGrams: number | null,
-): string {
-  return `+${formatRecipeGrams(pourGrams)} / Total ${formatRecipeGrams(
-    totalWaterGrams,
-  )}`;
+function getCumulativeWaterGrams(step: BrewStep): number | null {
+  return step.cumulativeWaterGrams === undefined
+    ? step.totalWaterGrams
+    : step.cumulativeWaterGrams;
 }
 
 export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps) {
@@ -94,14 +87,15 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const currentMethod = method;
   const currentSetup = activeSetup;
   const currentStep = steps[currentStepIndex] ?? steps[0];
-  const nextStep = steps[currentStepIndex + 1] ?? null;
   const isLastStep = currentStepIndex >= steps.length - 1;
   const canMoveBack = currentStepIndex > 0 && timerStatus !== "finished";
-  const semanticChip = getTimerSemanticChip(
-    currentSetup,
-    currentStep.order,
-    steps.length,
-  );
+  const cumulativeWaterGrams = getCumulativeWaterGrams(currentStep);
+  const isPlaceholderSchedule =
+    currentMethod.recipe.valuesArePlaceholder ||
+    steps.some((step) => step.isPlaceholder);
+  const semanticChip = isPlaceholderSchedule
+    ? null
+    : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
 
   function calculateElapsedMs(finishedAtMs: number): number {
     if (startedAtMs === null) return 0;
@@ -199,14 +193,6 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
     cancelled: "中止",
   };
 
-  const nextPreview = nextStep
-    ? `Next ${formatStepTime(nextStep.startSec)} / ${
-        hasRecipeGramValue(nextStep.totalWaterGrams)
-          ? `${formatRecipeGrams(nextStep.totalWaterGrams)}まで`
-          : "注湯量確認中"
-      }`
-    : "Finish へ進む";
-
   return (
     <Page
       title="Brew Timer"
@@ -220,28 +206,34 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <span className="status-pill">レシピ値確認中</span>
         </div>
 
+        {isPlaceholderSchedule && (
+          <p className="timer-schedule-note">
+            <strong>このメソッドの詳細スケジュールは確認中です</strong>
+            <span>現在はplaceholder手順で表示しています</span>
+          </p>
+        )}
+
         <output className="timer-display" aria-label="経過時間">
           {formatTimerMs(elapsedMs)}
         </output>
 
-        <div className="timer-target-card" aria-label="注湯の累計目標">
-          <span>累計目標</span>
-          {hasRecipeGramValue(currentStep.totalWaterGrams) ? (
-            <>
-              <strong>{formatPourTarget(currentStep.totalWaterGrams)}</strong>
-              <p>
-                {formatPourSummary(
-                  currentStep.pourGrams,
-                  currentStep.totalWaterGrams,
-                )}
-              </p>
-            </>
-          ) : (
-            <>
+        <div className="timer-target-card" aria-label="現在の注湯情報">
+          <div className="timer-target-row">
+            <span>現在の注湯量</span>
+            {hasScheduleNumber(currentStep.pourGrams) ? (
+              <strong>{formatRecipeGrams(currentStep.pourGrams)}</strong>
+            ) : (
               <p className="timer-target-fallback-title">注湯量は確認中</p>
-              <p className="timer-target-fallback-note">確認中のレシピ値です</p>
-            </>
-          )}
+            )}
+          </div>
+          <div className="timer-target-row timer-target-row--secondary">
+            <span>累計湯量</span>
+            {hasScheduleNumber(cumulativeWaterGrams) ? (
+              <strong>{formatRecipeGrams(cumulativeWaterGrams)}</strong>
+            ) : (
+              <p className="timer-target-fallback-title">累計湯量は確認中</p>
+            )}
+          </div>
         </div>
 
         {semanticChip && <p className="timer-semantic-chip">{semanticChip}</p>}
@@ -254,7 +246,19 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p>{currentStep.instruction}</p>
         </article>
 
-        <p className="timer-next-preview">{nextPreview}</p>
+        <div className="timer-next-preview" aria-label="次の注湯情報">
+          <span>次の注湯</span>
+          <p>
+            {hasScheduleNumber(currentStep.nextStepTimeSec)
+              ? formatStepTime(currentStep.nextStepTimeSec)
+              : "次の注湯タイミングは確認中"}
+          </p>
+          <p>
+            {hasScheduleNumber(currentStep.nextPourGrams)
+              ? `${formatRecipeGrams(currentStep.nextPourGrams)}を注ぐ`
+              : "次の注湯量は確認中"}
+          </p>
+        </div>
 
         {isLastStep && timerStatus !== "idle" && timerStatus !== "finished" && (
           <p className="timer-finish-note">

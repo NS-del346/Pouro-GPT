@@ -22,6 +22,14 @@ export type TimerStatus =
   | "finished"
   | "cancelled";
 
+export type BrewStepType =
+  | "pour"
+  | "bloom"
+  | "wait"
+  | "drawdown"
+  | "finish"
+  | "note";
+
 export type TasteNote =
   | "clear"
   | "sweet"
@@ -104,6 +112,10 @@ export interface BrewStep {
 
   pourGrams: number | null;
   totalWaterGrams: number | null;
+  cumulativeWaterGrams?: number | null;
+  nextStepTimeSec?: number | null;
+  nextPourGrams?: number | null;
+  stepType?: BrewStepType;
 
   instruction: string;
   nextPreview: string | null;
