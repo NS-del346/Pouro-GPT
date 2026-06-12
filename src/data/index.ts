@@ -1,6 +1,7 @@
 export {
   brewVariants,
   getDefaultVariantForMethod,
+  getRecipeForSetup,
   getVariantById,
   getVariantsByMethodId,
   placeholderMethods,

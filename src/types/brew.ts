@@ -85,8 +85,12 @@ export interface BrewVariant {
 
   sourceStatus: SourceStatus;
   verificationLevel: VerificationLevel;
+  sourceTitle?: string;
+  sourceUrl?: string;
+  sourceNote?: string;
   valuesArePlaceholder: boolean;
   fieldEvidence?: FieldEvidenceMap;
+  recipe?: BrewRecipe;
 }
 
 export interface BrewRecipe {
