@@ -152,6 +152,13 @@ export function RecipeSetupPage({
     coffeeGrams === 20 &&
     ratio === 15 &&
     waterGrams === 300;
+  const isHybridR08 =
+    setupMethodId === "hybrid" && setupVariant.id === "R-08";
+  const isExactHybridR08Setup =
+    isHybridR08 &&
+    coffeeGrams === 20 &&
+    ratio === 15 &&
+    waterGrams === 300;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -253,6 +260,13 @@ export function RecipeSetupPage({
               {isExactFourSixR01Setup
                 ? "20g / 300g / 1:15 の R-01 基本候補のみ出典付きです。ほかの 4:6 派生は確認中です。"
                 : "R-01 の出典付き候補は 20g / 300g / 1:15 のみです。この設定では詳細スケジュールを確認中として表示します。"}
+            </p>
+          )}
+          {isHybridR08 && (
+            <p className="recommendation-note">
+              {isExactHybridR08Setup
+                ? "New Hybrid の固定例（20g / 300g）のみ出典付き候補として表示します。最初の注湯は40-50gの範囲、時刻は目安です。任意の粉量・比率への換算には対応していません。"
+                : "New Hybrid の出典付き候補は20g / 300g / 1:15のみです。この設定では詳細スケジュールを確認中として表示します。"}
             </p>
           )}
           {selectedVariant.isAdvanced && (

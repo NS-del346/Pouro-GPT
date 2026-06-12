@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { getRecipeForSetup, visiblePlaceholderMethods } from "../data";
-import type { BrewSession, BrewSetup, BrewStep, TimerStatus } from "../types";
+import type {
+  BrewSession,
+  BrewSetup,
+  BrewStep,
+  TimerStatus,
+} from "../types";
 import { createId, formatRecipeGrams } from "../utils";
 
 interface BrewTimerPageProps {
@@ -26,6 +31,17 @@ function hasScheduleNumber(
   value: number | null | undefined,
 ): value is number {
   return typeof value === "number" && Number.isFinite(value);
+}
+
+function formatNumericRange(
+  range: NonNullable<BrewStep["pourGramsRange"]>,
+): string {
+  if (range.label) return range.label;
+
+  const unitLabel =
+    range.unit === "grams" ? "g" : range.unit === "celsius" ? "°C" : "秒";
+
+  return `${range.min}-${range.max}${unitLabel}`;
 }
 
 function getCumulativeWaterGrams(step: BrewStep): number | null {
@@ -99,6 +115,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const isFourSixR01 =
     currentSetup.methodId === "four-six" && currentSetup.variantId === "R-01";
   const isR01BasicCandidate = isFourSixR01 && !isPlaceholderSchedule;
+  const isHybridR08 =
+    currentSetup.methodId === "hybrid" && currentSetup.variantId === "R-08";
+  const isHybridR08Candidate = isHybridR08 && !isPlaceholderSchedule;
   const semanticChip = isPlaceholderSchedule
     ? null
     : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
@@ -210,7 +229,11 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p className="eyebrow">{statusLabel[timerStatus]}</p>
           <h2 id="timer-method-title">{method.displayName}</h2>
           <span className="status-pill">
-            {isR01BasicCandidate ? "R-01 基本候補" : "レシピ値確認中"}
+            {isR01BasicCandidate
+              ? "R-01 基本候補"
+              : isHybridR08Candidate
+                ? "R-08 固定例候補"
+                : "レシピ値確認中"}
           </span>
         </div>
 
@@ -230,7 +253,23 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           </p>
         )}
 
-        {!isFourSixR01 && isPlaceholderSchedule && (
+        {isHybridR08Candidate && (
+          <p className="timer-schedule-note">
+            <strong>New Hybrid 固定例（20g / 300g）</strong>
+            <span>
+              最初の注湯は40-50gの範囲、時刻は目安です。初期湯温は未解決で、後半の低い湯温は70-80°Cの目安です。任意換算には対応していません。Pourōは非公式で、出典元との提携・監修関係はありません。
+            </span>
+          </p>
+        )}
+
+        {isHybridR08 && isPlaceholderSchedule && (
+          <p className="timer-schedule-note">
+            <strong>New Hybrid の出典付き候補は 20g / 300g / 1:15 のみです</strong>
+            <span>この設定ではplaceholder手順を表示しています。</span>
+          </p>
+        )}
+
+        {!isFourSixR01 && !isHybridR08 && isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>このメソッドの詳細スケジュールは確認中です</strong>
             <span>現在はplaceholder手順で表示しています</span>
@@ -244,7 +283,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         <div className="timer-target-card" aria-label="現在の注湯情報">
           <div className="timer-target-row">
             <span>現在の注湯量</span>
-            {hasScheduleNumber(currentStep.pourGrams) ? (
+            {currentStep.pourGramsRange ? (
+              <strong>{formatNumericRange(currentStep.pourGramsRange)}</strong>
+            ) : hasScheduleNumber(currentStep.pourGrams) ? (
               <strong>{formatRecipeGrams(currentStep.pourGrams)}</strong>
             ) : (
               <p className="timer-target-fallback-title">注湯量は確認中</p>
@@ -268,6 +309,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           </p>
           <h3>{currentStep.title}</h3>
           <p>{currentStep.instruction}</p>
+          {currentStep.timingNote && <p>{currentStep.timingNote}</p>}
         </article>
 
         <div className="timer-next-preview" aria-label="次の注湯情報">
@@ -278,7 +320,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
               : "次の注湯タイミングは確認中"}
           </p>
           <p>
-            {hasScheduleNumber(currentStep.nextPourGrams)
+            {currentStep.nextPourGramsRange
+              ? `${formatNumericRange(currentStep.nextPourGramsRange)}を注ぐ`
+              : hasScheduleNumber(currentStep.nextPourGrams)
               ? `${formatRecipeGrams(currentStep.nextPourGrams)}を注ぐ`
               : currentStep.nextPreview ?? "次の注湯量は確認中"}
           </p>
