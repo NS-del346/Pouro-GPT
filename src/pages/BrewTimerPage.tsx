@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
-import { visiblePlaceholderMethods } from "../data";
+import { getRecipeForSetup, visiblePlaceholderMethods } from "../data";
 import type { BrewSession, BrewSetup, BrewStep, TimerStatus } from "../types";
 import { createId, formatRecipeGrams } from "../utils";
 
@@ -39,7 +39,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const method = visiblePlaceholderMethods.find(
     (item) => item.id === activeSetup?.methodId,
   );
-  const steps = method?.recipe.steps ?? [];
+  const recipe =
+    method && activeSetup ? getRecipeForSetup(method, activeSetup) : method?.recipe;
+  const steps = recipe?.steps ?? [];
   const [timerStatus, setTimerStatus] = useState<TimerStatus>("idle");
   const [startedAtMs, setStartedAtMs] = useState<number | null>(null);
   const [pausedAtMs, setPausedAtMs] = useState<number | null>(null);
@@ -80,19 +82,22 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
     totalPausedMs,
   ]);
 
-  if (!activeSetup || !method || steps.length === 0) {
+  if (!activeSetup || !method || !recipe || steps.length === 0) {
     return <Navigate to="/" replace />;
   }
 
   const currentMethod = method;
+  const currentRecipe = recipe;
   const currentSetup = activeSetup;
   const currentStep = steps[currentStepIndex] ?? steps[0];
   const isLastStep = currentStepIndex >= steps.length - 1;
   const canMoveBack = currentStepIndex > 0 && timerStatus !== "finished";
   const cumulativeWaterGrams = getCumulativeWaterGrams(currentStep);
   const isPlaceholderSchedule =
-    currentMethod.recipe.valuesArePlaceholder ||
+    currentRecipe.valuesArePlaceholder ||
     steps.some((step) => step.isPlaceholder);
+  const isR01BasicCandidate =
+    currentSetup.variantId === "R-01" && !isPlaceholderSchedule;
   const semanticChip = isPlaceholderSchedule
     ? null
     : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
@@ -203,8 +208,19 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         <div className="timer-method-summary">
           <p className="eyebrow">{statusLabel[timerStatus]}</p>
           <h2 id="timer-method-title">{method.displayName}</h2>
-          <span className="status-pill">レシピ値確認中</span>
+          <span className="status-pill">
+            {isR01BasicCandidate ? "出典付き R-01 基本候補" : "レシピ値確認中"}
+          </span>
         </div>
+
+        {isR01BasicCandidate && (
+          <p className="timer-schedule-note">
+            <strong>20g / 300g / 1:15 の基本例</strong>
+            <span>
+              03:30 はドリッパーを外す操作です。自然な落ち切り完了を保証する時刻ではありません。
+            </span>
+          </p>
+        )}
 
         {isPlaceholderSchedule && (
           <p className="timer-schedule-note">
@@ -256,7 +272,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p>
             {hasScheduleNumber(currentStep.nextPourGrams)
               ? `${formatRecipeGrams(currentStep.nextPourGrams)}を注ぐ`
-              : "次の注湯量は確認中"}
+              : currentStep.nextPreview ?? "次の注湯量は確認中"}
           </p>
         </div>
 
