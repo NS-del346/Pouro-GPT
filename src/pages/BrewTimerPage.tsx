@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { getRecipeForSetup, visiblePlaceholderMethods } from "../data";
+import { getTipsForDisplayContext } from "../data/tips";
 import type {
   BrewSession,
   BrewSetup,
   BrewStep,
   TimerStatus,
 } from "../types";
+import type { CoffeeTipRecipeCode } from "../types/tips";
 import { createId, formatRecipeGrams } from "../utils";
 
 interface BrewTimerPageProps {
@@ -48,6 +50,16 @@ function getCumulativeWaterGrams(step: BrewStep): number | null {
   return step.cumulativeWaterGrams === undefined
     ? step.totalWaterGrams
     : step.cumulativeWaterGrams;
+}
+
+function getTimerTipRecipeCode(setup: BrewSetup): CoffeeTipRecipeCode {
+  if (setup.methodId === "four-six") return "406";
+  if (setup.methodId === "ice-brew") return "ICE";
+  if (setup.methodId === "hybrid" && setup.variantId === "R-08") {
+    return "HYB_NEW";
+  }
+  if (setup.methodId === "ten-pour" && setup.variantId === "R-09") return "NEO";
+  return "ALL";
 }
 
 export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps) {
@@ -121,6 +133,17 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const isTenPourR09 =
     currentSetup.methodId === "ten-pour" && currentSetup.variantId === "R-09";
   const isTenPourR09Candidate = isTenPourR09 && !isPlaceholderSchedule;
+  const timerTipRecipeCode = getTimerTipRecipeCode(currentSetup);
+  const recipeSpecificTimerTips =
+    timerTipRecipeCode === "ALL"
+      ? []
+      : getTipsForDisplayContext("timer", timerTipRecipeCode).filter(
+          (tip) => tip.recipeCode === timerTipRecipeCode,
+        );
+  const globalTimerTips = getTipsForDisplayContext("timer", "ALL").filter(
+    (tip) => tip.recipeCode === "ALL",
+  );
+  const timerTip = [...recipeSpecificTimerTips, ...globalTimerTips][0];
   const semanticChip = isPlaceholderSchedule
     ? null
     : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
@@ -299,6 +322,20 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
             <span>現在はplaceholder手順で表示しています</span>
           </p>
           )}
+
+        {timerTip && (
+          <section className="timer-tip" aria-labelledby="timer-tip-label">
+            <span className="eyebrow" id="timer-tip-label">
+              POINT / TIPS
+            </span>
+            <div className="timer-tip-row">
+              <span className="status-pill status-pill--compact">
+                {timerTip.type}
+              </span>
+              <p>{timerTip.contentShortJa || timerTip.contentJa}</p>
+            </div>
+          </section>
+        )}
 
         <output className="timer-display" aria-label="経過時間">
           {formatTimerMs(elapsedMs)}

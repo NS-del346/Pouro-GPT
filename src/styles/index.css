@@ -2231,6 +2231,36 @@ p {
   box-shadow: none;
 }
 
+.visual-polish-page--timer .timer-tip {
+  order: 1;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-surface));
+}
+
+.visual-polish-page--timer .timer-tip-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.visual-polish-page--timer .timer-tip .status-pill {
+  margin-top: 1px;
+  color: #17130e;
+}
+
+.visual-polish-page--timer .timer-tip p {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
 .visual-polish-page--timer .timer-step-card {
   order: 2;
   gap: 8px;
@@ -2313,7 +2343,7 @@ p {
 }
 
 .visual-polish-page--timer .timer-schedule-note {
-  order: 4;
+  order: 1;
   margin: 0;
   border-left-color: var(--color-accent);
   border-radius: 0 10px 10px 0;
