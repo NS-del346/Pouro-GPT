@@ -158,10 +158,20 @@ export function RecipeSetupPage({
 
   const setupMethodId = currentMethodId;
   const setupVariant = selectedVariant;
-  const setupTips = getTipsForDisplayContext(
-    "setup",
-    getSetupTipRecipeCode(setupMethodId, setupVariant.id),
-  ).slice(0, 2);
+  const setupTipRecipeCode = getSetupTipRecipeCode(
+    setupMethodId,
+    setupVariant.id,
+  );
+  const recipeSpecificSetupTips =
+    setupTipRecipeCode === "ALL"
+      ? []
+      : getTipsForDisplayContext("setup", setupTipRecipeCode).filter(
+          (tip) => tip.recipeCode === setupTipRecipeCode,
+        );
+  const globalSetupTips = getTipsForDisplayContext("setup", "ALL").filter(
+    (tip) => tip.recipeCode === "ALL",
+  );
+  const setupTips = [...recipeSpecificSetupTips, ...globalSetupTips].slice(0, 2);
   const isFourSixR01 =
     setupMethodId === "four-six" && setupVariant.id === "R-01";
   const isExactFourSixR01Setup =
