@@ -159,6 +159,13 @@ export function RecipeSetupPage({
     coffeeGrams === 20 &&
     ratio === 15 &&
     waterGrams === 300;
+  const isTenPourR09 =
+    setupMethodId === "ten-pour" && setupVariant.id === "R-09";
+  const isExactTenPourR09Setup =
+    isTenPourR09 &&
+    coffeeGrams === 20 &&
+    ratio === 15 &&
+    waterGrams === 300;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -267,6 +274,13 @@ export function RecipeSetupPage({
               {isExactHybridR08Setup
                 ? "New Hybrid の固定例（20g / 300g）のみ出典付き候補として表示します。最初の注湯は40-50gの範囲、時刻は目安です。任意の粉量・比率への換算には対応していません。"
                 : "New Hybrid の出典付き候補は20g / 300g / 1:15のみです。この設定では詳細スケジュールを確認中として表示します。"}
+            </p>
+          )}
+          {isTenPourR09 && (
+            <p className="recommendation-note">
+              {isExactTenPourR09Setup
+                ? "THE NEO BREW の固定例（20g / 300g / 1:15）のみ確認済み候補として表示します。約3:30は落ち切りの目安です。任意換算には対応していません。"
+                : "THE NEO BREW の確認済み候補は20g / 300g / 1:15のみです。この設定ではplaceholderガイドを表示します。"}
             </p>
           )}
           {selectedVariant.isAdvanced && (

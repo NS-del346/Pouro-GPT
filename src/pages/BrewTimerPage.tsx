@@ -118,6 +118,9 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const isHybridR08 =
     currentSetup.methodId === "hybrid" && currentSetup.variantId === "R-08";
   const isHybridR08Candidate = isHybridR08 && !isPlaceholderSchedule;
+  const isTenPourR09 =
+    currentSetup.methodId === "ten-pour" && currentSetup.variantId === "R-09";
+  const isTenPourR09Candidate = isTenPourR09 && !isPlaceholderSchedule;
   const semanticChip = isPlaceholderSchedule
     ? null
     : getTimerSemanticChip(currentSetup, currentStep.order, steps.length);
@@ -233,6 +236,8 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
               ? "R-01 基本候補"
               : isHybridR08Candidate
                 ? "R-08 固定例候補"
+                : isTenPourR09Candidate
+                  ? "R-09 固定例候補"
                 : "レシピ値確認中"}
           </span>
         </div>
@@ -269,12 +274,31 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           </p>
         )}
 
-        {!isFourSixR01 && !isHybridR08 && isPlaceholderSchedule && (
+        {isTenPourR09Candidate && (
+          <p className="timer-schedule-note">
+            <strong>THE NEO BREW 固定例（20g / 300g / 1:15）</strong>
+            <span>
+              10投の確認済み候補です。約3:30は落ち切りの目安で、正確な完了時刻やドリッパー取り外し時刻ではありません。フィルターは未解決、任意換算は非対応です。HARIO V60 NEO推奨、V60対応です。Pourōは非公式で、出典元との提携・監修関係はありません。
+            </span>
+          </p>
+        )}
+
+        {isTenPourR09 && isPlaceholderSchedule && (
+          <p className="timer-schedule-note">
+            <strong>THE NEO BREW の確認済み候補は 20g / 300g / 1:15 のみです</strong>
+            <span>この設定ではplaceholderガイドを表示しています。</span>
+          </p>
+        )}
+
+        {!isFourSixR01 &&
+          !isHybridR08 &&
+          !isTenPourR09 &&
+          isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>このメソッドの詳細スケジュールは確認中です</strong>
             <span>現在はplaceholder手順で表示しています</span>
           </p>
-        )}
+          )}
 
         <output className="timer-display" aria-label="経過時間">
           {formatTimerMs(elapsedMs)}
