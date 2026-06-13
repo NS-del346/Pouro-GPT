@@ -7,7 +7,9 @@ import {
   getVariantsByMethodId,
   visiblePlaceholderMethods,
 } from "../data";
+import { getTipsForDisplayContext } from "../data/tips";
 import type { BrewMethodId, BrewSetup, BrewVariant, BrewVariantId } from "../types";
+import type { CoffeeTipRecipeCode } from "../types/tips";
 import { getRecipeStatusLabel } from "../utils/sourceStatus";
 
 const coffeeGramOptions = [15, 18, 20, 24, 30];
@@ -29,6 +31,17 @@ function getVariantStatusLabel(variant: BrewVariant): string {
 
 function getInitialVariantId(methodId: BrewMethodId): BrewVariantId | undefined {
   return getDefaultVariantForMethod(methodId)?.id;
+}
+
+function getSetupTipRecipeCode(
+  methodId: BrewMethodId,
+  variantId: BrewVariantId,
+): CoffeeTipRecipeCode {
+  if (methodId === "four-six") return "406";
+  if (methodId === "ice-brew") return "ICE";
+  if (methodId === "hybrid" && variantId === "R-08") return "HYB_NEW";
+  if (methodId === "ten-pour" && variantId === "R-09") return "NEO";
+  return "ALL";
 }
 
 export function RecipeSetupPage({
@@ -145,6 +158,10 @@ export function RecipeSetupPage({
 
   const setupMethodId = currentMethodId;
   const setupVariant = selectedVariant;
+  const setupTips = getTipsForDisplayContext(
+    "setup",
+    getSetupTipRecipeCode(setupMethodId, setupVariant.id),
+  ).slice(0, 2);
   const isFourSixR01 =
     setupMethodId === "four-six" && setupVariant.id === "R-01";
   const isExactFourSixR01Setup =
@@ -290,6 +307,27 @@ export function RecipeSetupPage({
             </p>
           )}
         </section>
+
+        {setupTips.length > 0 && (
+          <section
+            className="setup-card setup-card--tips"
+            aria-labelledby="setup-tips-label"
+          >
+            <div className="field-heading">
+              <span id="setup-tips-label">POINT / TIPS</span>
+            </div>
+            <div className="setup-tip-list">
+              {setupTips.map((tip) => (
+                <div className="setup-tip" key={tip.id}>
+                  <span className="status-pill status-pill--compact">
+                    {tip.type}
+                  </span>
+                  <p>{tip.contentShortJa || tip.contentJa}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="setup-card" aria-labelledby="coffee-grams-label">
           <div className="field-heading">
