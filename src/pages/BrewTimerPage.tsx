@@ -278,7 +278,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p className="timer-schedule-note">
             <strong>THE NEO BREW 固定例（20g / 300g / 1:15）</strong>
             <span>
-              10投の確認済み候補です。約3:30は落ち切りの目安で、正確な完了時刻やドリッパー取り外し時刻ではありません。フィルターは未解決、任意換算は非対応です。HARIO V60 NEO推奨、V60対応です。Pourōは非公式で、出典元との提携・監修関係はありません。
+              THE NEO BREW固定例のみです。約3:30は落ち切り目安で、正確な完了時刻ではありません。フィルターは未解決、任意換算は非対応です。Pourōは非公式で、出典元との提携・監修関係はありません。
             </span>
           </p>
         )}
@@ -286,7 +286,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         {isTenPourR09 && isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>THE NEO BREW の確認済み候補は 20g / 300g / 1:15 のみです</strong>
-            <span>この設定ではplaceholderガイドを表示しています。</span>
+            <span>この設定はplaceholderガイドです。</span>
           </p>
         )}
 

@@ -279,8 +279,8 @@ export function RecipeSetupPage({
           {isTenPourR09 && (
             <p className="recommendation-note">
               {isExactTenPourR09Setup
-                ? "THE NEO BREW の固定例（20g / 300g / 1:15）のみ確認済み候補として表示します。約3:30は落ち切りの目安です。任意換算には対応していません。"
-                : "THE NEO BREW の確認済み候補は20g / 300g / 1:15のみです。この設定ではplaceholderガイドを表示します。"}
+                ? "THE NEO BREWは20g / 300g / 1:15の固定例のみ表示します。約3:30は落ち切り目安で、任意換算は未対応です。"
+                : "確認済み候補は20g / 300g / 1:15のみです。この設定ではplaceholderガイドを表示します。"}
             </p>
           )}
           {selectedVariant.isAdvanced && (
