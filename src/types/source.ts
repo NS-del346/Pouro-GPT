@@ -16,6 +16,8 @@ export type VerificationLevel =
 
 export type ValueProvenance =
   | "source_original"
+  | "primary_description_confirmed"
+  | "user_supplied_visual_evidence_confirmed"
   | "app_calculated"
   | "app_guidance"
   | "placeholder"

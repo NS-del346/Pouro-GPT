@@ -2,6 +2,8 @@ import type { FieldSourceEvidence, ValueProvenance } from "../types";
 
 export type ProvenanceLabel =
   | "出典記載値"
+  | "一次説明確認値"
+  | "ユーザー提供視覚証拠確認値"
   | "アプリ計算値"
   | "アプリガイド"
   | "仮の値"
@@ -10,6 +12,8 @@ export type ProvenanceLabel =
 
 const provenanceLabels: Record<ValueProvenance, ProvenanceLabel> = {
   source_original: "出典記載値",
+  primary_description_confirmed: "一次説明確認値",
+  user_supplied_visual_evidence_confirmed: "ユーザー提供視覚証拠確認値",
   app_calculated: "アプリ計算値",
   app_guidance: "アプリガイド",
   placeholder: "仮の値",

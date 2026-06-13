@@ -107,6 +107,19 @@ const hybridSources = {
   },
 } as const;
 
+const tenPourSources = {
+  S1: {
+    sourceId: "S1",
+    sourceTitle:
+      "TETSU KASUYA: 世界制覇から10年かけて辿り着いた最新式のドリップレシピ完成しました！！",
+    sourceUrl: "https://www.youtube.com/watch?v=k0nsShguOsU",
+  },
+  E1: {
+    sourceId: "E1",
+    sourceTitle: "PR-013E THE NEO BREW user-supplied recipe-card evidence",
+  },
+} as const;
+
 function sourceOriginalEvidence(
   sourceId: keyof typeof fourSixSources,
   note: string,
@@ -125,6 +138,22 @@ function hybridSourceOriginalEvidence(
   return {
     provenance: "source_original",
     ...hybridSources[sourceId],
+    note,
+  };
+}
+
+function tenPourPrimaryDescriptionEvidence(note: string): FieldSourceEvidence {
+  return {
+    provenance: "primary_description_confirmed",
+    ...tenPourSources.S1,
+    note,
+  };
+}
+
+function tenPourVisualEvidence(note: string): FieldSourceEvidence {
+  return {
+    provenance: "user_supplied_visual_evidence_confirmed",
+    ...tenPourSources.E1,
     note,
   };
 }
@@ -664,6 +693,204 @@ const hybridR08FixedExampleRecipe: BrewRecipe = {
   steps: createHybridR08FixedSteps(),
 };
 
+function createTenPourR09FixedSteps(): BrewStep[] {
+  const starts = [0, 30, 45, 60, 75, 90, 105, 120, 135, 150];
+
+  return starts.map((startSec, index) => {
+    const order = index + 1;
+    const cumulativeWaterGrams = order * 30;
+    const isLastPour = order === starts.length;
+    const nextStepTimeSec = isLastPour ? null : starts[index + 1];
+
+    return {
+      id: `ten-pour-r09-fixed-step-${order}`,
+      order,
+      startSec,
+      endSec: null,
+      title: `Pour ${order}`,
+      actionLabel: "30g 注ぐ",
+      pourGrams: 30,
+      totalWaterGrams: cumulativeWaterGrams,
+      cumulativeWaterGrams,
+      nextStepTimeSec,
+      nextPourGrams: isLastPour ? null : 30,
+      stepType: "pour",
+      instruction:
+        order === 1
+          ? "00:00 に30g注いで蒸らします。追加の蒸らし技法は設定していません。"
+          : `${String(Math.floor(startSec / 60)).padStart(2, "0")}:${String(
+              startSec % 60,
+            ).padStart(2, "0")} に30g注ぎ、累計${cumulativeWaterGrams}gにします。`,
+      nextPreview: isLastPour
+        ? "約3:30を目安に、全量の落ち切りを確認します"
+        : `${String(Math.floor(nextStepTimeSec! / 60)).padStart(2, "0")}:${String(
+            nextStepTimeSec! % 60,
+          ).padStart(2, "0")} に30g注ぐ`,
+      sourceStatus: "needsReview",
+      verificationLevel: "unverified",
+      isPlaceholder: false,
+      fieldEvidence: {
+        id: appGuidanceEvidence(
+          "Pourō identifier for the narrow THE NEO BREW R-09 fixed example.",
+        ),
+        order: appGuidanceEvidence(
+          "Pourō ordering for the visually confirmed ten-pour schedule.",
+        ),
+        startSec: tenPourVisualEvidence(
+          "Exact pour timestamp confirmed in the PR-013E user-supplied visual evidence.",
+        ),
+        endSec: unresolvedEvidence(
+          "No exact pour duration or exact completion duration is represented.",
+        ),
+        title: appGuidanceEvidence(
+          "Neutral Pour label avoids over-promoting bloom semantics.",
+        ),
+        actionLabel: tenPourPrimaryDescriptionEvidence(
+          "The creator description confirms ten pours of 30g each.",
+        ),
+        pourGrams: tenPourPrimaryDescriptionEvidence(
+          "The creator description confirms ten pours of 30g each for the fixed example.",
+        ),
+        totalWaterGrams: tenPourVisualEvidence(
+          "Cumulative target confirmed in the PR-013E user-supplied visual evidence.",
+        ),
+        cumulativeWaterGrams: tenPourVisualEvidence(
+          "Cumulative target confirmed in the PR-013E user-supplied visual evidence.",
+        ),
+        nextStepTimeSec: isLastPour
+          ? unresolvedEvidence(
+              "No exact next event is stored after the final pour; completion is approximate guidance.",
+            )
+          : tenPourVisualEvidence(
+              "Next pour timestamp confirmed in the PR-013E user-supplied visual evidence.",
+            ),
+        nextPourGrams: isLastPour
+          ? appGuidanceEvidence("There is no next pour after Pour 10.")
+          : tenPourPrimaryDescriptionEvidence(
+              "The creator description confirms each next pour is 30g in the fixed example.",
+            ),
+        stepType: appGuidanceEvidence(
+          "Pourō maps every schedule row to the neutral existing pour step type.",
+        ),
+        instruction:
+          order === 1
+            ? tenPourVisualEvidence(
+                "The first-row note visibly says to pour 30g and bloom/rest; no extra technique is added.",
+              )
+            : tenPourVisualEvidence(
+                "Instruction restates the visually confirmed timestamp and cumulative target.",
+              ),
+        nextPreview: isLastPour
+          ? tenPourVisualEvidence(
+              "About 3:30 is approximate completion/drawdown guidance, not exact duration or dripper-removal timing.",
+            )
+          : tenPourVisualEvidence(
+              "Preview restates the next visually confirmed pour timestamp.",
+            ),
+        sourceStatus: appGuidanceEvidence(
+          "The candidate step remains needsReview at container level.",
+        ),
+        verificationLevel: appGuidanceEvidence(
+          "The candidate step remains unverified at container level.",
+        ),
+        isPlaceholder: appGuidanceEvidence(
+          "This exact-gated step contains reviewed candidate data rather than the generic placeholder scaffold.",
+        ),
+      },
+    };
+  });
+}
+
+const tenPourR09FixedExampleRecipe: BrewRecipe = {
+  recipeId: "ten-pour-r09-the-neo-brew-fixed-example",
+  methodId: "ten-pour",
+  coffeeGrams: 20,
+  waterGrams: 300,
+  ratio: 15,
+  waterTempCelsius: null,
+  waterTempCelsiusRange: {
+    min: 95,
+    max: 96,
+    unit: "celsius",
+    label: "95-96°C",
+    note: "Primary-description-confirmed range for the fixed example.",
+  },
+  grindSizeLabel: "極粗挽き / Comandante C40 40-45クリック",
+  totalTimeSec: null,
+  totalTimeReferences: [
+    {
+      seconds: 210,
+      precision: "approximate",
+      kind: "finish_target",
+      label: "約3:30",
+      note: "Approximate completion/drawdown guidance only; not exact duration or dripper-removal timing.",
+    },
+  ],
+  fixedSetupGate: {
+    coffeeGrams: 20,
+    waterGrams: 300,
+    ratio: 15,
+    scalingSupported: false,
+    unsupportedSetupBehavior: "placeholder_fallback",
+    note: "THE NEO BREW R-09 candidate is limited to exact 20g / 300g / 1:15.",
+  },
+  valuesArePlaceholder: false,
+  needsReviewReason:
+    "THE NEO BREW の固定例（20g / 300g / 1:15）のみ確認済み候補です。約3:30は落ち切りの目安で、フィルター、正確な完了時刻、ドリッパー取り外し時刻、任意換算は未解決です。HARIO V60 NEO推奨、V60対応です。Pourōは非公式で、出典元との提携・監修関係はありません。",
+  fieldEvidence: {
+    recipeId: appGuidanceEvidence(
+      "Pourō identifier for the narrow THE NEO BREW R-09 fixed example.",
+    ),
+    methodId: appGuidanceEvidence(
+      "PR-013E approves R-09 as Pourō's internal mapping for this fixed-example candidate only.",
+    ),
+    coffeeGrams: tenPourPrimaryDescriptionEvidence(
+      "20g is directly confirmed for the fixed example only.",
+    ),
+    waterGrams: tenPourPrimaryDescriptionEvidence(
+      "300g is directly confirmed for the fixed example only.",
+    ),
+    ratio: tenPourPrimaryDescriptionEvidence(
+      "1:15 is directly confirmed for the fixed example only.",
+    ),
+    waterTempCelsius: unresolvedEvidence(
+      "No single exact temperature is selected because the source supports a range.",
+    ),
+    waterTempCelsiusRange: tenPourPrimaryDescriptionEvidence(
+      "The creator description confirms 95-96°C as a range.",
+    ),
+    grindSizeLabel: tenPourPrimaryDescriptionEvidence(
+      "The creator description confirms extra coarse / Comandante C40 40-45 clicks.",
+    ),
+    totalTimeSec: unresolvedEvidence(
+      "Exact completion duration and dripper-removal timing remain unresolved.",
+    ),
+    totalTimeReferences: tenPourVisualEvidence(
+      "The PR-013E visual evidence supports about 3:30 as approximate completion/drawdown guidance only.",
+    ),
+    fixedSetupGate: appGuidanceEvidence(
+      "Pourō limits the candidate to exact 20g / 300g / 1:15, disables scaling, and falls back otherwise.",
+    ),
+    valuesArePlaceholder: appGuidanceEvidence(
+      "The exact-gated recipe contains reviewed candidate data while method and variant containers retain caution metadata.",
+    ),
+    needsReviewReason: appGuidanceEvidence(
+      "Pourō caution copy states fixed-example scope, approximation, unresolved fields, narrow equipment support, disabled scaling, and non-affiliation.",
+    ),
+    steps: tenPourVisualEvidence(
+      "The full timestamp and cumulative-target schedule is confirmed by the PR-013E user-supplied visual evidence.",
+    ),
+    equipment: tenPourPrimaryDescriptionEvidence(
+      "HARIO V60 NEO is recommended and V60 is acceptable; no broader equipment claim is made.",
+    ),
+    filter: unresolvedEvidence("No filter type is established."),
+    scaling: unresolvedEvidence(
+      "Arbitrary dose and ratio scaling are unsupported.",
+    ),
+  },
+  steps: createTenPourR09FixedSteps(),
+};
+
 function createPlaceholderMethod(seed: PlaceholderMethodSeed): BrewMethod {
   return {
     ...seed,
@@ -913,14 +1140,45 @@ export const brewVariants: BrewVariant[] = [
     methodId: "ten-pour",
     displayName: "THE NEO BREW / 10投式",
     shortLabel: "THE NEO BREW",
-    shortDescription: "10 Pour Methodの独立variantとして参考表示します。",
+    shortDescription: "THE NEO BREW / HARIO V60 NEO の固定例候補です。",
     isAdvanced: false,
     recommendedCoffeeGrams: 20,
     recommendedRatio: 15,
     recommendedWaterGrams: 300,
     sourceStatus: "needsReview",
     verificationLevel: "unverified",
+    sourceTitle: tenPourSources.S1.sourceTitle,
+    sourceUrl: tenPourSources.S1.sourceUrl,
+    sourceNote:
+      "R-09 は THE NEO BREW の 20g / 300g / 1:15 固定例のみを扱うPourō内部候補です。任意換算には対応せず、Pourōは出典元と提携・監修関係のない非公式ガイドです。",
     valuesArePlaceholder: true,
+    fieldEvidence: {
+      recommendedCoffeeGrams: tenPourPrimaryDescriptionEvidence(
+        "20g is directly confirmed for the fixed example only.",
+      ),
+      recommendedRatio: tenPourPrimaryDescriptionEvidence(
+        "1:15 is directly confirmed for the fixed example only.",
+      ),
+      recommendedWaterGrams: tenPourPrimaryDescriptionEvidence(
+        "300g is directly confirmed for the fixed example only.",
+      ),
+      sourceTitle: tenPourPrimaryDescriptionEvidence(
+        "Creator-source metadata for the narrow fixed example.",
+      ),
+      sourceUrl: tenPourPrimaryDescriptionEvidence(
+        "Creator-source metadata for the narrow fixed example.",
+      ),
+      sourceNote: appGuidanceEvidence(
+        "Pourō note limits source-backed treatment to the fixed example and states non-affiliation.",
+      ),
+      valuesArePlaceholder: appGuidanceEvidence(
+        "The R-09 variant container remains caution-protected despite its exact recipe candidate.",
+      ),
+      recipe: appGuidanceEvidence(
+        "The reviewed candidate is selected only by the exact setup gate.",
+      ),
+    },
+    recipe: tenPourR09FixedExampleRecipe,
   },
   {
     id: "R-10",
@@ -976,6 +1234,17 @@ export function getRecipeForSetup(
     setup.waterGrams === 300
   ) {
     return getVariantById("R-08")?.recipe ?? method.recipe;
+  }
+
+  if (
+    method.id === "ten-pour" &&
+    setup.methodId === "ten-pour" &&
+    setup.variantId === "R-09" &&
+    setup.coffeeGrams === 20 &&
+    setup.ratio === 15 &&
+    setup.waterGrams === 300
+  ) {
+    return getVariantById("R-09")?.recipe ?? method.recipe;
   }
 
   return method.recipe;
