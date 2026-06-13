@@ -1,7 +1,9 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
+import { getTipsForDisplayContext } from "../data/tips";
 import { getBrewSessionById } from "../repositories";
 import type { BrewSetup, TasteNote } from "../types";
+import type { CoffeeTipRecipeCode } from "../types/tips";
 import {
   formatDateTime,
   formatElapsedMs,
@@ -26,6 +28,16 @@ const tasteNoteLabels: Record<TasteNote, string> = {
   other: "その他",
 };
 
+function getHistoryDetailTipRecipeCode(setup: BrewSetup): CoffeeTipRecipeCode {
+  if (setup.methodId === "four-six") return "406";
+  if (setup.methodId === "ice-brew") return "ICE";
+  if (setup.methodId === "hybrid" && setup.variantId === "R-08") {
+    return "HYB_NEW";
+  }
+  if (setup.methodId === "ten-pour" && setup.variantId === "R-09") return "NEO";
+  return "ALL";
+}
+
 export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
   const { sessionId } = useParams();
   const navigate = useNavigate();
@@ -40,6 +52,23 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
   const needsReview = requiresReviewLabel(methodSnapshot);
   const variantLabel = getSessionVariantLabel(currentSession);
   const setupFields = getSessionSetupFields(currentSession);
+  const historyDetailTipRecipeCode =
+    getHistoryDetailTipRecipeCode(setupSnapshot);
+  const recipeSpecificHistoryDetailTips =
+    historyDetailTipRecipeCode === "ALL"
+      ? []
+      : getTipsForDisplayContext(
+          "historyDetail",
+          historyDetailTipRecipeCode,
+        ).filter((tip) => tip.recipeCode === historyDetailTipRecipeCode);
+  const globalHistoryDetailTips = getTipsForDisplayContext(
+    "historyDetail",
+    "ALL",
+  ).filter((tip) => tip.recipeCode === "ALL");
+  const historyDetailTips = [
+    ...recipeSpecificHistoryDetailTips,
+    ...globalHistoryDetailTips,
+  ].slice(0, 2);
 
   function handleReplay() {
     onReplayBrew({
@@ -83,6 +112,27 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
           </p>
         )}
       </section>
+
+      {historyDetailTips.length > 0 && (
+        <section
+          className="record-card record-card--tips"
+          aria-labelledby="history-detail-tips-label"
+        >
+          <div className="field-heading">
+            <span id="history-detail-tips-label">POINT / TIPS</span>
+          </div>
+          <div className="history-detail-tip-list">
+            {historyDetailTips.map((tip) => (
+              <div className="history-detail-tip" key={tip.id}>
+                <span className="status-pill status-pill--compact">
+                  {tip.type}
+                </span>
+                <p>{tip.contentShortJa || tip.contentJa}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="record-card">
         <div className="section-heading">
