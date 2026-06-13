@@ -1833,6 +1833,36 @@ p {
   padding: 0;
 }
 
+.visual-polish-page--finish .record-card--tips {
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+.visual-polish-page--finish .finish-tip-list {
+  display: grid;
+  gap: 8px;
+}
+
+.visual-polish-page--finish .finish-tip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.visual-polish-page--finish .finish-tip .status-pill {
+  margin-top: 1px;
+  color: #17130e;
+}
+
+.visual-polish-page--finish .finish-tip p {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .visual-polish-page .record-card--summary .session-variant-label {
   display: none;
 }
