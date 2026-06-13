@@ -1,8 +1,10 @@
 import { FormEvent, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
+import { getTipsForDisplayContext } from "../data/tips";
 import { saveBrewSession } from "../repositories";
-import type { BrewResult, BrewSession, TasteNote } from "../types";
+import type { BrewResult, BrewSession, BrewSetup, TasteNote } from "../types";
+import type { CoffeeTipRecipeCode } from "../types/tips";
 import {
   formatElapsedMs,
   getSessionSetupFields,
@@ -26,6 +28,16 @@ const tasteNoteOptions: Array<{ value: TasteNote; label: string }> = [
   { value: "other", label: "その他" },
 ];
 
+function getFinishTipRecipeCode(setup: BrewSetup): CoffeeTipRecipeCode {
+  if (setup.methodId === "four-six") return "406";
+  if (setup.methodId === "ice-brew") return "ICE";
+  if (setup.methodId === "hybrid" && setup.variantId === "R-08") {
+    return "HYB_NEW";
+  }
+  if (setup.methodId === "ten-pour" && setup.variantId === "R-09") return "NEO";
+  return "ALL";
+}
+
 export function BrewFinishPage({
   finishedSessionDraft,
   onClearFinishedSession,
@@ -46,6 +58,17 @@ export function BrewFinishPage({
   const needsReview = requiresReviewLabel(methodSnapshot);
   const variantLabel = getSessionVariantLabel(sessionDraft);
   const setupFields = getSessionSetupFields(sessionDraft);
+  const finishTipRecipeCode = getFinishTipRecipeCode(setupSnapshot);
+  const recipeSpecificFinishTips =
+    finishTipRecipeCode === "ALL"
+      ? []
+      : getTipsForDisplayContext("finish", finishTipRecipeCode).filter(
+          (tip) => tip.recipeCode === finishTipRecipeCode,
+        );
+  const globalFinishTips = getTipsForDisplayContext("finish", "ALL").filter(
+    (tip) => tip.recipeCode === "ALL",
+  );
+  const finishTips = [...recipeSpecificFinishTips, ...globalFinishTips].slice(0, 2);
 
   function toggleTasteNote(note: TasteNote) {
     setTasteNotes((currentNotes) =>
@@ -144,6 +167,27 @@ export function BrewFinishPage({
             </div>
           )}
         </section>
+
+        {finishTips.length > 0 && (
+          <section
+            className="record-card record-card--tips"
+            aria-labelledby="finish-tips-label"
+          >
+            <div className="field-heading">
+              <span id="finish-tips-label">POINT / TIPS</span>
+            </div>
+            <div className="finish-tip-list">
+              {finishTips.map((tip) => (
+                <div className="finish-tip" key={tip.id}>
+                  <span className="status-pill status-pill--compact">
+                    {tip.type}
+                  </span>
+                  <p>{tip.contentShortJa || tip.contentJa}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="record-card">
           <div className="field-heading">
