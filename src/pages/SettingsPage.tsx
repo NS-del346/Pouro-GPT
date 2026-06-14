@@ -7,13 +7,83 @@ import {
   getUserSettings,
   saveUserSettings,
 } from "../repositories";
-import type { AppTheme, UserSettings } from "../types";
+import type { AppTheme, BrewSession, UserSettings } from "../types";
 
 const themeOptions: Array<{ label: string; value: AppTheme }> = [
   { label: "ライト", value: "light" },
   { label: "ウォーム", value: "warm" },
   { label: "ダーク", value: "dark" },
 ];
+
+const csvHeaders = [
+  "id",
+  "finishedAtIso",
+  "methodId",
+  "methodName",
+  "variantId",
+  "coffeeGrams",
+  "waterGrams",
+  "ratio",
+  "elapsedMsAtFinish",
+  "rating",
+  "tasteNotes",
+  "tasteImpression",
+  "nextAdjustmentMemo",
+  "freeMemo",
+];
+
+function formatExportTimestamp(date: Date): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate()),
+    "-",
+    pad(date.getHours()),
+    pad(date.getMinutes()),
+    pad(date.getSeconds()),
+  ].join("");
+}
+
+function escapeCsvValue(value: unknown): string {
+  const text = value === null || value === undefined ? "" : String(value);
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+function buildBrewHistoryCsv(history: BrewSession[]): string {
+  const rows = history.map((session) => [
+    session.id,
+    session.finishedAtIso,
+    session.methodId,
+    session.methodSnapshot?.displayName,
+    session.setupSnapshot?.variantId,
+    session.setupSnapshot?.coffeeGrams,
+    session.setupSnapshot?.waterGrams,
+    session.setupSnapshot?.ratio,
+    session.elapsedMsAtFinish,
+    session.result?.rating,
+    session.result?.tasteNotes?.join(" / "),
+    session.result?.tasteImpression,
+    session.result?.nextAdjustmentMemo,
+    session.result?.freeMemo,
+  ]);
+
+  return [csvHeaders, ...rows]
+    .map((row) => row.map(escapeCsvValue).join(","))
+    .join("\r\n");
+}
+
+function downloadFile(content: BlobPart, type: string, filename: string) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
 
 export function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(() => getUserSettings());
@@ -42,6 +112,47 @@ export function SettingsPage() {
     clearBrewHistory();
     setHistoryCount(0);
     setSaveMessage("抽出履歴を削除しました。設定は保持されています。");
+  }
+
+  function handleExportCsv() {
+    const history = getBrewHistory();
+    if (history.length === 0) {
+      setHistoryCount(0);
+      return;
+    }
+
+    const timestamp = formatExportTimestamp(new Date());
+    const csv = buildBrewHistoryCsv(history);
+    downloadFile(
+      `\uFEFF${csv}`,
+      "text/csv;charset=utf-8",
+      `pouro-brew-history-${timestamp}.csv`,
+    );
+    setSaveMessage("CSVを書き出しました。");
+  }
+
+  function handleExportJson() {
+    const history = getBrewHistory();
+    if (history.length === 0) {
+      setHistoryCount(0);
+      return;
+    }
+
+    const exportedAt = new Date();
+    const backup = {
+      app: "Pouro-GPT",
+      exportType: "brewHistoryBackup",
+      exportedAt: exportedAt.toISOString(),
+      schemaVersion: 1,
+      brewHistory: history,
+    };
+
+    downloadFile(
+      JSON.stringify(backup, null, 2),
+      "application/json;charset=utf-8",
+      `pouro-brew-history-backup-${formatExportTimestamp(exportedAt)}.json`,
+    );
+    setSaveMessage("JSONバックアップを書き出しました。");
   }
 
   return (
@@ -149,13 +260,38 @@ export function SettingsPage() {
         <p className="history-count">
           保存済み記録: <strong>{historyCount}</strong>
         </p>
-        <button
-          className="danger-button"
-          onClick={handleDeleteData}
-          type="button"
-        >
-          すべての履歴を削除
-        </button>
+        <div className="settings-export-actions">
+          <button
+            className="settings-export-button"
+            disabled={historyCount === 0}
+            onClick={handleExportCsv}
+            type="button"
+          >
+            履歴を書き出す（CSV）
+          </button>
+          <button
+            className="settings-export-button settings-export-button--secondary"
+            disabled={historyCount === 0}
+            onClick={handleExportJson}
+            type="button"
+          >
+            詳細バックアップ（JSON）
+          </button>
+          {historyCount === 0 && (
+            <p className="settings-empty-message">
+              書き出せる保存済み履歴はありません。
+            </p>
+          )}
+        </div>
+        <div className="settings-danger-zone">
+          <button
+            className="danger-button"
+            onClick={handleDeleteData}
+            type="button"
+          >
+            すべての履歴を削除
+          </button>
+        </div>
       </section>
 
       <RouteLinks
