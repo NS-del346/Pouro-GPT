@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { getBrewHistory } from "../repositories";
-import type { TasteNote } from "../types";
+import type { BrewSession, BrewSetup, TasteNote } from "../types";
 import {
   formatDateTime,
   formatElapsedMs,
@@ -22,13 +22,26 @@ const tasteNoteLabels: Record<TasteNote, string> = {
   other: "その他",
 };
 
+interface HistoryPageProps {
+  onReplayBrew: (setup: BrewSetup) => void;
+}
+
 function truncateMemo(memo: string): string {
   if (memo.length <= 42) return memo;
   return `${memo.slice(0, 42)}...`;
 }
 
-export function HistoryPage() {
+export function HistoryPage({ onReplayBrew }: HistoryPageProps) {
+  const navigate = useNavigate();
   const history = useMemo(() => getBrewHistory(), []);
+
+  function handleReplay(session: BrewSession) {
+    onReplayBrew({
+      ...session.setupSnapshot,
+      createdAt: new Date().toISOString(),
+    });
+    navigate(`/setup/${session.methodId}`);
+  }
 
   return (
     <Page
@@ -52,11 +65,7 @@ export function HistoryPage() {
             const variantLabel = getSessionVariantLabel(session);
 
             return (
-              <Link
-                className="history-card"
-                key={session.id}
-                to={`/history/${session.id}`}
-              >
+              <article className="history-card" key={session.id}>
                 <div className="section-heading">
                   <p className="eyebrow">{formatDateTime(session.finishedAtIso)}</p>
                   <h2>{getSessionMethodLabel(session)}</h2>
@@ -87,7 +96,22 @@ export function HistoryPage() {
                     {truncateMemo(result.nextAdjustmentMemo)}
                   </p>
                 )}
-              </Link>
+                <div className="history-card-actions">
+                  <Link
+                    className="history-card-action history-card-action--secondary"
+                    to={`/history/${session.id}`}
+                  >
+                    詳細を見る
+                  </Link>
+                  <button
+                    className="history-card-action history-card-action--rebrew"
+                    onClick={() => handleReplay(session)}
+                    type="button"
+                  >
+                    同じ条件で再抽出
+                  </button>
+                </div>
+              </article>
             );
           })}
         </section>
