@@ -31,22 +31,42 @@ TIPS, provenance, PWA, package, or storage schema change is included.
 
 ## Manual QA
 
-Manual browser QA results will be recorded after implementation verification.
+* 375x667 browser interactive QA: NOT RUN in local environment
+* 390x844 browser interactive QA: NOT RUN in local environment
+* Reason: local environment did not support interactive browser verification.
 
 ## Regression checks
 
-Regression check results will be recorded after implementation verification.
+* Static scope review: PASS
+* Changed files limited to intended PR scope: PASS
+* No recipe data changes: PASS
+* No method schedule changes: PASS
+* No timer behavior changes: PASS
+* No POINT/TIPS changes: PASS
+* No source/provenance flag changes: PASS
+* No localStorage schema changes: PASS
+* No route changes except Brew Home wiring to existing replay mechanism: PASS
+* History Detail replay not directly modified: PASS
+* Timer / Finish / Settings not directly modified: PASS
+* No direct Timer start added: PASS
+* No account / cloud / analytics / graph / SNS / bean inventory added: PASS
 
 ## Source/legal safety checks
 
 The Last Brew card displays only the user's locally saved session summary. It
 does not expose source URLs, titles, timecodes, transcripts, or source notes,
-and it makes no official endorsement, partnership, or accuracy claim.
+and it makes no official endorsement, partnership, or guaranteed accuracy
+claim.
 
 ## Commands run
 
-Command results will be recorded after implementation verification.
+* `npm run build`: PASS
+* `git diff --check`: PASS
+* `git status --short --branch`: PASS
+* `git commit`: PASS
 
 ## Known limitations
 
 This PR does not add cloud sync, analytics, comparison, history editing, or direct timer start. The shortcut returns the user to Recipe Setup for confirmation before brewing.
+
+Interactive mobile browser QA at 375x667 and 390x844 remains pending.
