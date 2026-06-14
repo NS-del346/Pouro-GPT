@@ -23,7 +23,14 @@ export function App() {
   return (
     <Routes>
       <Route element={<AppShell />}>
-        <Route index element={<BrewHomePage />} />
+        <Route
+          index
+          element={
+            <BrewHomePage
+              onReplayBrew={(setup) => setReplaySetupDraft(setup)}
+            />
+          }
+        />
         <Route
           path="setup/:methodId"
           element={
