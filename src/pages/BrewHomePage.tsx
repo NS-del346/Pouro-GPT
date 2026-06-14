@@ -1,6 +1,14 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getVariantsByMethodId, visiblePlaceholderMethods } from "../data";
+import { getBrewHistory } from "../repositories";
+import type { BrewSetup } from "../types";
+import {
+  formatDateTime,
+  getSessionMethodLabel,
+  getSessionSetupSummary,
+  getSessionVariantLabel,
+} from "../utils";
 import {
   getRecipeStatusLabel,
   getSourceStatusLabel,
@@ -15,9 +23,15 @@ const methodGlyphLabels: Record<string, string> = {
   "ice-brew": "Ice",
 };
 
-export function BrewHomePage() {
+interface BrewHomePageProps {
+  onReplayBrew: (setup: BrewSetup) => void;
+}
+
+export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
+  const navigate = useNavigate();
   const firstMethodId = visiblePlaceholderMethods[0]?.id ?? "";
   const [selectedMethodId, setSelectedMethodId] = useState(firstMethodId);
+  const latestSession = useMemo(() => getBrewHistory()[0] ?? null, []);
 
   const selectedMethod = useMemo(
     () =>
@@ -25,6 +39,20 @@ export function BrewHomePage() {
       visiblePlaceholderMethods[0],
     [selectedMethodId],
   );
+
+  function handleReplayLatest() {
+    if (!latestSession) return;
+
+    onReplayBrew({
+      ...latestSession.setupSnapshot,
+      createdAt: new Date().toISOString(),
+    });
+    navigate(`/setup/${latestSession.methodId}`);
+  }
+
+  const latestVariantLabel = latestSession
+    ? getSessionVariantLabel(latestSession)
+    : null;
 
   return (
     <section
@@ -45,6 +73,30 @@ export function BrewHomePage() {
           抽出メソッドを選び、次の画面であなたの抽出条件を設定します。
         </p>
       </header>
+
+      {latestSession && (
+        <article className="last-brew-card" aria-labelledby="last-brew-title">
+          <header className="last-brew-card__header">
+            <p className="eyebrow">Last Brew</p>
+            <h2 id="last-brew-title">前回の条件で再抽出</h2>
+          </header>
+          <div className="last-brew-card__summary">
+            <strong>{getSessionMethodLabel(latestSession)}</strong>
+            {latestVariantLabel && <span>{latestVariantLabel}</span>}
+            <p>{getSessionSetupSummary(latestSession)}</p>
+          </div>
+          <p className="last-brew-card__meta">
+            完了 {formatDateTime(latestSession.finishedAtIso)}
+          </p>
+          <button
+            className="last-brew-card__button"
+            onClick={handleReplayLatest}
+            type="button"
+          >
+            前回の条件を確認する
+          </button>
+        </article>
+      )}
 
       <div className="method-grid" aria-label="抽出メソッド">
         {visiblePlaceholderMethods.map((method) => {
