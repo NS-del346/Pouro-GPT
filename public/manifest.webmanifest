@@ -2,8 +2,8 @@
   "name": "Pourō",
   "short_name": "Pourō",
   "description": "A quiet pour-over coffee brew guide and timer.",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/Pouro-GPT/",
+  "scope": "/Pouro-GPT/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FAF7F1",
@@ -11,13 +11,13 @@
   "lang": "ja",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
+      "src": "/Pouro-GPT/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./icons/icon-512.png",
+      "src": "/Pouro-GPT/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
