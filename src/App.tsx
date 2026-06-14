@@ -62,7 +62,14 @@ export function App() {
             />
           }
         />
-        <Route path="history" element={<HistoryPage />} />
+        <Route
+          path="history"
+          element={
+            <HistoryPage
+              onReplayBrew={(setup) => setReplaySetupDraft(setup)}
+            />
+          }
+        />
         <Route
           path="history/:sessionId"
           element={
