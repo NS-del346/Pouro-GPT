@@ -1354,6 +1354,46 @@ p {
   line-height: 1;
 }
 
+.settings-export-actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.settings-export-button {
+  min-height: 52px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-button);
+  color: var(--color-text);
+  background: var(--color-accent-soft);
+  font-weight: 900;
+  box-shadow: var(--shadow-soft);
+}
+
+.settings-export-button--secondary {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.settings-export-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-empty-message {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.settings-danger-zone {
+  display: grid;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
 .danger-button {
   min-height: 52px;
   border: 1px solid color-mix(in srgb, #9f2f24 55%, var(--color-border));
