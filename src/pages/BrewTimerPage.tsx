@@ -342,22 +342,24 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         </output>
 
         <div className="timer-target-card" aria-label="現在の注湯情報">
-          <div className="timer-target-row">
-            <span>現在の注湯量</span>
+          <div className="timer-target-row timer-target-row--primary">
+            <span>累計目標 / Target Total</span>
+            {hasScheduleNumber(cumulativeWaterGrams) ? (
+              <strong>{formatRecipeGrams(cumulativeWaterGrams)}</strong>
+            ) : (
+              <p className="timer-target-fallback-title">累計目標は確認中</p>
+            )}
+          </div>
+          <div className="timer-target-row timer-target-row--secondary">
+            <span>今回の注湯 / This Pour</span>
             {currentStep.pourGramsRange ? (
               <strong>{formatNumericRange(currentStep.pourGramsRange)}</strong>
             ) : hasScheduleNumber(currentStep.pourGrams) ? (
               <strong>{formatRecipeGrams(currentStep.pourGrams)}</strong>
             ) : (
-              <p className="timer-target-fallback-title">注湯量は確認中</p>
-            )}
-          </div>
-          <div className="timer-target-row timer-target-row--secondary">
-            <span>累計湯量</span>
-            {hasScheduleNumber(cumulativeWaterGrams) ? (
-              <strong>{formatRecipeGrams(cumulativeWaterGrams)}</strong>
-            ) : (
-              <p className="timer-target-fallback-title">累計湯量は確認中</p>
+              <p className="timer-target-fallback-title">
+                今回の注湯量は確認中
+              </p>
             )}
           </div>
         </div>
