@@ -12,6 +12,7 @@ import { PrivacyPage } from "./pages/PrivacyPage";
 import { RecipeSetupPage } from "./pages/RecipeSetupPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SourcesPage } from "./pages/SourcesPage";
+import { ToolsPage } from "./pages/ToolsPage";
 import type { BrewSession, BrewSetup } from "./types";
 
 export function App() {
@@ -78,6 +79,7 @@ export function App() {
             />
           }
         />
+        <Route path="tools" element={<ToolsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="settings/about" element={<AboutPage />} />
         <Route path="settings/sources" element={<SourcesPage />} />
