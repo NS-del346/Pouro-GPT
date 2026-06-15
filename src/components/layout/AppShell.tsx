@@ -6,9 +6,7 @@ export function AppShell() {
   const { pathname } = useLocation();
   const hideBottomTabs = pathname === "/timer" || pathname === "/finish";
   const themeClassName =
-    pathname === "/settings" || pathname.startsWith("/settings/")
-      ? "theme-warm"
-      : "theme-dark";
+    pathname === "/timer" ? "theme-active-brew" : "theme-precision";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });

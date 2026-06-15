@@ -1,9 +1,10 @@
 import { NavLink, useLocation } from "react-router-dom";
 
 const tabs = [
-  { icon: "brew", label: "Brew", to: "/" },
-  { icon: "history", label: "History", to: "/history" },
-  { icon: "settings", label: "Settings", to: "/settings" },
+  { icon: "brew", label: "抽出", to: "/" },
+  { icon: "tools", label: "ツール", to: "/tools" },
+  { icon: "history", label: "履歴", to: "/history" },
+  { icon: "settings", label: "設定", to: "/settings" },
 ];
 
 export function BottomTabs() {
