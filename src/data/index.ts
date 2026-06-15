@@ -7,3 +7,5 @@ export {
   placeholderMethods,
   visiblePlaceholderMethods,
 } from "./placeholderMethods";
+
+export { placeholderGrinderPresets } from "./grinderPresets";
