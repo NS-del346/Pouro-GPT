@@ -7,6 +7,14 @@ export type {
 } from "./source";
 
 export type {
+  GrinderAdjustmentType,
+  GrinderPreset,
+  GrinderPresetSourceStatus,
+  GrinderPresetStatus,
+  GrinderPresetVerificationLevel,
+} from "./grinder";
+
+export type {
   AppTheme,
   BrewMethod,
   BrewMethodId,
