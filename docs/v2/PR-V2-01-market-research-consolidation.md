@@ -37,18 +37,22 @@ documents under `docs/v2/`.
 
 The archived HTML is the supplied Genspark artifact and is not part of app or
 public runtime. External claims in the report are not independently verified by
-this PR. The summary preserves confirmed, inference, hypothesis, and
-recommendation distinctions where possible.
+this PR. The summary preserves report-labeled facts, inferences, hypotheses, and
+recommendations where possible.
 
-The supplied HTML is incomplete: it ends during Section 9, Risk 3 and has no
-closing HTML tags. This PR preserves that artifact byte-for-byte and limits its
-summary to the available content plus the explicit task-directed consolidation
-requirements.
+The archived HTML is preserved as a source artifact only. It is incomplete and
+ends during Section 9, Risk 3. It is not production source, not public runtime,
+and not a complete research report. The markdown summary and consolidation do
+not fabricate or infer the missing tail.
+
+The CRLF/whitespace warning is accepted only because the archived HTML is
+byte-preserved source material. It does not affect runtime because the file is
+under `docs/` and outside public/app code.
 
 ## 4. Key Findings
 
-- Target Total-first timer hierarchy is the strongest differentiation
-  opportunity.
+- Target Total-first persistent hierarchy is a useful differentiation
+  opportunity, but target water/weight concepts are not completely unique.
 - One-second glanceability is a P0 UX requirement for brewing execution.
 - Execution-first UX should take priority over discovery, marketplace, and
   community scope.
@@ -58,7 +62,7 @@ requirements.
 - Local-first and no-account remain strategically useful, but are not unique.
 - Light high-contrast UI and stable monospace/tabular numerals support live
   brewing readability.
-- Dark mode is P2/later, not P0.
+- Dark theme is deferred and is not part of initial Ver2.0 identity.
 - Broad feature competition with premium all-rounders and parameter-dense
   trackers would create scope and positioning risk.
 
@@ -69,19 +73,32 @@ feature count. The early Ver2.0 value proposition is a focused manual brewing
 cockpit that makes the next action and stopping target immediately clear, then
 supports a small, understandable improvement loop.
 
-Research recommendations are planning inputs, not verified user demand or
-implementation approval. Visual direction alone is insufficient differentiation;
-the Target Total-first hierarchy, execution flow, provenance safety, and
-lightweight improvement loop must carry the product position.
+Research recommendations are planning inputs, not verified user demand, market
+validation, or implementation approval. Filtru and Drippe appear to include
+target water amount or target weight concepts in guided brewing flows, so
+Target Total-first must not be described as completely unique.
+
+Pourō-GPT can differentiate by making cumulative Target Total the dominant,
+persistent hierarchy for physical-scale brewing, while remaining lightweight,
+local-first, no-account, source-transparent, and free from Bluetooth, AR, and
+cloud dependencies in initial Ver2.0.
+
+BeanConqueror and Timer.Coffee show that local/offline/open-source oriented tools
+already exist. Pourō-GPT's opportunity is a focused execution-first PWA that
+combines local-first operation with a constrained method set, Target Total-first
+timer, and source/provenance transparency.
 
 ## 6. Adopted Direction
 
-Use `Light Precision Cockpit + Amber Accent` as a provisional Ver2.0 baseline
-direction.
+Recommendation: Yes with modifications.
 
-This is not yet an implementation decision. It must be translated into Product
-Vision, UX Strategy, Information Architecture, and Visual Direction in PR-V2-02
-before any UI implementation PR.
+Continue `Light Precision Cockpit + Amber Accent` as the Ver2.0 baseline
+candidate. However, it is not market-validated yet. It remains a promising
+planning hypothesis that requires `375×667` usability validation,
+contrast/accessibility review, Japanese label review, and real brewing-context
+testing.
+
+This is not yet an implementation decision.
 
 The provisional direction includes:
 
@@ -105,56 +122,66 @@ The following are not adopted for early Ver2.0 implementation:
 - TDS / water-quality tracking
 - Full analytics dashboard
 
-Rule-based Next Cup Hint, JSON import/restore, History edit/delete, source
-confidence UI, and PWA guidance remain planning candidates. Their inclusion,
-behavior, safety boundaries, and PR placement require explicit follow-up
-decisions.
+Next cup hint rules, JSON import/restore design, History edit/delete design,
+source confidence expansion, and PWA guidance remain planning candidates. Their
+inclusion, behavior, safety boundaries, and PR placement require explicit
+follow-up decisions.
 
 The source report also labels an auto-backup reminder as P0 mitigation for
-local-first data loss. It is not adopted by this consolidation because it is not
-part of the task-directed P0 feature summary and requires explicit UX, frequency,
-and non-cloud-protection wording decisions.
+local-first data loss. It is not adopted as P0 by this consolidation and requires
+separate UX, frequency, and non-cloud-protection wording design.
 
 ## 8. Ver2.0 Priority Buckets
 
-### P0
+### P0: Essential for Ver2.0 identity
 
-- Target Total-first timer with compact step timeline
-- Brew Result feedback
-- History Detail comparison view
-- One-second glanceability
-- Execution-first cockpit information hierarchy
-- Specify the bounded, explainable role of the source report's P0 Next Cup Hint
-  recommendation before adoption
-- Reconcile the source report's P0 auto-backup-reminder mitigation with the
-  task-directed priority summary before adoption
+- Target Total-first timer
+- compact step timeline
+- `375×667` timer glanceability validation
+- minimal Brew Result feedback
+- History improvement log
+- source/provenance safety visibility
+- Japanese label clarity
 
-### P1
+### P1: High-value, should consider early
 
-- History edit and individual delete
-- JSON import / restore
-- Source confidence UI
+- JSON import / restore design
+- History edit / individual delete design
+- Next cup hint rules
 - PWA install / update guidance
+- History Detail comparison
+- drawdown status refinement
 
-### P2
+JSON import / restore is P1 design work, not immediate implementation. It
+requires schema validation, duplicate handling, rollback/failure behavior, and
+user confirmation design.
 
-- Dark mode toggle
-- Bean name field
-- Grind size reference
+### P2: Useful but not required
 
-### Later
+- taste tag refinement
+- sound / vibration polish
+- method detail / source confidence expansion
+
+### Later: Defer
+
+- dark theme / theme switcher
+- simple bean tags only if proven useful
+- broader method expansion
+- advanced comparison views
+
+### Avoid initially
 
 - Bluetooth scale integration
-- Recipe marketplace / community
-- Advanced analytics
-
-### Avoid for early Ver2.0
-
-- Cloud sync / account system
-- AI diagnosis
-- Heavy bean inventory
-- AR guides
-- TDS / water-quality tracking
+- AR
+- AI diagnosis / LLM recipe generation
+- cloud sync
+- account
+- subscription
+- SNS/community
+- heavy bean inventory
+- water chemistry / TDS tracking
+- large analytics dashboard
+- recipe marketplace
 
 ## 9. Constraints Carried Forward from Ver1.0
 
@@ -173,26 +200,13 @@ and non-cloud-protection wording decisions.
 
 ## 10. Recommended Next PR: PR-V2-02
 
-The current `PR_ROADMAP.md` defines PR-V2-02 as a Ver1.0 UX audit and problem
-map. This task also directs PR-V2-02 to translate the PR-V2-01 research into
-reviewed Product Vision, UX Strategy, Information Architecture, and Visual
-Direction decisions before UI implementation begins.
+PR-V2-02 remains aligned with the existing roadmap: Ver1.0 UX audit and problem
+map.
 
-This PR does not change the roadmap or silently redefine PR-V2-02. The next
-docs-only planning decision should reconcile those two scopes, the existing
-PR-V2-00 planning documents, and the PR-V2-01 research before implementation.
+PR-V2-01 findings should be used as inputs to PR-V2-02, but they do not replace
+the PR-V2-02 scope. PR-V2-02 may reference the corrected P0 identity criteria,
+Target Total-first hypothesis, source/provenance safety, and baseline-candidate
+validation needs while auditing the completed Ver1.0 UX.
 
-It should define:
-
-- the P0 execution loop and measurable one-second glanceability criteria;
-- the Target Total-first information hierarchy;
-- the compact step timeline and critical timer content;
-- the Brew Result and History Detail improvement loop;
-- source-confidence presentation that preserves provenance safety;
-- the provisional visual direction's accessibility, warmth, and mobile
-  validation requirements;
-- explicit boundaries for P1, P2, Later, and Avoid items.
-- the status and safety wording of the source report's P0 auto-backup-reminder
-  mitigation;
-- whether a complete replacement for the truncated Genspark artifact is required
-  before the research phase is considered complete.
+If a separate strategy-translation document is needed, create a later docs-only
+PR rather than expanding PR-V2-02 silently.

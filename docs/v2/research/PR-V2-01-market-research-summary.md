@@ -11,7 +11,8 @@ This document summarizes the supplied Genspark report. It does not independently
 verify every external market, competitor, or trend claim. The report's evidence
 categories are retained where useful:
 
-- **Confirmed:** presented by the report as a sourced fact or established trend.
+- **Report-labeled fact/trend:** presented by the report as sourced or
+  established, but not independently verified by this PR.
 - **Inference:** interpretation drawn from competitor or trend observations.
 - **Hypothesis:** proposition that still requires product or user validation.
 - **Recommendation:** proposed action or priority, not an implementation decision.
@@ -28,15 +29,16 @@ The report recommends positioning Pourō-GPT as an execution-first brewing tool:
 a professional daily brew cockpit rather than a recipe-discovery app, marketplace,
 community, or comprehensive coffee journal.
 
-The strongest opportunity is the combination of a Target Total-first timer,
-one-second glanceability, a compact step timeline, and a lightweight improvement
-loop spanning Brew Result and History Detail. Source transparency and provenance
-are also identified as meaningful differentiation.
+The most useful differentiation hypothesis is the combination of a Target
+Total-first timer, one-second glanceability, a compact step timeline, and a
+lightweight improvement loop spanning Brew Result and History. Source
+transparency and provenance are also useful differentiation opportunities.
 
-`Light Precision Cockpit + Amber Accent` is recommended as a viable provisional
-Ver2.0 design direction. Light high-contrast UI, stable numeric layouts, and
-monospace or tabular numerals support brewing-time readability. Dark mode is a
-P2/later option, not a P0 requirement.
+Recommendation: Yes with modifications. Continue `Light Precision Cockpit +
+Amber Accent` as a reasonable Ver2.0 baseline candidate, but do not treat it as
+market-validated. It remains a promising planning hypothesis that requires
+`375×667` usability validation, contrast/accessibility review, Japanese label
+review, and real brewing-context testing.
 
 Local-first and no-account remain strategically useful for privacy, low setup
 friction, and trust, but they are not unique in the competitor set.
@@ -46,11 +48,15 @@ friction, and trust, but they are not unique in the competitor set.
 | Competitor | Reported position and strengths | Implication for Pourō-GPT |
 | --- | --- | --- |
 | Filtru | Premium all-rounder with polished device, cloud, accessibility, Live Activities, Bluetooth, and premium UX | Avoid a direct feature arms race; focus on execution and repetition rather than broad discovery and device coverage |
-| Beanconqueror | Free, open-source, privacy-focused, local-first, powerful, and parameter-dense | Confirms local-first viability while demonstrating complexity and logging-friction risks |
-| Timer.Coffee | Free, open-source, simple timer and recipe/diary experience | Confirms the value of simplicity, but also shows recipe-first competition |
+| Beanconqueror | Free, open-source, privacy-focused, local-first, powerful, and parameter-dense | Shows local-first viability while demonstrating complexity and logging-friction risks |
+| Timer.Coffee | Free, open-source, simple timer and recipe/diary experience | Shows the value of simplicity, but also shows recipe-first competition |
 | FourSix | Focused method specialist with a glanceable timer and visual pour preview | Useful reference for method-focused execution; Target Total-first remains a differentiation opportunity |
 | Brew Timer | Recipe library, community, discovery, sharing, and audio-assistant direction | Do not copy marketplace/community scope in early Ver2.0 |
 | Aeromatic | Specialist guided workflow with a large AeroPress recipe library and video walkthroughs | Focused guided UX is useful; video-heavy discovery is not an early priority |
+
+Filtru and Drippe appear to include target water amount or target weight
+concepts in guided brewing flows. Target Total-first should therefore not be
+described as completely unique.
 
 The report treats competitor details as a mixture of sourced claims and strategic
 interpretation. This PR preserves those conclusions without promoting them to
@@ -58,9 +64,8 @@ internally verified product facts.
 
 ## 4. UI/UX Trend Findings
 
-- **Confirmed/established in the report:** light high-contrast utility UI,
-  accessibility contrast, and monospace/tabular numerals for changing numeric
-  values.
+- **Report-supported practice:** light high-contrast utility UI, accessibility
+  contrast, and monospace/tabular numerals for changing numeric values.
 - **Critical UX principle:** brewing-time information should be understandable
   in a one-second glance. Target Total, elapsed time, and current step must be
   stable and immediately readable.
@@ -69,19 +74,21 @@ internally verified product facts.
 - **Recommendation:** use compact modular panels only when they clarify
   hierarchy; avoid dense dashboard behavior that competes with the brewing task.
 - **Mixed evidence:** dark mode has user and environment benefits, but it is not
-  required for the initial Ver2.0 direction. Treat it as P2/later.
+  required for initial Ver2.0. Defer it until later validation.
 - **Inference:** a restrained technical mobile UI can communicate precision, but
   it must remain warm enough to avoid a sterile or overly clinical impression.
 
 ## 5. Light Precision Cockpit + Amber Accent Assessment
 
-The report's verdict is to proceed with `Light Precision Cockpit + Amber Accent`
-as a baseline for further planning and validation.
+Recommendation: Yes with modifications.
 
-Supporting assessment:
+Continue `Light Precision Cockpit + Amber Accent` as the Ver2.0 baseline
+candidate. However, it is not market-validated yet. It appears promising and
+requires `375×667` usability validation, contrast/accessibility review, Japanese
+label review, and real brewing-context testing.
 
-- **Inference:** the light cockpit direction is market-acceptable and can
-  differentiate Pourō-GPT from warmer coffee-journal and recipe-library visuals.
+- **Inference:** the light cockpit direction may provide useful differentiation
+  from warmer coffee-journal and recipe-library visuals.
 - **Hypothesis:** high contrast, stable numeric layout, and a Target Total-first
   hierarchy will improve one-second glanceability during brewing.
 - **Recommendation:** use amber selectively for active state, primary action, and
@@ -96,9 +103,12 @@ tokens, generated mock code, or an app-wide redesign.
 
 ## 6. Differentiation Opportunities
 
-1. **Target Total-first execution:** Make cumulative target weight the primary
-   timer value and the current pour amount secondary. The report treats this as
-   the strongest differentiation opportunity.
+1. **Target Total-first execution:** Filtru and Drippe appear to include target
+   water amount or target weight concepts in guided brewing flows. Pourō-GPT can
+   differentiate by making cumulative Target Total the dominant, persistent
+   hierarchy for physical-scale brewing, while remaining lightweight,
+   local-first, no-account, source-transparent, and free from Bluetooth, AR, and
+   cloud dependencies in initial Ver2.0.
 2. **Execution-first UX:** Optimize for starting, performing, finishing,
    reviewing, and repeating a brew rather than recipe discovery or marketplace
    participation.
@@ -106,62 +116,78 @@ tokens, generated mock code, or an app-wide redesign.
    comparison, and a carefully bounded next-cup adjustment path.
 4. **Source transparency and provenance:** Preserve visible confidence and
    provenance distinctions without overwhelming the compact brewing UI.
-5. **Zero-setup local-first use:** Keep no-account and local-first benefits, while
-   acknowledging that competing products also offer them and that backup/restore
-   safety becomes more important.
+5. **Focused local-first execution:** BeanConqueror and Timer.Coffee show that
+   local/offline/open-source oriented tools already exist. Position Pourō-GPT as
+   a focused execution-first PWA that combines local-first operation with a
+   constrained method set, Target Total-first timer, and source/provenance
+   transparency.
 
 ## 7. Feature Priority Recommendations
 
-The report's feature cards and this consolidation's UX requirements are recorded
-separately so that priority meaning is not lost.
+These corrected priority buckets are planning recommendations. They do not adopt
+features or authorize implementation.
 
-### P0: Critical execution experience
+### P0: Essential for Ver2.0 identity
 
-- Target Total-first timer with compact step timeline
-- Brew Result feedback
-- History Detail comparison view
-- One-second glanceability
-- Execution-first cockpit information hierarchy
-- Rule-based Next Cup Hint is listed as P0 in the source report, but its behavior
-  and safety boundaries still require specification before adoption
-- The source report separately labels an auto-backup reminder as P0 mitigation
-  for local-first data loss. It is recorded as an unresolved priority input, not
-  adopted implementation, because it is outside the task-directed P0 feature
-  summary and requires UX/safety specification
+- Target Total-first timer
+- compact step timeline
+- `375×667` timer glanceability validation
+- minimal Brew Result feedback
+- History improvement log
+- source/provenance safety visibility
+- Japanese label clarity
 
-### P1: High-value early candidates
+### P1: High-value, should consider early
 
-- History edit and individual delete
-- JSON import / restore
-- Source confidence UI
+- JSON import / restore design
+- History edit / individual delete design
+- Next cup hint rules
 - PWA install / update guidance
+- History Detail comparison
+- drawdown status refinement
 
-### P2: Useful, non-critical candidates
+JSON import / restore is P1 design work, not immediate implementation. It
+requires schema validation, duplicate handling, rollback/failure behavior, and
+user confirmation design.
 
-- Dark mode toggle
-- Bean name field
-- Grind size reference
+### P2: Useful but not required
 
-### Later: Evaluate after core UX validation
+- taste tag refinement
+- sound / vibration polish
+- method detail / source confidence expansion
+
+### Later: Defer
+
+- dark theme / theme switcher
+- simple bean tags only if proven useful
+- broader method expansion
+- advanced comparison views
+
+### Avoid initially
 
 - Bluetooth scale integration
-- Recipe marketplace / community
-- Advanced analytics
+- AR
+- AI diagnosis / LLM recipe generation
+- cloud sync
+- account
+- subscription
+- SNS/community
+- heavy bean inventory
+- water chemistry / TDS tracking
+- large analytics dashboard
+- recipe marketplace
 
-### Avoid for early Ver2.0
-
-- Cloud sync / account system
-- AI diagnosis
-- Heavy bean inventory
-- AR guides
-- TDS / water-quality tracking
+History Detail comparison and Next cup hint rules are P1 design candidates, not
+adopted P0 features. Dark theme and simple bean tags are deferred. The source
+report's auto-backup-reminder proposal is not adopted as P0 without separate UX
+design.
 
 ## 8. Features to Defer or Avoid
 
 Early Ver2.0 should not compete on breadth. Bluetooth support, marketplace
 features, and advanced analytics carry significant scope and competitive
 pressure, so they should be evaluated only after the core manual execution and
-improvement loop is validated.
+improvement loop receives usability validation.
 
 Cloud sync, AI diagnosis, heavy bean inventory, AR guides, and TDS/water tracking
 conflict with current product constraints or introduce disproportionate
@@ -175,36 +201,27 @@ complexity. They are explicitly not part of the early Ver2.0 direction.
 | Competitor convergence | Differentiate through Target Total-first execution and improvement-loop UX, not visual style alone |
 | Overbuilding | Exclude cloud, AI, marketplace, Bluetooth, heavy inventory, AR, TDS, and broad analytics from early Ver2.0 |
 | Accessibility or glanceability failure | Maintain high contrast, large target numbers, stable numeric layout, clear labels, and realistic mobile/kitchen validation |
-| Local-first data loss | Reconcile the report's P0 auto-backup-reminder proposal with understandable export, backup, and future restore safety without implying cloud protection |
-| Unsupported external conclusions | Keep confirmed facts, inferences, hypotheses, and recommendations visibly distinct until independently validated |
+| Local-first data loss | Treat backup reminders as a separate UX design question; prioritize understandable export and future restore safety without implying cloud protection |
+| Unsupported external conclusions | Keep report-labeled facts, inferences, hypotheses, and recommendations visibly distinct until independently verified |
 
 ## 10. Implications for PR-V2-02
 
-This section is a task-directed bridge, not a summary of the unavailable tail of
-the truncated report.
+PR-V2-02 remains aligned with the existing
+[`../PR_ROADMAP.md`](../PR_ROADMAP.md): Ver1.0 UX audit and problem map.
+PR-V2-01 findings should be used as inputs to PR-V2-02, but they do not replace
+or expand the PR-V2-02 scope.
 
-The current [`../PR_ROADMAP.md`](../PR_ROADMAP.md) defines PR-V2-02 as a Ver1.0
-UX audit and problem map, while this task directs PR-V2-02 to translate the
-research into reviewed Product Vision, UX Strategy, Information Architecture,
-and Visual Direction before any UI implementation PR. PR-V2-02 should reconcile
-those scopes and the existing provisional `docs/v2/` documents rather than
-silently replacing or duplicating them.
-
-Required decisions include:
-
-- define the P0 execution loop and one-second glanceability acceptance criteria;
-- specify the Target Total-first timer hierarchy and compact step timeline;
-- define the lightweight Brew Result to History Detail improvement loop;
-- decide how source confidence appears without weakening provenance or
-  overwhelming compact UI;
-- validate the provisional light cockpit direction and amber usage;
-- keep P1, P2, Later, and Avoid boundaries explicit.
+During the Ver1.0 UX audit, PR-V2-02 may reference the corrected P0 identity
+criteria, Target Total-first hypothesis, source/provenance safety, and visual
+candidate validation needs recorded here. If a separate strategy-translation
+document is needed, create a later docs-only PR rather than expanding PR-V2-02
+silently.
 
 ## 11. Open Questions
 
 - What user evidence is required before the provisional visual direction becomes
   an implementation decision?
-- What exact information must be visible within one second on `375x667` and
+- What exact information must be visible within one second on `375×667` and
   `390x844` timer layouts?
 - How should History Detail comparison choose a comparison target without
   becoming an analytics dashboard?
@@ -214,8 +231,7 @@ Required decisions include:
   can move from P1 planning to implementation?
 - How should source confidence be concise in daily use while preserving access to
   provenance detail?
-- Should PR-V2-02 retain the current roadmap's Ver1.0 UX audit/problem-map scope,
-  combine it with the task-directed strategy translation, or require a roadmap
-  update in a separate docs-only decision?
+- Is a later docs-only strategy-translation PR needed after PR-V2-02 completes
+  the roadmap-defined Ver1.0 UX audit and problem map?
 - Can a complete copy of the Genspark report be obtained so the missing tail can
   be reviewed without inference?

@@ -15,6 +15,7 @@ Allowed changes:
 - `docs/v2/research/PR-V2-01-market-research-summary.md`
 - `docs/v2/PR-V2-01-market-research-consolidation.md`
 - `docs/qa/PR-V2-01-market-research-consolidation.md`
+- `docs/v2/README.md`
 
 No app code was changed. Browser/mobile QA is not applicable to this docs-only
 PR and was not run.
@@ -25,6 +26,7 @@ PR and was not run.
 - `docs/v2/research/PR-V2-01-market-research-summary.md`
 - `docs/v2/PR-V2-01-market-research-consolidation.md`
 - `docs/qa/PR-V2-01-market-research-consolidation.md`
+- `docs/v2/README.md`
 
 Changed-file allowlist: PASS
 
@@ -54,19 +56,25 @@ Changed-file allowlist: PASS
 - HTML moved into `public/` or app runtime: NO
 - HTML content edited: NO
 - Original trailing whitespace retained to preserve byte identity: YES
+- Archived HTML is intentionally preserved as an incomplete source artifact
+  outside app/public runtime: YES
 
 ## 7. Summary Accuracy Check
 
 - Markdown summary exists: PASS
 - Competitor, UI/UX, design-direction, differentiation, priority, risk, and next
   PR findings are summarized: PASS
-- Confirmed, inference, hypothesis, and recommendation distinctions are
+- Report-labeled fact, inference, hypothesis, and recommendation distinctions are
   preserved where possible: PASS
 - External claims presented as independently verified by this PR: NO
 - Truncated source disclosed and missing tail not fabricated: PASS
-- Task-directed PR-V2-02 implications distinguished from source findings: PASS
-- Source report's P0 auto-backup-reminder mitigation disclosed as unresolved:
-  PASS
+- Target Total-first claim corrected to a persistent-hierarchy opportunity, not
+  a completely unique concept: PASS
+- Local-first/no-account claim corrected as useful but not unique: PASS
+- Feature priority buckets corrected to P0/P1/P2/Later/Avoid: PASS
+- Next Cup Hint and auto-backup reminder not adopted as P0: PASS
+- Recommendation language states `Yes with modifications` and requires
+  validation: PASS
 
 ## 8. Ver1.0 Constraint Carryover Check
 
@@ -94,10 +102,15 @@ Result: PASS
 - Archived HTML relative link from consolidation doc: PASS
 - Markdown summary relative link from consolidation doc: PASS
 - Archived HTML remains outside `public/`: PASS
-- Existing `PR_ROADMAP.md` PR-V2-02 scope discrepancy disclosed: PASS
+- `docs/v2/README.md` index link added: PASS
+- PR-V2-02 remains aligned with roadmap-defined Ver1.0 UX audit/problem-map
+  scope: PASS
 
 ## 11. Build / Static Checks
 
+- `git diff --name-only`: PASS; correction changes are limited to four allowed
+  Markdown files
+- `git diff --stat`: PASS; correction diff reviewed
 - `npm.cmd run build`: PASS
 - `git diff --check`: PASS for the unstaged working-tree diff; this command does
   not inspect staged files
@@ -105,8 +118,8 @@ Result: PASS
 - full staged/branch whitespace check: LIMITATION; byte-identical preservation
   retains the source HTML's CRLF bytes, which Git reports as trailing whitespace
   on all 1,424 archived HTML lines
-- `git status --short --branch`: PASS; only the four allowed docs files are
-  prospective changes
+- `git status --short --branch`: PASS; the final PR is limited to the five
+  allowed docs files
 - changed-file allowlist: PASS
 
 ## 12. Out of Scope
@@ -129,14 +142,17 @@ Result: PASS
   tail was not fabricated or summarized.
 - Byte-identical preservation retains the source HTML's CRLF bytes, so a
   staged/branch-wide whitespace check reports trailing whitespace on all 1,424
-  archived HTML lines.
-- The provisional visual direction and feature priorities require translation
-  and review in PR-V2-02 before implementation.
-- Existing `PR_ROADMAP.md` defines PR-V2-02 as a Ver1.0 UX audit and problem map;
-  this task also assigns strategy translation to PR-V2-02. This PR records the
-  discrepancy but does not change the roadmap.
+  archived HTML lines. This warning is accepted only because the file is
+  byte-preserved source material under `docs/`; it does not affect runtime.
+- The baseline candidate and research recommendations require independent
+  usability, accessibility, Japanese-label, and real brewing-context validation.
 - Browser/mobile QA was not run because this PR changes documentation only.
 
 ## 14. Judgment
 
-`PASS_WITH_LIMITATIONS`
+`PASS_WITH_NOTES`
+
+The remaining notes are documented and non-blocking for review.
+
+- Ready for independent verification: YES
+- Ready for review: YES
