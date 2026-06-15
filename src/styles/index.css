@@ -2265,7 +2265,188 @@ p {
 }
 
 .visual-polish-page--finish .finish-form {
-  gap: 20px;
+  gap: 16px;
+}
+
+.visual-polish-page--finish .page-header {
+  gap: 7px;
+  padding: 15px 16px;
+}
+
+.visual-polish-page--finish .page-header h1 {
+  font-size: clamp(1.85rem, 9vw, 2.65rem);
+}
+
+.visual-polish-page--finish .page-header p:last-child {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.visual-polish-page--finish .finish-result-hero {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-border));
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    var(--color-surface),
+    color-mix(in srgb, var(--color-accent-soft) 34%, var(--color-surface))
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+.visual-polish-page--finish .finish-result-hero__topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.visual-polish-page--finish .finish-save-state {
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.visual-polish-page--finish .finish-result-hero .section-heading h2 {
+  font-size: clamp(1.35rem, 6.5vw, 1.85rem);
+}
+
+.visual-polish-page--finish .finish-result-hero__time {
+  display: grid;
+  gap: 3px;
+  padding: 13px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+}
+
+.visual-polish-page--finish .finish-result-hero__time span {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.visual-polish-page--finish .finish-result-hero__time strong {
+  color: var(--color-text);
+  font-size: clamp(2.35rem, 12vw, 3.25rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.visual-polish-page--finish .finish-result-hero__prompt,
+.visual-polish-page--finish .finish-section-description,
+.visual-polish-page--finish .finish-guidance-copy,
+.visual-polish-page--finish .finish-save-copy {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--finish .finish-section-heading {
+  gap: 4px;
+}
+
+.visual-polish-page--finish .finish-section-heading h2 {
+  font-size: 1.18rem;
+}
+
+.visual-polish-page--finish .finish-section-heading .eyebrow {
+  font-size: 0.82rem;
+}
+
+.visual-polish-page--finish .finish-condition-card .record-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.visual-polish-page--finish .finish-condition-card .status-row {
+  padding-top: 2px;
+}
+
+.visual-polish-page--finish .finish-condition-memos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.visual-polish-page--finish .finish-condition-memos p {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-muted);
+}
+
+.visual-polish-page--finish .finish-condition-memos p:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.visual-polish-page--finish .finish-feedback-card {
+  gap: 0;
+}
+
+.visual-polish-page--finish .finish-subsection {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+}
+
+.visual-polish-page--finish .finish-subsection + .finish-subsection,
+.visual-polish-page--finish .finish-feedback-card > .text-field {
+  margin-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.visual-polish-page--finish .finish-feedback-card > .text-field {
+  padding-top: 14px;
+}
+
+.visual-polish-page--finish .finish-feedback-card .choice-row--wrap {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.visual-polish-page--finish .finish-feedback-card .choice-row--wrap .choice-button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 3px;
+  font-size: 0.78rem;
+}
+
+.visual-polish-page--finish .finish-guidance-card {
+  background: var(--color-surface);
+}
+
+.visual-polish-page--finish .finish-guidance-copy {
+  padding: 10px 11px;
+  border-left: 3px solid var(--color-border);
+  border-radius: 0 12px 12px 0;
+  background: var(--color-surface-muted);
+}
+
+.visual-polish-page--finish .finish-save-card {
+  gap: 12px;
+}
+
+.visual-polish-page--finish .finish-save-card .cta-stack {
+  gap: 8px;
+  padding: 2px 0 0;
+}
+
+.visual-polish-page--finish .finish-save-card .primary-cta {
+  color: #17130e;
+  background: var(--color-accent);
+  box-shadow: none;
+}
+
+.visual-polish-page--finish .finish-save-card .secondary-cta {
+  color: var(--color-text-muted);
+  box-shadow: none;
 }
 
 .visual-polish-page--finish .record-card,
@@ -2418,6 +2599,12 @@ p {
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.visual-polish-page--finish .text-field textarea {
+  min-height: 78px;
+  border-radius: 14px;
+  background: var(--color-surface);
 }
 
 .visual-polish-page--finish .cta-stack {
@@ -2578,6 +2765,14 @@ p {
   .visual-polish-page--finish .record-card,
   .visual-polish-page--history-detail .record-card {
     padding: 14px;
+  }
+
+  .visual-polish-page--finish .finish-result-hero {
+    padding: 15px;
+  }
+
+  .visual-polish-page--finish .finish-result-hero__time strong {
+    font-size: clamp(2.2rem, 12vw, 2.85rem);
   }
 
   .visual-polish-page--finish .record-card--summary,
