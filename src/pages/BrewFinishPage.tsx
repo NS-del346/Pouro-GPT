@@ -107,30 +107,56 @@ export function BrewFinishPage({
 
   return (
     <Page
-      title="Brew Finish"
-      description="抽出後の印象を短く残します。保存操作をするまで履歴には入りません。"
+      title="抽出結果"
+      eyebrow="Brew Result"
+      description="今回の条件と結果を確認し、忘れないうちに次の一杯へのメモを残します。"
       backTo="/"
       className="visual-polish-page visual-polish-page--finish"
     >
       <form className="finish-form" onSubmit={handleSave}>
-        <section className="record-card record-card--summary">
+        <section
+          className="finish-result-hero"
+          aria-labelledby="finish-result-heading"
+        >
+          <div className="finish-result-hero__topline">
+            <span className="status-pill status-pill--compact">抽出完了</span>
+            <span className="finish-save-state">
+              履歴にはまだ保存されていません
+            </span>
+          </div>
           <div className="section-heading">
             <p className="eyebrow">今回の抽出</p>
-            <h2>
+            <h2 id="finish-result-heading">
               {methodSnapshot.displayName}
               {variantLabel ? ` ・ ${variantLabel}` : ""}
             </h2>
-            {variantLabel && (
-              <p className="session-variant-label">{variantLabel}</p>
-            )}
           </div>
-          <span className="status-pill">{getRecipeStatusLabel(methodSnapshot)}</span>
-          {needsReview && (
-            <p className="notice-text">
-              このメソッドのレシピ値は確認中です。確定レシピとして扱わず、記録用の条件として保存します。
-            </p>
-          )}
+          <div className="finish-result-hero__time">
+            <span>完了時の抽出時間</span>
+            <strong>{formatElapsedMs(sessionDraft.elapsedMsAtFinish)}</strong>
+          </div>
+          <p className="finish-result-hero__prompt">
+            味の印象と、次に変えたいことを短く残してから保存します。
+          </p>
+        </section>
+
+        <section
+          className="record-card finish-condition-card"
+          aria-labelledby="finish-condition-heading"
+        >
+          <div className="section-heading finish-section-heading">
+            <p className="eyebrow">今回の条件</p>
+            <h2 id="finish-condition-heading">条件スナップショット</h2>
+          </div>
           <dl className="record-list">
+            <div>
+              <dt>メソッド</dt>
+              <dd>{methodSnapshot.displayName}</dd>
+            </div>
+            <div>
+              <dt>バリエーション</dt>
+              <dd>{variantLabel || "未記録"}</dd>
+            </div>
             {setupFields.map((field) => (
               <div key={field.label}>
                 <dt>{field.label}</dt>
@@ -142,30 +168,31 @@ export function BrewFinishPage({
               <dd>{formatElapsedMs(sessionDraft.elapsedMsAtFinish)}</dd>
             </div>
           </dl>
-          {(setupSnapshot.waterTempMemo ||
-            setupSnapshot.grindMemo ||
-            setupSnapshot.freeMemo) && (
-            <div className="memo-stack">
-              {setupSnapshot.waterTempMemo && (
-                <p>
-                  <strong>湯温メモ</strong>
-                  {setupSnapshot.waterTempMemo}
-                </p>
-              )}
-              {setupSnapshot.grindMemo && (
-                <p>
-                  <strong>挽き目メモ</strong>
-                  {setupSnapshot.grindMemo}
-                </p>
-              )}
-              {setupSnapshot.freeMemo && (
-                <p>
-                  <strong>準備メモ</strong>
-                  {setupSnapshot.freeMemo}
-                </p>
-              )}
-            </div>
+          <div className="status-row">
+            <span className="status-pill">{getRecipeStatusLabel(methodSnapshot)}</span>
+            <span className="status-note">保存時点のレシピ状態</span>
+          </div>
+          {needsReview && (
+            <p className="notice-text">
+              このメソッドのレシピ値は確認中です。確定レシピとして扱わず、記録用の条件として保存します。
+            </p>
           )}
+          <div className="memo-stack finish-condition-memos">
+            <p>
+              <strong>湯温メモ</strong>
+              {setupSnapshot.waterTempMemo || "未記録"}
+            </p>
+            <p>
+              <strong>挽き目メモ</strong>
+              {setupSnapshot.grindMemo || "未記録"}
+            </p>
+            {setupSnapshot.freeMemo && (
+              <p>
+                <strong>準備メモ</strong>
+                {setupSnapshot.freeMemo}
+              </p>
+            )}
+          </div>
         </section>
 
         {finishTips.length > 0 && (
@@ -174,7 +201,8 @@ export function BrewFinishPage({
             aria-labelledby="finish-tips-label"
           >
             <div className="field-heading">
-              <span id="finish-tips-label">POINT / TIPS</span>
+              <span id="finish-tips-label">抽出後の確認</span>
+              <span>POINT / TIPS</span>
             </div>
             <div className="finish-tip-list">
               {finishTips.map((tip) => (
@@ -189,85 +217,129 @@ export function BrewFinishPage({
           </section>
         )}
 
-        <section className="record-card">
-          <div className="field-heading">
-            <span>味の印象</span>
+        <section
+          className="record-card finish-feedback-card"
+          aria-labelledby="finish-feedback-heading"
+        >
+          <div className="section-heading finish-section-heading">
+            <p className="eyebrow">記録する前に</p>
+            <h2 id="finish-feedback-heading">味の記録</h2>
+            <p className="finish-section-description">
+              今感じていることだけを、短く残せば十分です。
+            </p>
           </div>
-          <div className="choice-row choice-row--wrap" aria-label="味の印象">
-            {tasteNoteOptions.map((option) => (
-              <button
-                className={`choice-button${
-                  tasteNotes.includes(option.value) ? " choice-button--selected" : ""
-                }`}
-                key={option.value}
-                onClick={() => toggleTasteNote(option.value)}
-                type="button"
-              >
-                {option.label}
-              </button>
-            ))}
+
+          <div className="finish-subsection">
+            <div className="field-heading">
+              <span>味の印象</span>
+              <span>{tasteNotes.length > 0 ? `${tasteNotes.length}件選択` : "任意"}</span>
+            </div>
+            <div className="choice-row choice-row--wrap" aria-label="味の印象">
+              {tasteNoteOptions.map((option) => (
+                <button
+                  aria-pressed={tasteNotes.includes(option.value)}
+                  className={`choice-button${
+                    tasteNotes.includes(option.value)
+                      ? " choice-button--selected"
+                      : ""
+                  }`}
+                  key={option.value}
+                  onClick={() => toggleTasteNote(option.value)}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+            <label className="text-field text-field--embedded">
+              <span>ひとこと</span>
+              <textarea
+                onChange={(event) => setTasteImpression(event.currentTarget.value)}
+                placeholder="例: 余韻は軽いが、少し平たい"
+                rows={3}
+                value={tasteImpression}
+              />
+            </label>
           </div>
+
+          <div className="finish-subsection">
+            <div className="field-heading">
+              <span>評価</span>
+              <span>{rating ? `${rating}/5` : "未選択"}</span>
+            </div>
+            <div className="choice-row choice-row--rating" aria-label="評価">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  aria-pressed={rating === value}
+                  className={`choice-button${
+                    rating !== null && rating >= value
+                      ? " choice-button--selected"
+                      : ""
+                  }`}
+                  key={value}
+                  onClick={() => setRating(value as BrewResult["rating"])}
+                  aria-label={`${value} / 5`}
+                  type="button"
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <label className="text-field text-field--embedded">
-            <span>ひとこと</span>
+            <span>任意メモ</span>
             <textarea
-              onChange={(event) => setTasteImpression(event.currentTarget.value)}
-              placeholder="例: 余韻は軽いが、少し平たい"
+              onChange={(event) => setFreeMemo(event.currentTarget.value)}
+              placeholder="豆や抽出中に気づいたこと"
               rows={3}
-              value={tasteImpression}
+              value={freeMemo}
             />
           </label>
         </section>
 
-        <section className="record-card">
-          <div className="field-heading">
-            <span>評価</span>
-            <span>{rating ? `${rating}/5` : "未選択"}</span>
+        <section
+          className="record-card finish-guidance-card"
+          aria-labelledby="finish-guidance-heading"
+        >
+          <div className="section-heading finish-section-heading">
+            <p className="eyebrow">次の一杯へ</p>
+            <h2 id="finish-guidance-heading">変える点を1つだけ残す</h2>
           </div>
-          <div className="choice-row choice-row--rating" aria-label="評価">
-            {[1, 2, 3, 4, 5].map((value) => (
-              <button
-                className={`choice-button${
-                  rating !== null && rating >= value ? " choice-button--selected" : ""
-                }`}
-                key={value}
-                onClick={() => setRating(value as BrewResult["rating"])}
-                aria-label={`${value} / 5`}
-                type="button"
-              >
-                {value}
-              </button>
-            ))}
-          </div>
+          <p className="finish-guidance-copy">
+            酸味・甘み・濃さ・後味などから気になった点を振り返り、次回は挽き目・湯温・注湯リズムのどれを調整するかを1つに決めると比較しやすくなります。
+          </p>
+          <label className="text-field text-field--embedded">
+            <span>次回改善メモ</span>
+            <textarea
+              onChange={(event) => setNextAdjustmentMemo(event.currentTarget.value)}
+              placeholder="例: 次は挽き目だけを少し細かくする"
+              rows={3}
+              value={nextAdjustmentMemo}
+            />
+          </label>
         </section>
 
-        <label className="text-field">
-          <span>次回改善メモ</span>
-          <textarea
-            onChange={(event) => setNextAdjustmentMemo(event.currentTarget.value)}
-            placeholder="例: 次は少し細かく、湯温を下げる"
-            rows={3}
-            value={nextAdjustmentMemo}
-          />
-        </label>
-
-        <label className="text-field">
-          <span>任意メモ</span>
-          <textarea
-            onChange={(event) => setFreeMemo(event.currentTarget.value)}
-            placeholder="豆や抽出中に気づいたこと"
-            rows={3}
-            value={freeMemo}
-          />
-        </label>
-
-        <div className="cta-stack">
-          <button className="primary-cta" type="submit">
-            記録を保存する
-          </button>
-          <button className="secondary-cta" onClick={handleDiscard} type="button">
-            保存せずBrewへ戻る
-          </button>
-        </div>
+        <section
+          className="record-card finish-save-card"
+          aria-labelledby="finish-save-heading"
+        >
+          <div className="section-heading finish-section-heading">
+            <p className="eyebrow">保存の確認</p>
+            <h2 id="finish-save-heading">この抽出を履歴に保存</h2>
+          </div>
+          <p className="finish-save-copy">
+            保存すると、今回の条件と入力した記録が履歴に追加されます。保存しない場合、この画面で入力した内容は残りません。
+          </p>
+          <div className="cta-stack">
+            <button className="primary-cta" type="submit">
+              履歴に保存する
+            </button>
+            <button className="secondary-cta" onClick={handleDiscard} type="button">
+              保存せずBrewへ戻る
+            </button>
+          </div>
+        </section>
       </form>
     </Page>
   );
