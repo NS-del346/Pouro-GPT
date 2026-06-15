@@ -118,9 +118,21 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const currentRecipe = recipe;
   const currentSetup = activeSetup;
   const currentStep = steps[currentStepIndex] ?? steps[0];
+  const nextStep = steps[currentStepIndex + 1] ?? null;
   const isLastStep = currentStepIndex >= steps.length - 1;
   const canMoveBack = currentStepIndex > 0 && timerStatus !== "finished";
   const cumulativeWaterGrams = getCumulativeWaterGrams(currentStep);
+  const nextStepTimeSec = hasScheduleNumber(currentStep.nextStepTimeSec)
+    ? currentStep.nextStepTimeSec
+    : nextStep && hasScheduleNumber(nextStep.startSec)
+      ? nextStep.startSec
+      : null;
+  const nextStepCountdownMs =
+    nextStepTimeSec === null
+      ? null
+      : Math.max(0, nextStepTimeSec * 1000 - elapsedMs);
+  const hasReachedNextStep =
+    nextStepTimeSec !== null && elapsedMs >= nextStepTimeSec * 1000;
   const isPlaceholderSchedule =
     currentRecipe.valuesArePlaceholder ||
     steps.some((step) => step.isPlaceholder);
@@ -231,10 +243,10 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
 
   const timerActionLabel =
     timerStatus === "paused"
-      ? "Resume"
+      ? "再開"
       : timerStatus === "idle"
-        ? "Start"
-        : "Pause";
+        ? "開始"
+        : "一時停止";
 
   const statusLabel: Record<TimerStatus, string> = {
     idle: "開始前",
@@ -251,19 +263,20 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
       className="visual-polish-page visual-polish-page--timer"
     >
       <section className="timer-core" aria-labelledby="timer-method-title">
-        <div className="timer-method-summary">
-          <p className="eyebrow">{statusLabel[timerStatus]}</p>
-          <h2 id="timer-method-title">{method.displayName}</h2>
-          <span className="status-pill">
-            {isR01BasicCandidate
-              ? "R-01 基本候補"
-              : isHybridR08Candidate
-                ? "R-08 固定例候補"
-                : isTenPourR09Candidate
-                  ? "R-09 固定例候補"
-                : "レシピ値確認中"}
-          </span>
-        </div>
+        <div className="timer-cockpit-scroll">
+          <div className="timer-method-summary">
+            <p className="eyebrow">{statusLabel[timerStatus]}</p>
+            <h2 id="timer-method-title">{method.displayName}</h2>
+            <span className="status-pill">
+              {isR01BasicCandidate
+                ? "R-01 基本候補"
+                : isHybridR08Candidate
+                  ? "R-08 固定例候補"
+                  : isTenPourR09Candidate
+                    ? "R-09 固定例候補"
+                    : "レシピ値確認中"}
+            </span>
+          </div>
 
         {isR01BasicCandidate && (
           <p className="timer-schedule-note">
@@ -337,11 +350,37 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           </section>
         )}
 
-        <output className="timer-display" aria-label="経過時間">
-          {formatTimerMs(elapsedMs)}
-        </output>
+        <div className="timer-time-hero">
+          <div className="timer-elapsed">
+            <span>経過時間</span>
+            <output className="timer-display" aria-label="経過時間">
+              {formatTimerMs(elapsedMs)}
+            </output>
+          </div>
+          <div
+            className={`timer-countdown-card${
+              hasReachedNextStep ? " timer-countdown-card--ready" : ""
+            }`}
+            aria-label="次の工程まで"
+          >
+            <span>次の工程まで</span>
+            <strong>
+              {nextStepCountdownMs === null
+                ? "--:--"
+                : formatTimerMs(nextStepCountdownMs)}
+            </strong>
+            <p>
+              {nextStep
+                ? hasReachedNextStep
+                  ? "次へ進めます"
+                  : `Step ${nextStep.order} ${nextStep.title}`
+                : "現在の工程が最後です"}
+            </p>
+          </div>
+        </div>
 
-        <div className="timer-target-card" aria-label="現在の注湯情報">
+        <div className="timer-target-card" aria-label="参考グラム">
+          <p className="eyebrow timer-supporting-label">参考グラム</p>
           <div className="timer-target-row timer-target-row--primary">
             <span>累計目標 / Target Total</span>
             {hasScheduleNumber(cumulativeWaterGrams) ? (
@@ -367,35 +406,83 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         {semanticChip && <p className="timer-semantic-chip">{semanticChip}</p>}
 
         <article className="timer-step-card">
-          <p className="eyebrow">
-            Step {currentStep.order} / {steps.length}
-          </p>
-          <h3>{currentStep.title}</h3>
-          <p>{currentStep.instruction}</p>
-          {currentStep.timingNote && <p>{currentStep.timingNote}</p>}
+          <div className="timer-step-heading">
+            <p className="eyebrow">
+              現在の工程 / Step {currentStep.order} of {steps.length}
+            </p>
+            <h3>{currentStep.title}</h3>
+          </div>
+          <div className="timer-current-instruction">
+            <span>現在の指示</span>
+            <p>{currentStep.instruction}</p>
+            {currentStep.timingNote && <p>{currentStep.timingNote}</p>}
+          </div>
         </article>
 
-        <div className="timer-next-preview" aria-label="次の注湯情報">
-          <span>次の注湯</span>
-          <p>
-            {hasScheduleNumber(currentStep.nextStepTimeSec)
-              ? formatStepTime(currentStep.nextStepTimeSec)
-              : "次の注湯タイミングは確認中"}
-          </p>
-          <p>
-            {currentStep.nextPourGramsRange
-              ? `${formatNumericRange(currentStep.nextPourGramsRange)}を注ぐ`
-              : hasScheduleNumber(currentStep.nextPourGrams)
-              ? `${formatRecipeGrams(currentStep.nextPourGrams)}を注ぐ`
-              : currentStep.nextPreview ?? "次の注湯量は確認中"}
+        <div className="timer-next-preview" aria-label="次の工程">
+          <span>次の工程</span>
+          <p>{nextStep ? `Step ${nextStep.order} ${nextStep.title}` : "完了へ"}</p>
+          <div className="timer-next-preview-meta">
+            <strong>
+              {nextStepTimeSec === null
+                ? "時刻確認中"
+                : formatStepTime(nextStepTimeSec)}
+            </strong>
+            <span>
+              {currentStep.nextPourGramsRange
+                ? formatNumericRange(currentStep.nextPourGramsRange)
+                : hasScheduleNumber(currentStep.nextPourGrams)
+                  ? formatRecipeGrams(currentStep.nextPourGrams)
+                  : "グラム確認中"}
+            </span>
+          </div>
+          <p className="timer-next-preview-instruction">
+            {nextStep?.instruction ??
+              currentStep.nextPreview ??
+              "現在の工程を完了して記録画面へ進みます。"}
           </p>
         </div>
+
+        <section className="timer-timeline" aria-labelledby="timer-timeline-title">
+          <div className="timer-timeline-heading">
+            <span id="timer-timeline-title">工程タイムライン</span>
+            <strong>
+              {currentStepIndex + 1} / {steps.length}
+            </strong>
+          </div>
+          <ol>
+            {steps.map((step, index) => {
+              const timelineState =
+                index < currentStepIndex
+                  ? "complete"
+                  : index === currentStepIndex
+                    ? "current"
+                    : "upcoming";
+
+              return (
+                <li
+                  className={`timer-timeline-step timer-timeline-step--${timelineState}`}
+                  key={step.id}
+                  aria-current={index === currentStepIndex ? "step" : undefined}
+                >
+                  <span className="timer-timeline-dot">{step.order}</span>
+                  <span>
+                    {hasScheduleNumber(step.startSec)
+                      ? formatStepTime(step.startSec)
+                      : "--:--"}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
 
         {isLastStep && timerStatus !== "idle" && timerStatus !== "finished" && (
           <p className="timer-finish-note">
             抽出を終了して記録画面へ進みます。
           </p>
         )}
+        </div>
 
         <div className="timer-controls" aria-label="タイマー操作">
           <button
@@ -404,7 +491,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
             onClick={handleBack}
             type="button"
           >
-            Back
+            前へ
           </button>
           <button
             className="timer-control-button timer-control-button--primary"
@@ -428,7 +515,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
             onClick={handleNextOrFinish}
             type="button"
           >
-            {isLastStep ? "Finish" : "Next"}
+            {isLastStep ? "完了" : "次へ"}
           </button>
         </div>
       </section>
