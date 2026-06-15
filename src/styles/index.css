@@ -2501,52 +2501,127 @@ p {
 }
 
 .visual-polish-page--timer {
-  gap: 14px;
+  gap: 0;
 }
 
 .visual-polish-page--timer .timer-core {
-  gap: 12px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0;
+  height: calc(100dvh - 44px - env(safe-area-inset-bottom));
   padding-bottom: 0;
+  overflow: hidden;
+}
+
+.visual-polish-page--timer .timer-cockpit-scroll {
+  display: grid;
+  gap: 14px;
+  min-height: 0;
+  padding-bottom: 20px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
 }
 
 .visual-polish-page--timer .timer-method-summary {
   order: 0;
-  gap: 4px 10px;
-  padding: 2px;
-  border: 0;
-  background: transparent;
+  gap: 5px 12px;
+  padding: 14px 16px;
+  border-color: #353535;
+  border-radius: 18px;
+  background: #202020;
+  box-shadow: none;
 }
 
 .visual-polish-page--timer .timer-method-summary h2 {
   color: var(--color-text);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
 }
 
 .visual-polish-page--timer .timer-method-summary .status-pill {
   min-height: 30px;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
+  max-width: 132px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 48%, var(--color-border));
   color: var(--color-accent-text);
-  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-bg));
+  background: #181818;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.visual-polish-page--timer .timer-time-hero {
+  order: 1;
+  display: grid;
+  gap: 20px;
+  justify-items: center;
+  min-width: 0;
+  padding: 28px 0 22px;
+}
+
+.visual-polish-page--timer .timer-elapsed {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.visual-polish-page--timer .timer-elapsed > span,
+.visual-polish-page--timer .timer-countdown-card > span {
+  color: #d7d1c9;
+  font-size: 0.86rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
 }
 
 .visual-polish-page--timer .timer-display {
-  order: 1;
+  display: block;
   min-width: 0;
-  padding: 8px 0;
+  padding: 0;
   border: 0;
   border-radius: 0;
   color: var(--color-text);
   background: transparent;
-  font-size: clamp(2rem, 10vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  text-align: left;
+  font-family: var(--font-numeric);
+  font-size: clamp(4.75rem, 22vw, 7.2rem);
+  font-weight: 900;
+  letter-spacing: -0.075em;
+  line-height: 0.92;
+  text-align: center;
   box-shadow: none;
 }
 
+.visual-polish-page--timer .timer-countdown-card {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  width: min(100%, 268px);
+  padding: 17px 20px 15px;
+  border: 2px solid var(--color-accent);
+  border-radius: 18px;
+  background: #202020;
+}
+
+.visual-polish-page--timer .timer-countdown-card strong {
+  color: #ffb000;
+  font-family: var(--font-numeric);
+  font-size: clamp(2.75rem, 13vw, 4rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.visual-polish-page--timer .timer-countdown-card p {
+  color: #b9b0a5;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.visual-polish-page--timer .timer-countdown-card--ready {
+  background: color-mix(in srgb, var(--color-accent) 9%, #202020);
+}
+
 .visual-polish-page--timer .timer-tip {
-  order: 1;
+  order: 8;
   display: grid;
   gap: 6px;
   min-width: 0;
@@ -2576,85 +2651,107 @@ p {
 }
 
 .visual-polish-page--timer .timer-step-card {
-  order: 4;
-  gap: 8px;
-  padding: 16px;
-  border-color: var(--color-border);
-  border-radius: 20px;
-  background: var(--color-surface-muted);
+  order: 2;
+  gap: 14px;
+  padding: 18px;
+  border-color: #414141;
+  border-radius: 18px;
+  background: #242424;
   box-shadow: none;
+}
+
+.visual-polish-page--timer .timer-step-heading {
+  display: grid;
+  gap: 4px;
 }
 
 .visual-polish-page--timer .timer-step-card h3 {
   color: var(--color-text);
-  font-size: clamp(1.55rem, 7.5vw, 2.25rem);
+  font-size: clamp(1.7rem, 8vw, 2.4rem);
   letter-spacing: -0.025em;
 }
 
-.visual-polish-page--timer .timer-step-card p:last-child {
+.visual-polish-page--timer .timer-current-instruction {
+  display: grid;
+  gap: 7px;
+  padding-top: 13px;
+  border-top: 1px solid #454545;
+}
+
+.visual-polish-page--timer .timer-current-instruction > span {
+  color: #d7d1c9;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.visual-polish-page--timer .timer-current-instruction p {
+  color: var(--color-text);
+  font-size: clamp(1.05rem, 5.2vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.visual-polish-page--timer .timer-current-instruction p + p {
   color: var(--color-text-muted);
-  font-size: 0.96rem;
-  line-height: 1.5;
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
 .visual-polish-page--timer .timer-target-card {
-  order: 2;
-  gap: 12px;
-  padding: 15px 16px;
+  order: 5;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  padding: 13px 14px;
   border-color: var(--color-border);
-  border-radius: 18px;
-  background: var(--color-surface);
+  border-radius: 16px;
+  background: #1b1b1b;
   box-shadow: none;
 }
 
+.visual-polish-page--timer .timer-supporting-label {
+  grid-column: 1 / -1;
+}
+
 .visual-polish-page--timer .timer-target-row + .timer-target-row {
-  padding-top: 12px;
-  border-color: var(--color-border);
+  padding-top: 0;
+  padding-left: 12px;
+  border-top: 0;
+  border-left: 1px solid var(--color-border);
 }
 
 .visual-polish-page--timer .timer-target-card:has(strong) {
-  border-color: #5a5146;
+  border-color: var(--color-border);
 }
 
 .visual-polish-page--timer .timer-target-card span {
   color: var(--color-text-muted);
-  font-size: 0.76rem;
+  font-size: 0.7rem;
 }
 
 .visual-polish-page--timer .timer-target-row--primary strong {
-  color: var(--color-text);
-  font-size: clamp(3rem, 15vw, 4.8rem);
-  letter-spacing: -0.035em;
-  line-height: 0.95;
+  color: #d7d1c9;
+  font-family: var(--font-numeric);
+  font-size: clamp(1.35rem, 6vw, 1.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
   overflow-wrap: anywhere;
 }
 
 .visual-polish-page--timer .timer-target-row--secondary strong {
-  color: var(--color-text-muted);
-  font-size: clamp(1.3rem, 6vw, 1.8rem);
+  color: #d7d1c9;
+  font-family: var(--font-numeric);
+  font-size: clamp(1.35rem, 6vw, 1.75rem);
 }
 
 .visual-polish-page--timer .timer-target-card p {
-  color: var(--color-accent-text);
-  font-size: 0.94rem;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
 }
 
 .visual-polish-page--timer .timer-target-card .timer-target-fallback-title {
-  color: var(--color-text);
-  font-size: 1.15rem;
-}
-
-.visual-polish-page--timer
-  .timer-target-row--primary
-  .timer-target-fallback-title {
-  font-size: 1.65rem;
-}
-
-.visual-polish-page--timer
-  .timer-target-row--secondary
-  .timer-target-fallback-title {
   color: var(--color-text-muted);
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 .visual-polish-page--timer .timer-target-card .timer-target-fallback-note {
@@ -2663,7 +2760,7 @@ p {
 }
 
 .visual-polish-page--timer .timer-semantic-chip {
-  order: 3;
+  order: 6;
   min-height: 36px;
   margin: 0;
   padding: 7px 12px;
@@ -2673,7 +2770,7 @@ p {
 }
 
 .visual-polish-page--timer .timer-schedule-note {
-  order: 1;
+  order: 7;
   margin: 0;
   border-left-color: var(--color-accent);
   border-radius: 0 10px 10px 0;
@@ -2681,70 +2778,194 @@ p {
 }
 
 .visual-polish-page--timer .timer-next-preview {
-  order: 5;
-  gap: 4px;
-  padding: 12px 14px;
+  order: 3;
+  gap: 7px;
+  padding: 15px 16px;
   border-color: var(--color-border);
   border-radius: 16px;
   color: #b9b0a5;
-  background: #191919;
+  background: #202020;
   font-size: 0.94rem;
   line-height: 1.4;
   box-shadow: none;
 }
 
-.visual-polish-page--timer .timer-next-preview span,
-.visual-polish-page--timer .timer-next-preview p + p {
+.visual-polish-page--timer .timer-next-preview > span,
+.visual-polish-page--timer .timer-next-preview-instruction {
   color: #b9b0a5;
 }
 
 .visual-polish-page--timer .timer-next-preview p:first-of-type {
   color: #f4efe6;
+  font-size: 1.12rem;
+}
+
+.visual-polish-page--timer .timer-next-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+
+.visual-polish-page--timer .timer-next-preview-meta strong {
+  color: #f4efe6;
+  font-family: var(--font-numeric);
   font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.visual-polish-page--timer .timer-next-preview-meta span {
+  color: var(--color-text-muted);
+  font-family: var(--font-numeric);
+  font-size: 0.84rem;
+}
+
+.visual-polish-page--timer .timer-next-preview-instruction {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.visual-polish-page--timer .timer-timeline {
+  order: 4;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 0 2px;
+}
+
+.visual-polish-page--timer .timer-timeline-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.visual-polish-page--timer .timer-timeline-heading strong {
+  color: var(--color-accent-text);
+  font-family: var(--font-numeric);
+}
+
+.visual-polish-page--timer .timer-timeline ol {
+  display: grid;
+  grid-auto-columns: minmax(28px, 1fr);
+  grid-auto-flow: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.visual-polish-page--timer .timer-timeline-step {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  color: #6f6f6f;
+  font-family: var(--font-numeric);
+  font-size: 0.64rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.visual-polish-page--timer .timer-timeline-step::before {
+  position: absolute;
+  top: 13px;
+  right: 50%;
+  width: calc(100% + 4px);
+  height: 2px;
+  background: #424242;
+  content: "";
+}
+
+.visual-polish-page--timer .timer-timeline-step:first-child::before {
+  display: none;
+}
+
+.visual-polish-page--timer .timer-timeline-step--complete::before,
+.visual-polish-page--timer .timer-timeline-step--current::before {
+  background: #ffb000;
+}
+
+.visual-polish-page--timer .timer-timeline-dot {
+  z-index: 1;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 2px solid #4b4b4b;
+  border-radius: 50%;
+  color: #9b9b9b;
+  background: #2d2d2d;
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.visual-polish-page--timer .timer-timeline-step--complete .timer-timeline-dot {
+  border-color: #ffb000;
+  color: #17130e;
+  background: #ffb000;
+}
+
+.visual-polish-page--timer .timer-timeline-step--current {
+  color: var(--color-text);
+}
+
+.visual-polish-page--timer .timer-timeline-step--current .timer-timeline-dot {
+  border-color: #ffb000;
+  color: #ffb000;
+  background: #242424;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #ffb000 16%, transparent);
 }
 
 .visual-polish-page--timer .timer-finish-note {
-  order: 6;
+  order: 9;
   border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
   color: var(--color-text-muted);
   background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
 }
 
 .visual-polish-page--timer .timer-controls {
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  order: 7;
-  grid-template-columns: 1fr 72px 1fr;
+  position: relative;
+  bottom: auto;
+  order: 10;
+  grid-template-columns: minmax(0, 1fr) minmax(112px, 1.25fr) minmax(0, 1fr);
   gap: 8px;
-  padding-block: 2px;
-  background: var(--color-bg);
-  box-shadow: 0 0 0 10px var(--color-bg);
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid #343434;
+  background: #202020;
+  box-shadow:
+    -24px 0 0 #202020,
+    24px 0 0 #202020,
+    0 -12px 20px rgba(0, 0, 0, 0.28);
 }
 
 .visual-polish-page--timer .timer-control-button {
   min-width: 0;
-  min-height: 54px;
-  padding: 8px;
+  min-height: 56px;
+  padding: 8px 6px;
   border-color: var(--color-border);
-  border-radius: 16px;
+  border-radius: 14px;
   color: var(--color-text);
-  background: var(--color-surface);
+  background: #292929;
+  font-size: 0.88rem;
   box-shadow: none;
 }
 
 .visual-polish-page--timer .timer-control-button--primary {
-  width: 72px;
-  min-height: 64px;
-  justify-self: center;
+  width: auto;
+  min-height: 56px;
   border-color: var(--color-accent);
-  border-radius: 999px;
+  border-radius: 14px;
   color: #17130e;
-  background: var(--color-accent);
+  background: #ffb000;
 }
 
 .visual-polish-page--timer .timer-control-button--finish {
-  border-color: var(--color-accent);
-  color: var(--color-accent-text);
-  background: var(--color-surface);
+  border-color: #ffb000;
+  color: #17130e;
+  background: #ffb000;
 }
 
 .visual-polish-page--timer .timer-control-button:disabled {
@@ -2924,13 +3145,21 @@ p {
     text-align: left;
   }
 
-  .visual-polish-page--timer,
+  .visual-polish-page--timer {
+    gap: 0;
+  }
+
   .visual-polish-page--timer .timer-core {
+    gap: 0;
+  }
+
+  .visual-polish-page--timer .timer-cockpit-scroll {
     gap: 10px;
   }
 
   .visual-polish-page--timer .timer-method-summary {
     grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px 13px;
   }
 
   .visual-polish-page--timer .timer-method-summary .status-pill {
@@ -2938,9 +3167,19 @@ p {
     grid-column: 2;
   }
 
+  .visual-polish-page--timer .timer-time-hero {
+    gap: 16px;
+    padding: 22px 0 16px;
+  }
+
   .visual-polish-page--timer .timer-display {
-    padding: 6px 0;
-    font-size: clamp(2rem, 10vw, 2.5rem);
+    padding: 0;
+    font-size: clamp(4.45rem, 22vw, 5.4rem);
+  }
+
+  .visual-polish-page--timer .timer-countdown-card {
+    width: min(100%, 250px);
+    padding: 15px 18px 13px;
   }
 
   .visual-polish-page--timer .timer-step-card,
@@ -2958,7 +3197,7 @@ p {
   }
 
   .visual-polish-page--timer .timer-control-button--primary {
-    min-height: 64px;
+    min-height: 52px;
   }
 
   .visual-polish-page--history {
@@ -2971,6 +3210,14 @@ p {
 }
 
 @media (max-width: 375px) {
+  .visual-polish-page--timer .timer-controls {
+    grid-template-columns: minmax(0, 0.9fr) minmax(104px, 1.2fr) minmax(0, 0.9fr);
+  }
+
+  .visual-polish-page--timer .timer-control-button {
+    font-size: 0.82rem;
+  }
+
   .visual-polish-page--history .history-card-actions {
     grid-template-columns: 1fr;
   }
