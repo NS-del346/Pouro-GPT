@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import {
@@ -14,6 +14,15 @@ import { getRecipeStatusLabel } from "../utils/sourceStatus";
 
 const coffeeGramOptions = [15, 18, 20, 24, 30];
 const ratioOptions = [14, 15, 16];
+const fourSixTasteDirections = ["甘み", "標準", "酸味"] as const;
+const fourSixCombinationRows: {
+  strength: string;
+  variantIds: (BrewVariantId | undefined)[];
+}[] = [
+  { strength: "軽め", variantIds: [undefined, undefined, undefined] },
+  { strength: "標準", variantIds: [undefined, "R-01", undefined] },
+  { strength: "しっかり", variantIds: [undefined, undefined, undefined] },
+];
 
 interface RecipeSetupPageProps {
   onStartBrew: (setup: BrewSetup) => void;
@@ -252,37 +261,132 @@ export function RecipeSetupPage({
         </section>
 
         {showsFourSixVariantSelector && (
-          <section className="setup-card" aria-labelledby="variant-label">
-            <div className="field-heading">
-              <span id="variant-label">バリエーション</span>
-            </div>
-            <div
-              className="variant-chip-grid"
-              role="group"
-              aria-labelledby="variant-label"
+          <>
+            <section
+              className="setup-card four-six-combination-card"
+              aria-labelledby="four-six-combination-label"
             >
-              {methodVariants.map((variant) => (
-                <button
-                  className={`variant-chip${
-                    selectedVariant.id === variant.id ? " variant-chip--selected" : ""
-                  }`}
-                  key={variant.id}
-                  onClick={() => setVariantId(variant.id)}
-                  type="button"
-                >
-                  <span>{variant.shortLabel}</span>
-                  {variant.isAdvanced && (
-                    <small className="advanced-badge">Advanced</small>
-                  )}
-                </button>
-              ))}
-            </div>
-          </section>
+              <div className="field-heading">
+                <span id="four-six-combination-label">
+                  味 × 濃さの9組み合わせ
+                </span>
+                <span className="status-pill status-pill--compact">設計中</span>
+              </div>
+              <p className="four-six-combination-description">
+                最初の40%を味方向、後半60%を濃さの軸として整理します。軸ラベルと未対応セルは確認中です。
+              </p>
+              <div className="four-six-selection-summary" aria-live="polite">
+                <span>現在の選択</span>
+                <strong>{selectedVariant.shortLabel}</strong>
+                <small>
+                  {selectedVariant.id === "R-01"
+                    ? "標準 × 標準（暫定対応）"
+                    : "9組み合わせへの対応確認中"}
+                </small>
+              </div>
+              <div className="four-six-axis-note" aria-hidden="true">
+                <span>横: 味方向</span>
+                <span>縦: 濃さ</span>
+              </div>
+              <div
+                className="four-six-combination-grid"
+                role="group"
+                aria-label="4:6 味方向と濃さの9組み合わせ"
+              >
+                <span className="four-six-matrix-corner" aria-hidden="true" />
+                {fourSixTasteDirections.map((taste) => (
+                  <span className="four-six-matrix-heading" key={taste}>
+                    {taste}
+                  </span>
+                ))}
+                {fourSixCombinationRows.map((row) => (
+                  <Fragment key={row.strength}>
+                    <span className="four-six-matrix-heading four-six-matrix-heading--row">
+                      {row.strength}
+                    </span>
+                    {row.variantIds.map((cellVariantId, index) => {
+                      const cellVariant = cellVariantId
+                        ? methodVariants.find(
+                            (variant) => variant.id === cellVariantId,
+                          )
+                        : undefined;
+                      const isSelected = cellVariant?.id === selectedVariant.id;
+                      const taste = fourSixTasteDirections[index];
+
+                      return (
+                        <button
+                          aria-label={`${taste} × ${row.strength}: ${
+                            cellVariant
+                              ? `${cellVariant.shortLabel}を選択`
+                              : "対応確認中"
+                          }`}
+                          aria-pressed={cellVariant ? isSelected : undefined}
+                          className={`four-six-combination-cell${
+                            isSelected
+                              ? " four-six-combination-cell--selected"
+                              : ""
+                          }`}
+                          disabled={!cellVariant}
+                          key={`${row.strength}-${taste}`}
+                          onClick={() => cellVariant && setVariantId(cellVariant.id)}
+                          type="button"
+                        >
+                          <strong>
+                            {cellVariant ? cellVariant.shortLabel : "確認中"}
+                          </strong>
+                          <small>{cellVariant ? "利用可能" : "設計中"}</small>
+                        </button>
+                      );
+                    })}
+                  </Fragment>
+                ))}
+              </div>
+              <p className="four-six-combination-note">
+                現時点では「基本形」のみ中央セルへ暫定対応しています。新しいレシピ値や抽出手順は追加していません。
+              </p>
+            </section>
+
+            <section className="setup-card" aria-labelledby="variant-label">
+              <div className="field-heading">
+                <span id="variant-label">既存バリエーション</span>
+              </div>
+              <p className="four-six-variant-note">
+                9組み合わせへの対応確認中の選択肢も、従来どおり選択できます。
+              </p>
+              <div
+                className="variant-chip-grid"
+                role="group"
+                aria-labelledby="variant-label"
+              >
+                {methodVariants.map((variant) => (
+                  <button
+                    className={`variant-chip${
+                      selectedVariant.id === variant.id
+                        ? " variant-chip--selected"
+                        : ""
+                    }`}
+                    key={variant.id}
+                    onClick={() => setVariantId(variant.id)}
+                    type="button"
+                  >
+                    <span>{variant.shortLabel}</span>
+                    {variant.isAdvanced && (
+                      <small className="advanced-badge">Advanced</small>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </section>
+          </>
         )}
 
         <section className="setup-card setup-card--variant">
           <div className="field-heading">
-            <span>選択中バリエーション</span>
+            <span>
+              {showsFourSixVariantSelector
+                ? "出典・確認状態"
+                : "選択中バリエーション"}
+            </span>
             <span className="status-pill status-pill--compact">
               {getVariantStatusLabel(selectedVariant)}
             </span>

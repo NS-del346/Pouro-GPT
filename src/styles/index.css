@@ -1882,12 +1882,136 @@ p {
   display: none;
 }
 
-.visual-polish-page--setup .setup-card:not(.setup-card--result):not(.setup-card--variant):not(.setup-card--tips),
+.visual-polish-page--setup .setup-card:not(.setup-card--result):not(.setup-card--variant):not(.setup-card--tips):not(.four-six-combination-card),
 .visual-polish-page--setup .text-field {
   gap: 10px;
   padding: 0;
   border: 0;
   background: transparent;
+}
+
+.visual-polish-page--setup .four-six-combination-card {
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.visual-polish-page--setup .four-six-combination-card .status-pill {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+}
+
+.visual-polish-page--setup .four-six-combination-description,
+.visual-polish-page--setup .four-six-combination-note,
+.visual-polish-page--setup .four-six-variant-note {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.visual-polish-page--setup .four-six-selection-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 10px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-muted);
+}
+
+.visual-polish-page--setup .four-six-selection-summary span,
+.visual-polish-page--setup .four-six-selection-summary small {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.visual-polish-page--setup .four-six-selection-summary strong {
+  min-width: 0;
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+}
+
+.visual-polish-page--setup .four-six-selection-summary small {
+  grid-column: 2;
+  line-height: 1.35;
+}
+
+.visual-polish-page--setup .four-six-axis-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.visual-polish-page--setup .four-six-combination-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(44px, 0.62fr) repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.visual-polish-page--setup .four-six-matrix-corner,
+.visual-polish-page--setup .four-six-matrix-heading {
+  min-width: 0;
+}
+
+.visual-polish-page--setup .four-six-matrix-heading {
+  display: grid;
+  min-height: 24px;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.visual-polish-page--setup .four-six-matrix-heading--row {
+  justify-items: start;
+  text-align: left;
+}
+
+.visual-polish-page--setup .four-six-combination-cell {
+  display: grid;
+  min-width: 0;
+  min-height: 64px;
+  gap: 3px;
+  align-content: center;
+  padding: 6px 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.visual-polish-page--setup .four-six-combination-cell strong {
+  min-width: 0;
+  font-size: 0.74rem;
+  overflow-wrap: anywhere;
+}
+
+.visual-polish-page--setup .four-six-combination-cell small {
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.visual-polish-page--setup .four-six-combination-cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.visual-polish-page--setup .four-six-combination-cell--selected {
+  border-color: var(--color-accent);
+  color: #17130e;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 32%, transparent);
 }
 
 .visual-polish-page--setup .setup-card--tips {
@@ -3210,6 +3334,24 @@ p {
 }
 
 @media (max-width: 375px) {
+  .visual-polish-page--setup .four-six-combination-card {
+    padding: 12px;
+  }
+
+  .visual-polish-page--setup .four-six-combination-grid {
+    gap: 4px;
+    grid-template-columns: minmax(42px, 0.58fr) repeat(3, minmax(0, 1fr));
+  }
+
+  .visual-polish-page--setup .four-six-combination-cell {
+    min-height: 60px;
+    padding-inline: 2px;
+  }
+
+  .visual-polish-page--setup .four-six-combination-cell strong {
+    font-size: 0.7rem;
+  }
+
   .visual-polish-page--timer .timer-controls {
     grid-template-columns: minmax(0, 0.9fr) minmax(104px, 1.2fr) minmax(0, 0.9fr);
   }
