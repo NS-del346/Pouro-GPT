@@ -76,26 +76,35 @@ The spec records these implementation constraints:
 - This PR does not implement visual tokens.
 - This PR does not implement navigation, timer, click converter, 4:6 UI, history, settings, or motion.
 - The Drive ZIP is referenced as an external artifact and is not committed to the repository.
-- The current branch was created from the PR-V2-01 merged main baseline; if additional PRs merged after that baseline, rebase/update may be required before merge.
 
-## 7. Checks to run before merge
+## 7. Final local verification
 
-Recommended local checks:
+Verification date:
 
 ```text
-git diff --name-only
-git diff --stat
-git diff --check
-npm.cmd run build
+2026-06-15
 ```
 
-Because this PR was created through GitHub file operations, local build has not been run at creation time.
+Results:
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| `git status --short --branch` | PASS | Branch tracks `origin/codex/pr-v2-03-visual-system-screen-spec`; worktree was clean before this QA result update. |
+| `git diff --name-only origin/main...HEAD` | PASS | Exactly the four allowed Markdown files changed. |
+| `git diff --stat origin/main...HEAD` | PASS | Four docs-only files changed; no app, runtime, package, public, PWA, asset, or release files changed. |
+| `git diff --check origin/main...HEAD` | PASS | No output. |
+| `npm.cmd run build` | PASS | TypeScript and Vite production build completed successfully; 71 modules transformed. |
+| `npm.cmd run lint` | NOT RUN | lint script not available in `package.json`. |
+| README local links | PASS | All eight local Markdown links in `docs/v2/README.md` resolve to existing files. |
+| Required document content | PASS | Stitch boundary, timer hierarchy, 10 Pour schedule, Click Converter caution, and legal/source guardrails are present. |
+| Browser/mobile QA | NOT RUN | No production UI or app code changed. |
 
 ## 8. Judgment
 
 `PASS_WITH_NOTES`
 
-The remaining notes are non-blocking for a docs-only planning PR if changed files remain within the allowed docs boundary.
+The remaining notes are non-blocking for this docs-only planning PR. No app code was changed, and the PR does not approve implementation by itself.
 
 Ready for independent verification: YES
-Ready for review: YES, subject to changed-file audit
+Ready for review: YES
+Safe to merge after external verification: YES
