@@ -2,7 +2,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Page } from "../components/layout/Page";
 import { getTipsForDisplayContext } from "../data/tips";
 import { getBrewSessionById } from "../repositories";
-import type { BrewSetup, TasteNote } from "../types";
+import type { BrewSession, BrewSetup, TasteNote } from "../types";
 import type { CoffeeTipRecipeCode } from "../types/tips";
 import {
   formatDateTime,
@@ -16,6 +16,15 @@ import { getRecipeStatusLabel, requiresReviewLabel } from "../utils/sourceStatus
 interface HistoryDetailPageProps {
   onReplayBrew: (setup: BrewSetup) => void;
 }
+
+type DetailItem = {
+  label: string;
+  value: string;
+};
+
+const emptyLabel = "未記録";
+const emptyMemoLabel = "メモなし";
+const checkingLabel = "確認中";
 
 const tasteNoteLabels: Record<TasteNote, string> = {
   clear: "クリア",
@@ -38,6 +47,50 @@ function getHistoryDetailTipRecipeCode(setup: BrewSetup): CoffeeTipRecipeCode {
   return "ALL";
 }
 
+function displayMemo(value: string | undefined): string {
+  const trimmedValue = value?.trim();
+  return trimmedValue ? trimmedValue : emptyMemoLabel;
+}
+
+function displayText(value: string | undefined): string {
+  const trimmedValue = value?.trim();
+  return trimmedValue ? trimmedValue : emptyLabel;
+}
+
+function displayElapsed(value: number | null): string {
+  return typeof value === "number" ? formatElapsedMs(value) : emptyLabel;
+}
+
+function getConditionSnapshot(session: BrewSession): DetailItem[] {
+  return [
+    ...getSessionSetupFields(session),
+    {
+      label: "完了時間",
+      value: displayElapsed(session.elapsedMsAtFinish),
+    },
+  ];
+}
+
+function getHeaderSnapshot(
+  session: BrewSession,
+  variantLabel: string | null,
+): DetailItem[] {
+  return [
+    {
+      label: "保存時間",
+      value: formatDateTime(session.finishedAtIso),
+    },
+    {
+      label: "メソッド",
+      value: getSessionMethodLabel(session),
+    },
+    {
+      label: "バリアント",
+      value: variantLabel ?? emptyLabel,
+    },
+  ];
+}
+
 export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
   const { sessionId } = useParams();
   const navigate = useNavigate();
@@ -51,7 +104,9 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
   const { methodSnapshot, setupSnapshot, result } = currentSession;
   const needsReview = requiresReviewLabel(methodSnapshot);
   const variantLabel = getSessionVariantLabel(currentSession);
-  const setupFields = getSessionSetupFields(currentSession);
+  const headerSnapshot = getHeaderSnapshot(currentSession, variantLabel);
+  const conditionSnapshot = getConditionSnapshot(currentSession);
+  const recipeStatusLabel = getRecipeStatusLabel(methodSnapshot);
   const historyDetailTipRecipeCode =
     getHistoryDetailTipRecipeCode(setupSnapshot);
   const recipeSpecificHistoryDetailTips =
@@ -80,32 +135,137 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
 
   return (
     <Page
-      title="History Detail"
-      description="1回分の抽出条件、味の印象、次回メモを確認します。"
+      title="履歴詳細"
+      description="保存された1回分の条件と味の記録を、次回に向けて確認します。"
       backTo="/history"
       className="visual-polish-page visual-polish-page--history-detail"
     >
-      <section className="record-card record-card--summary">
+      <section className="record-card history-detail-hero">
+        <div className="history-detail-hero__topline">
+          <p className="eyebrow">保存された抽出</p>
+          <span className="status-pill">{recipeStatusLabel}</span>
+        </div>
+
         <div className="section-heading">
-          <p className="eyebrow">{formatDateTime(session.finishedAtIso)}</p>
           <h2>
             {getSessionMethodLabel(currentSession)}
             {variantLabel ? ` ・ ${variantLabel}` : ""}
           </h2>
+          <p className="history-detail-date">
+            {formatDateTime(currentSession.finishedAtIso)}
+          </p>
         </div>
-        <dl className="detail-list detail-list--compact">
-          <div>
-            <dt>メソッド</dt>
-            <dd>{getSessionMethodLabel(currentSession)}</dd>
-          </div>
-          {variantLabel && (
-            <div>
-              <dt>Variant</dt>
-              <dd>{variantLabel}</dd>
+
+        <dl className="history-detail-key-grid" aria-label="保存内容">
+          {headerSnapshot.map((item) => (
+            <div key={item.label}>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
             </div>
-          )}
+          ))}
         </dl>
-        <span className="status-pill">{getRecipeStatusLabel(methodSnapshot)}</span>
+      </section>
+
+      <section className="record-card history-detail-section">
+        <div className="section-heading">
+          <p className="eyebrow">Condition Snapshot</p>
+          <h2>今回の条件</h2>
+        </div>
+        <dl className="history-detail-condition-grid">
+          {conditionSnapshot.map((item) => (
+            <div key={item.label}>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="record-card history-detail-section">
+        <div className="section-heading">
+          <p className="eyebrow">Setup Memo</p>
+          <h2>準備メモ</h2>
+        </div>
+        <dl className="history-detail-memo-list">
+          <div>
+            <dt>湯温メモ</dt>
+            <dd>{displayMemo(setupSnapshot.waterTempMemo)}</dd>
+          </div>
+          <div>
+            <dt>挽き目メモ</dt>
+            <dd>{displayMemo(setupSnapshot.grindMemo)}</dd>
+          </div>
+          <div>
+            <dt>準備メモ</dt>
+            <dd>{displayMemo(setupSnapshot.freeMemo)}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section className="record-card history-detail-section">
+        <div className="section-heading">
+          <p className="eyebrow">Result / Feedback</p>
+          <h2>味の記録</h2>
+        </div>
+
+        <div className="history-detail-feedback-summary">
+          <div>
+            <span>評価</span>
+            <strong>{result?.rating ? `${result.rating}/5` : emptyLabel}</strong>
+          </div>
+          <div>
+            <span>完了時間</span>
+            <strong>{displayElapsed(currentSession.elapsedMsAtFinish)}</strong>
+          </div>
+        </div>
+
+        {result?.tasteNotes.length ? (
+          <div className="tag-row history-detail-tag-row" aria-label="味タグ">
+            {result.tasteNotes.map((note) => (
+              <span className="mini-tag" key={note}>
+                {tasteNoteLabels[note]}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="notice-text">味の印象タグは{emptyLabel}です。</p>
+        )}
+
+        <dl className="history-detail-memo-list history-detail-memo-list--result">
+          <div>
+            <dt>ひとこと</dt>
+            <dd>{displayText(result?.tasteImpression)}</dd>
+          </div>
+          <div>
+            <dt>任意メモ</dt>
+            <dd>{displayMemo(result?.freeMemo)}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section className="record-card history-detail-section history-detail-next-card">
+        <div className="section-heading">
+          <p className="eyebrow">Next Cup</p>
+          <h2>次回メモ</h2>
+        </div>
+        <p>{displayMemo(result?.nextAdjustmentMemo)}</p>
+      </section>
+
+      <section className="record-card history-detail-section history-detail-source-card">
+        <div className="section-heading">
+          <p className="eyebrow">Source / Verification</p>
+          <h2>出典・確認状態</h2>
+        </div>
+        <dl className="history-detail-source-list">
+          <div>
+            <dt>状態</dt>
+            <dd>{recipeStatusLabel}</dd>
+          </div>
+          <div>
+            <dt>確認</dt>
+            <dd>{needsReview ? checkingLabel : "確認済み"}</dd>
+          </div>
+        </dl>
         {needsReview && (
           <p className="notice-text">
             保存時点の確認中データです。確定レシピではなく、この記録の条件として表示しています。
@@ -134,78 +294,18 @@ export function HistoryDetailPage({ onReplayBrew }: HistoryDetailPageProps) {
         </section>
       )}
 
-      <section className="record-card">
+      <section className="record-card history-detail-rebrew-card">
         <div className="section-heading">
-          <p className="eyebrow">条件</p>
-          <h2>入力条件</h2>
+          <p className="eyebrow">Rebrew</p>
+          <h2>同じ条件で再抽出</h2>
         </div>
-        <dl className="record-list">
-          {setupFields.map((field) => (
-            <div key={field.label}>
-              <dt>{field.label}</dt>
-              <dd>{field.value}</dd>
-            </div>
-          ))}
-          <div>
-            <dt>抽出時間</dt>
-            <dd>{formatElapsedMs(session.elapsedMsAtFinish)}</dd>
-          </div>
-        </dl>
-        <div className="memo-stack">
-          <p>
-            <strong>湯温メモ</strong>
-            {setupSnapshot.waterTempMemo || "未記録"}
-          </p>
-          <p>
-            <strong>挽き目メモ</strong>
-            {setupSnapshot.grindMemo || "未記録"}
-          </p>
-          <p>
-            <strong>準備メモ</strong>
-            {setupSnapshot.freeMemo || "未記録"}
-          </p>
-        </div>
+        <p>
+          保存された条件をRecipe Setupに読み込みます。開始前に豆量やメモを確認できます。
+        </p>
+        <button className="primary-cta" onClick={handleReplay} type="button">
+          同じ条件で再抽出
+        </button>
       </section>
-
-      <section className="record-card">
-        <div className="section-heading">
-          <p className="eyebrow">味</p>
-          <h2>記録</h2>
-        </div>
-        {result?.tasteNotes.length ? (
-          <div className="tag-row">
-            {result.tasteNotes.map((note) => (
-              <span className="mini-tag" key={note}>
-                {tasteNoteLabels[note]}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="notice-text">味の印象タグは未記録です。</p>
-        )}
-        <dl className="detail-list">
-          <div>
-            <dt>ひとこと</dt>
-            <dd>{result?.tasteImpression || "未記録"}</dd>
-          </div>
-          <div>
-            <dt>評価</dt>
-            <dd>{result?.rating ? `${result.rating}/5` : "未記録"}</dd>
-          </div>
-          <div>
-            <dt>次回改善メモ</dt>
-            <dd>{result?.nextAdjustmentMemo || "未記録"}</dd>
-          </div>
-          <div>
-            <dt>任意メモ</dt>
-            <dd>{result?.freeMemo || "未記録"}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <button className="primary-cta" onClick={handleReplay} type="button">
-        同じ条件で再抽出
-      </button>
     </Page>
   );
 }
