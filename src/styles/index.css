@@ -1589,6 +1589,247 @@ p {
   box-shadow: var(--shadow-soft);
 }
 
+.visual-polish-page--settings {
+  gap: 14px;
+}
+
+.visual-polish-page--settings > .page-header {
+  gap: 7px;
+  padding: 13px 14px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--settings > .page-header h1 {
+  color: var(--color-text);
+  font-size: 1.8rem;
+  line-height: 1.08;
+}
+
+.visual-polish-page--settings > .page-header p:last-child {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--settings .settings-brand,
+.visual-polish-page--settings .settings-panel,
+.visual-polish-page--settings .route-link {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--settings .settings-brand,
+.visual-polish-page--settings .settings-panel {
+  gap: 12px;
+  padding: 14px;
+}
+
+.visual-polish-page--settings .settings-brand--trust {
+  border-left: 3px solid var(--color-accent);
+}
+
+.visual-polish-page--settings .settings-brand h2 {
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1.58rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.visual-polish-page--settings .settings-brand p:last-child,
+.visual-polish-page--settings .notice-text {
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.visual-polish-page--settings .settings-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-muted);
+}
+
+.visual-polish-page--settings .settings-status-grid div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 9px;
+}
+
+.visual-polish-page--settings .settings-status-grid div + div {
+  border-left: 1px solid var(--color-border);
+}
+
+.visual-polish-page--settings .settings-status-grid dt {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.visual-polish-page--settings .settings-status-grid dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.98rem;
+  font-weight: 900;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.visual-polish-page--settings .settings-status-grid div:first-child dd {
+  color: var(--color-accent-text);
+  font-family: var(--font-numeric);
+  font-size: 1.14rem;
+}
+
+.visual-polish-page--settings .settings-note-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--settings .settings-note-list li::marker {
+  color: var(--color-accent-text);
+}
+
+.visual-polish-page--settings .settings-save-message {
+  padding-top: 9px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.visual-polish-page--settings .settings-export-actions {
+  gap: 0;
+}
+
+.visual-polish-page--settings .settings-export-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.visual-polish-page--settings .settings-export-action:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.visual-polish-page--settings .settings-export-action strong {
+  display: block;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.visual-polish-page--settings .settings-export-action p {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.visual-polish-page--settings .settings-export-button {
+  width: 112px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--settings .settings-empty-message {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.visual-polish-page--settings .settings-panel--caution {
+  border-color: color-mix(in srgb, var(--color-accent) 48%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent-soft) 32%, var(--color-surface));
+}
+
+.visual-polish-page--settings .settings-panel--source {
+  background: color-mix(in srgb, var(--color-surface-muted) 38%, var(--color-surface));
+}
+
+.visual-polish-page--settings .settings-panel--danger {
+  border-color: color-mix(in srgb, var(--color-danger) 42%, var(--color-border));
+}
+
+.visual-polish-page--settings .danger-button {
+  justify-self: stretch;
+  min-height: 48px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--settings .setting-row {
+  min-height: 54px;
+  padding: 11px 0;
+}
+
+.visual-polish-page--settings .segmented-control {
+  gap: 7px;
+}
+
+.visual-polish-page--settings .segment-button {
+  min-height: 42px;
+  border-radius: 8px;
+}
+
+.visual-polish-page--settings .route-links {
+  gap: 8px;
+}
+
+.visual-polish-page--settings .route-link {
+  min-height: 46px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 430px) {
+  .visual-polish-page--settings .settings-export-action {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .visual-polish-page--settings .settings-export-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .visual-polish-page--settings > .page-header h1 {
+    font-size: 1.68rem;
+  }
+
+  .visual-polish-page--settings .settings-status-grid dt {
+    font-size: 0.66rem;
+  }
+
+  .visual-polish-page--settings .settings-status-grid dd {
+    font-size: 0.88rem;
+  }
+
+  .visual-polish-page--settings .settings-status-grid div:first-child dd {
+    font-size: 1rem;
+  }
+}
+
 @media (min-width: 600px) {
   .app-content {
     padding: var(--space-6) var(--space-5)
