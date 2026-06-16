@@ -104,7 +104,7 @@ export function SettingsPage() {
 
   function handleDeleteData() {
     const confirmed = window.confirm(
-      "このブラウザに保存された抽出履歴をすべて削除します。設定は削除されません。",
+      "このブラウザに保存された抽出履歴をすべて削除します。設定は削除されません。必要な場合は先にCSVまたはJSONを書き出してください。",
     );
 
     if (!confirmed) return;
@@ -157,14 +157,144 @@ export function SettingsPage() {
 
   return (
     <Page
-      title="設定"
-      eyebrow="pourō"
-      description="Pourōの設定、ローカルデータ管理、アプリ情報・出典・免責・プライバシーへの入口です。"
+      title="設定 / データ"
+      eyebrow="Data Trust"
+      description="保存場所、書き出し、バックアップ、非公式性をここで確認できます。"
+      className="visual-polish-page visual-polish-page--settings"
     >
-      <section className="settings-brand" aria-label="アプリ情報">
+      <section className="settings-brand settings-brand--trust" aria-label="アプリとデータの状態">
         <p className="logo-mark">pourō</p>
-        <h2>Pourō</h2>
-        <p>Pour slowly. Brew deeply.</p>
+        <h2>データ管理センター</h2>
+        <p>
+          Pourō / Pouro-GPT は、抽出を進めるための非公式ローカルファーストツールです。
+          履歴の保存場所、書き出し、注意点をこの画面で確認できます。
+        </p>
+      </section>
+
+      <section className="settings-panel settings-panel--overview" aria-labelledby="data-heading">
+        <div className="section-heading">
+          <p className="eyebrow">データ管理</p>
+          <h2 id="data-heading">保存状態</h2>
+        </div>
+        <dl className="settings-status-grid" aria-label="データ管理の概要">
+          <div>
+            <dt>保存済み履歴</dt>
+            <dd>{historyCount}件</dd>
+          </div>
+          <div>
+            <dt>保存場所</dt>
+            <dd>このブラウザ</dd>
+          </div>
+          <div>
+            <dt>復元機能</dt>
+            <dd>未実装</dd>
+          </div>
+        </dl>
+        <p className="settings-save-message" role="status">
+          {saveMessage}
+        </p>
+      </section>
+
+      <section className="settings-panel" aria-labelledby="local-storage-heading">
+        <div className="section-heading">
+          <p className="eyebrow">ローカル保存</p>
+          <h2 id="local-storage-heading">履歴は端末のブラウザ内に保存</h2>
+        </div>
+        <ul className="settings-note-list">
+          <li>抽出履歴は、この端末のブラウザ内に保存されます。</li>
+          <li>アカウント同期やクラウド保存はありません。</li>
+          <li>
+            ブラウザデータ削除、端末変更、プライベートブラウズなどで履歴が失われる場合があります。
+          </li>
+          <li>必要に応じてCSVまたはJSONでバックアップしてください。</li>
+        </ul>
+      </section>
+
+      <section className="settings-panel settings-panel--exports" aria-labelledby="export-heading">
+        <div className="section-heading">
+          <p className="eyebrow">エクスポート</p>
+          <h2 id="export-heading">履歴を書き出す</h2>
+        </div>
+        <div className="settings-export-actions">
+          <div className="settings-export-action">
+            <div>
+              <strong>CSVを書き出す</strong>
+              <p>表計算ソフトで履歴を確認しやすい形式です。</p>
+            </div>
+            <button
+              className="settings-export-button"
+              disabled={historyCount === 0}
+              onClick={handleExportCsv}
+              type="button"
+            >
+              CSV
+            </button>
+          </div>
+          <div className="settings-export-action">
+            <div>
+              <strong>詳細バックアップ（JSON）</strong>
+              <p>履歴を詳しく残すためのバックアップ形式です。通常の確認にはCSVが十分です。</p>
+            </div>
+            <button
+              className="settings-export-button settings-export-button--secondary"
+              disabled={historyCount === 0}
+              onClick={handleExportJson}
+              type="button"
+            >
+              JSON
+            </button>
+          </div>
+          {historyCount === 0 && (
+            <p className="settings-empty-message">
+              書き出せる保存済み履歴はありません。
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="settings-panel settings-panel--caution" aria-labelledby="backup-caution-heading">
+        <div className="section-heading">
+          <p className="eyebrow">注意事項</p>
+          <h2 id="backup-caution-heading">JSON復元はまだできません</h2>
+        </div>
+        <p className="notice-text">
+          現在、この画面からJSONを復元する機能はありません。JSONは詳細バックアップとして保存し、
+          日常の確認や表計算での整理にはCSVを使ってください。
+        </p>
+      </section>
+
+      <section className="settings-panel settings-panel--source" aria-labelledby="source-note-heading">
+        <div className="section-heading">
+          <p className="eyebrow">非公式 / 確認状態</p>
+          <h2 id="source-note-heading">出典と保証について</h2>
+        </div>
+        <p className="notice-text">
+          このアプリは非公式の抽出補助ツールです。粕谷哲氏、PHILOCOFFEA / PHILOCOFFEE、
+          HARIO、各メーカー、その他の企業・人物による公認、監修、認証、提携、推奨、
+          保証を示すものではありません。
+        </p>
+        <p className="notice-text">
+          レシピ値や換算値には確認状況や要確認の値が含まれる場合があります。
+          抽出結果や味の改善は保証されません。
+        </p>
+      </section>
+
+      <section className="settings-panel settings-panel--danger" aria-labelledby="danger-heading">
+        <div className="section-heading">
+          <p className="eyebrow">データ削除</p>
+          <h2 id="danger-heading">この端末の履歴を削除</h2>
+        </div>
+        <p className="notice-text">
+          この操作は、このブラウザに保存された抽出履歴だけを削除します。設定は削除されません。
+          実行前に必要な履歴を書き出してください。
+        </p>
+        <button
+          className="danger-button"
+          onClick={handleDeleteData}
+          type="button"
+        >
+          すべての履歴を削除
+        </button>
       </section>
 
       <section className="settings-panel" aria-labelledby="preferences-heading">
@@ -243,55 +373,6 @@ export function SettingsPage() {
           />
         </label>
 
-        <p className="settings-save-message" role="status">
-          {saveMessage}
-        </p>
-      </section>
-
-      <section className="settings-panel" aria-labelledby="data-heading">
-        <div className="section-heading">
-          <p className="eyebrow">データ</p>
-          <h2 id="data-heading">データ管理</h2>
-        </div>
-        <p className="notice-text">
-          抽出履歴と設定は、このブラウザのローカル保存領域に保存されます。
-          履歴削除は取り消せません。
-        </p>
-        <p className="history-count">
-          保存済み記録: <strong>{historyCount}</strong>
-        </p>
-        <div className="settings-export-actions">
-          <button
-            className="settings-export-button"
-            disabled={historyCount === 0}
-            onClick={handleExportCsv}
-            type="button"
-          >
-            履歴を書き出す（CSV）
-          </button>
-          <button
-            className="settings-export-button settings-export-button--secondary"
-            disabled={historyCount === 0}
-            onClick={handleExportJson}
-            type="button"
-          >
-            詳細バックアップ（JSON）
-          </button>
-          {historyCount === 0 && (
-            <p className="settings-empty-message">
-              書き出せる保存済み履歴はありません。
-            </p>
-          )}
-        </div>
-        <div className="settings-danger-zone">
-          <button
-            className="danger-button"
-            onClick={handleDeleteData}
-            type="button"
-          >
-            すべての履歴を削除
-          </button>
-        </div>
       </section>
 
       <RouteLinks
