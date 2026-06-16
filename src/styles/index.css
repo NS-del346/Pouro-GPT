@@ -2521,6 +2521,262 @@ p {
   overflow-wrap: anywhere;
 }
 
+.visual-polish-page--history-detail {
+  gap: 12px;
+}
+
+.visual-polish-page--history-detail > .back-link {
+  min-height: 40px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.visual-polish-page--history-detail > .page-header {
+  gap: 7px;
+  padding: 13px 14px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--history-detail > .page-header h1 {
+  color: var(--color-text);
+  font-size: 1.75rem;
+  line-height: 1.08;
+}
+
+.visual-polish-page--history-detail > .page-header p:last-child {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.visual-polish-page--history-detail .history-detail-hero,
+.visual-polish-page--history-detail .history-detail-section,
+.visual-polish-page--history-detail .history-detail-rebrew-card {
+  gap: 12px;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.visual-polish-page--history-detail .history-detail-hero {
+  border-color: color-mix(in srgb, var(--color-accent) 34%, var(--color-border));
+  background: color-mix(in srgb, var(--color-accent-soft) 20%, var(--color-surface));
+}
+
+.visual-polish-page--history-detail .history-detail-hero__topline {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.visual-polish-page--history-detail .history-detail-hero__topline .eyebrow,
+.visual-polish-page--history-detail .history-detail-hero__topline .status-pill {
+  flex: 0 1 auto;
+}
+
+.visual-polish-page--history-detail .history-detail-hero .section-heading {
+  gap: 5px;
+}
+
+.visual-polish-page--history-detail .history-detail-hero .section-heading h2 {
+  color: var(--color-text);
+  font-size: clamp(1.45rem, 7vw, 2rem);
+  line-height: 1.14;
+}
+
+.visual-polish-page--history-detail .history-detail-date {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-detail-key-grid,
+.history-detail-condition-grid,
+.history-detail-source-list {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-border);
+}
+
+.history-detail-key-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.history-detail-condition-grid,
+.history-detail-source-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.history-detail-key-grid div,
+.history-detail-condition-grid div,
+.history-detail-source-list div {
+  display: grid;
+  min-width: 0;
+  padding: 10px 11px;
+  background: var(--color-surface);
+}
+
+.history-detail-key-grid dt,
+.history-detail-condition-grid dt,
+.history-detail-source-list dt,
+.history-detail-memo-list dt,
+.history-detail-feedback-summary span {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.history-detail-key-grid dd,
+.history-detail-condition-grid dd,
+.history-detail-source-list dd {
+  min-width: 0;
+  margin: 4px 0 0;
+  color: var(--color-text);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.history-detail-memo-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.history-detail-memo-list div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--color-border);
+  border-radius: 0 8px 8px 0;
+  background: var(--color-surface-muted);
+}
+
+.history-detail-memo-list dd {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.history-detail-feedback-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.history-detail-feedback-summary div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-muted);
+}
+
+.history-detail-feedback-summary strong {
+  color: var(--color-accent-text);
+  font-size: 1.16rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.visual-polish-page--history-detail .history-detail-tag-row {
+  gap: 6px;
+}
+
+.visual-polish-page--history-detail .history-detail-tag-row .mini-tag {
+  min-width: 0;
+  min-height: 30px;
+  padding: 5px 10px;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent-soft) 42%, var(--color-surface));
+}
+
+.history-detail-next-card > p,
+.history-detail-rebrew-card > p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.history-detail-next-card > p {
+  padding: 11px 12px;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--color-accent-soft) 38%, var(--color-surface));
+  color: var(--color-text);
+}
+
+.history-detail-source-card .notice-text {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 34%, var(--color-border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-accent-soft) 24%, var(--color-surface));
+}
+
+.history-detail-rebrew-card {
+  border-color: color-mix(in srgb, var(--color-accent) 38%, var(--color-border));
+}
+
+.history-detail-rebrew-card .primary-cta {
+  min-height: 52px;
+  cursor: pointer;
+}
+
+@media (max-width: 390px) {
+  .visual-polish-page--history-detail {
+    gap: 10px;
+  }
+
+  .visual-polish-page--history-detail .history-detail-hero,
+  .visual-polish-page--history-detail .history-detail-section,
+  .visual-polish-page--history-detail .history-detail-rebrew-card {
+    padding: 13px;
+  }
+
+  .history-detail-key-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .history-detail-key-grid div,
+  .history-detail-condition-grid div,
+  .history-detail-source-list div,
+  .history-detail-feedback-summary div {
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 375px) {
+  .visual-polish-page--history-detail .history-detail-hero__topline {
+    align-items: flex-start;
+  }
+
+  .history-detail-source-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .visual-polish-page .record-card--summary .session-variant-label {
   display: none;
 }
