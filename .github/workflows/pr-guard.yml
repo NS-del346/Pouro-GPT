@@ -1,0 +1,37 @@
+name: PR Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  protected-files:
+    name: Protected files check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: List changed files
+        run: |
+          git fetch origin "$GITHUB_BASE_REF" --depth=1
+          git diff --name-only "origin/$GITHUB_BASE_REF...HEAD" | tee changed_files.txt
+
+      - name: Block protected file changes
+        run: |
+          echo "Checking protected files..."
+
+          if grep -E '^(package\.json|package-lock\.json|vite\.config\..*|public/|src/service-worker\.ts|src/sw\.ts)$' changed_files.txt; then
+            echo "Protected file change detected. Split this into a dedicated PR with explicit approval."
+            exit 1
+          fi
+
+          echo "No protected file changes detected."
