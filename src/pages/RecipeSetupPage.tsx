@@ -403,7 +403,7 @@ export function RecipeSetupPage({
           {isHybridR08 && (
             <p className="recommendation-note">
               {isExactHybridR08Setup
-                ? "New Hybrid の固定例（20g / 300g）のみ出典付き候補として表示します。最初の注湯は40-50gの範囲、時刻は目安です。任意の粉量・比率への換算には対応していません。"
+                ? "New Hybrid の固定例（20g / 300g）のみ出典付き候補として表示します。注湯は64g / 64g / 172gで、Switch OPEN/CLOSEDを文字で確認します。任意の粉量・比率への換算には対応していません。"
                 : "New Hybrid の出典付き候補は20g / 300g / 1:15のみです。この設定では詳細スケジュールを確認中として表示します。"}
             </p>
           )}

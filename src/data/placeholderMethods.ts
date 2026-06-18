@@ -105,6 +105,10 @@ const hybridSources = {
       "TETSU KASUYA: どんなコーヒー豆も「おいしくなる」究極系レシピ、進化しました。",
     sourceUrl: "https://www.youtube.com/watch?v=4FeUp_zNiiY",
   },
+  F1: {
+    sourceId: "F1",
+    sourceTitle: "Pouro-Fable5 app.js RecipeEngine._buildHybrid",
+  },
 } as const;
 
 const tenPourSources = {
@@ -436,15 +440,24 @@ const fourSixR03BrightStandardRecipe = createFourSixStandardRecipe({
   label: `${fourSixFlavorNotes.bright} × 標準`,
 });
 
+const HYBRID_R08_FIXED_COFFEE_GRAMS = 20;
+const HYBRID_R08_FIXED_RATIO = 15;
+const HYBRID_R08_FIXED_WATER_GRAMS = Math.round(
+  HYBRID_R08_FIXED_COFFEE_GRAMS * HYBRID_R08_FIXED_RATIO,
+);
+const HYBRID_R08_FINISH_TARGET_SEC = 180;
+
 type HybridR08FixedStepSeed = {
   id: string;
   order: number;
   startSec: number | null;
   title: string;
   actionLabel: string;
-  pourGramsRange?: BrewStep["pourGramsRange"];
+  pourGrams: number | null;
   totalWaterGrams: number | null;
   cumulativeWaterGrams: number | null;
+  nextStepTimeSec: number | null;
+  nextPourGrams: number | null;
   instruction: string;
   nextPreview: string;
   stepType: BrewStep["stepType"];
@@ -458,80 +471,72 @@ function createHybridR08FixedStep(seed: HybridR08FixedStepSeed): BrewStep {
   return {
     ...seed,
     endSec: null,
-    pourGrams: null,
-    nextStepTimeSec: null,
-    nextPourGrams: null,
     sourceStatus: "needsReview",
     verificationLevel: "unverified",
     isPlaceholder: false,
     fieldEvidence: {
       id: appGuidanceEvidence("Pourō identifier for the narrow Hybrid R-08 fixed example."),
       order: appGuidanceEvidence("Pourō ordering for the source-backed fixed example."),
-      startSec:
-        seed.startSec === 0
-          ? hybridSourceOriginalEvidence(
-              "S1",
-              "The demonstrated example starts with the Switch closed at brew start.",
-            )
-          : appGuidanceEvidence(
-              "No exact step start is stored; approximate targets and observed examples remain separate time references.",
-            ),
+      startSec: hybridSourceOriginalEvidence(
+        "F1",
+        "Pouro-Fable5 Hybrid runtime uses exact 0:00, 0:30, 1:15, and 1:45 step targets.",
+      ),
       endSec: appGuidanceEvidence(
         "No exact step duration or completion second is represented.",
       ),
       title: appGuidanceEvidence("Pourō phase label for the fixed example."),
       actionLabel: appGuidanceEvidence(
-        "Pourō action label summarizing the source-backed cumulative target and Switch state.",
+        "Pourō action label summarizing the Fable5-aligned pour amount and Switch state.",
       ),
-      pourGrams: appGuidanceEvidence(
-        "No unsupported exact incremental pour amount is selected.",
-      ),
-      ...(seed.pourGramsRange
-        ? {
-            pourGramsRange: hybridSourceOriginalEvidence(
-              "S1",
-              "The visible creator-source frame directly shows the first pour as 40-50g.",
+      pourGrams:
+        seed.pourGrams === null
+          ? appGuidanceEvidence("No water is poured on the Switch OPEN drawdown step.")
+          : appCalculatedEvidence(
+              "h1 = round(300 * 3 / 14), h2 = round(300 * 3 / 14), h3 = 300 - h1 - h2.",
+              "Calculated from the Fable5 Hybrid runtime formula for exact 20g / 300g / 1:15.",
             ),
-          }
-        : {}),
       totalWaterGrams: hasCumulativeTarget
-        ? hybridSourceOriginalEvidence(
-            "S1",
-            "Cumulative target in the demonstrated fixed example.",
+        ? appCalculatedEvidence(
+            "Cumulative target after this Fable5-aligned Hybrid step.",
+            "Calculated from 64g, 64g, and 172g pours for the exact 300g total.",
           )
-        : appGuidanceEvidence(
-            "The first pour remains a range, so no single cumulative value is selected.",
-          ),
+        : appGuidanceEvidence("No cumulative target is selected for unresolved data."),
       cumulativeWaterGrams: hasCumulativeTarget
-        ? hybridSourceOriginalEvidence(
-            "S1",
-            "Cumulative target in the demonstrated fixed example.",
+        ? appCalculatedEvidence(
+            "Cumulative target after this Fable5-aligned Hybrid step.",
+            "Calculated from 64g, 64g, and 172g pours for the exact 300g total.",
           )
-        : appGuidanceEvidence(
-            "The first pour remains a range, so no single cumulative value is selected.",
-          ),
-      nextStepTimeSec: appGuidanceEvidence(
-        "Null prevents approximate guidance from driving exact timer behavior.",
-      ),
-      nextPourGrams: appGuidanceEvidence(
-        "Later source values are cumulative targets, not exact incremental pour amounts.",
-      ),
+        : appGuidanceEvidence("No cumulative target is selected for unresolved data."),
+      nextStepTimeSec:
+        seed.nextStepTimeSec === null
+          ? appGuidanceEvidence("No next timed pour is represented after the finish target.")
+          : hybridSourceOriginalEvidence(
+              "F1",
+              "Next step target follows the Fable5 Hybrid runtime sequence.",
+            ),
+      nextPourGrams:
+        seed.nextPourGrams === null
+          ? appGuidanceEvidence("There is no next pour; the next target is Switch operation or finish guidance.")
+          : appCalculatedEvidence(
+              "Next pour amount from the Fable5 Hybrid runtime formula.",
+              "Calculated from the exact 20g / 300g / 1:15 setup.",
+            ),
       timeReferences: hybridSourceOriginalEvidence(
-        "S1",
-        "Approximate narrated targets and observed example frames remain separately labeled.",
+        "F1",
+        "Fable5 Hybrid runtime targets are represented as instruction targets.",
       ),
       timingNote: appGuidanceEvidence(
-        "Pourō caution copy explains that step timing is approximate.",
+        "Pourō caution copy preserves target/guidance wording.",
       ),
       stepType: appGuidanceEvidence(
-        "Pourō maps the source-backed phase to an existing step type.",
+        "Pourō maps the Fable5 Hybrid phase to an existing step type.",
       ),
       instruction: hybridSourceOriginalEvidence(
-        "S1",
-        "Instruction paraphrases the reviewed fixed-example action without adding scaling.",
+        "F1",
+        "Instruction mirrors the Fable5 Hybrid Switch OPEN/CLOSED action text.",
       ),
       nextPreview: appGuidanceEvidence(
-        "Pourō preview keeps the next source-backed action visibly approximate.",
+        "Pourō preview keeps the next Switch action or finish target visible.",
       ),
       sourceStatus: appGuidanceEvidence(
         "The candidate step remains needsReview at container level.",
@@ -547,153 +552,111 @@ function createHybridR08FixedStep(seed: HybridR08FixedStepSeed): BrewStep {
 }
 
 function createHybridR08FixedSteps(): BrewStep[] {
+  const totalWater = HYBRID_R08_FIXED_WATER_GRAMS;
+  const h1 = Math.round((totalWater * 3) / 14);
+  const h2 = Math.round((totalWater * 3) / 14);
+  const h3 = totalWater - h1 - h2;
+
   return [
     createHybridR08FixedStep({
       id: "hybrid-r08-fixed-step-1",
       order: 1,
       startSec: 0,
-      title: "第1フェーズ",
-      actionLabel: "40-50g 注ぐ / Close",
-      pourGramsRange: {
-        min: 40,
-        max: 50,
-        unit: "grams",
-        label: "40-50g",
-      },
-      totalWaterGrams: null,
-      cumulativeWaterGrams: null,
-      instruction:
-        "Switchを閉じた状態で40-50g注ぎ、浸漬でしっかり蒸らします。",
-      nextPreview: "約0:45 に Open、120gまで注ぐ",
-      stepType: "bloom",
+      title: "第1投 / Switch OPEN",
+      actionLabel: `${h1}g 注ぐ / Switch OPEN`,
+      pourGrams: h1,
+      totalWaterGrams: h1,
+      cumulativeWaterGrams: h1,
+      nextStepTimeSec: 30,
+      nextPourGrams: h2,
+      instruction: "透過の注湯（Switch OPEN のまま）。",
+      nextPreview: `00:30 に第2投 ${h2}g / Switch OPEN`,
+      stepType: "pour",
       timeReferences: [
         {
           seconds: 0,
           precision: "exact",
           kind: "instruction_target",
-          label: "開始",
-          note: "The demonstrated example starts with the Switch closed.",
+          label: "00:00",
+          note: "Fable5 Hybrid step 1: Switch OPEN percolation pour.",
         },
       ],
-      timingNote: "時刻は目安です。",
+      timingNote: "Switch OPEN を文字で確認し、色だけに依存しません。",
     }),
     createHybridR08FixedStep({
       id: "hybrid-r08-fixed-step-2",
       order: 2,
-      startSec: null,
-      title: "Open / 120gまで",
-      actionLabel: "120gまで注ぐ / Open",
-      totalWaterGrams: 120,
-      cumulativeWaterGrams: 120,
-      instruction: "Switchを開け、累計120gまで注ぎます。",
-      nextPreview: "約1:30 に 200gまで注ぐ",
+      startSec: 30,
+      title: "第2投 / Switch OPEN",
+      actionLabel: `${h2}g 注ぐ / Switch OPEN`,
+      pourGrams: h2,
+      totalWaterGrams: h1 + h2,
+      cumulativeWaterGrams: h1 + h2,
+      nextStepTimeSec: 75,
+      nextPourGrams: h3,
+      instruction: "透過の注湯。注ぎ終えたら Switch を閉じます。",
+      nextPreview: `01:15 に第3投 ${h3}g / Switch CLOSED`,
       stepType: "pour",
       timeReferences: [
         {
-          seconds: 45,
-          precision: "approximate",
+          seconds: 30,
+          precision: "exact",
           kind: "instruction_target",
-          label: "約0:45",
-          note: "Approximate first release and 120g cumulative target.",
-        },
-        {
-          seconds: 46,
-          precision: "observed",
-          kind: "observed_example",
-          label: "約0:46",
-          note: "Observed example frame showing 120g and Open.",
+          label: "00:30",
+          note: "Fable5 Hybrid step 2: Switch remains OPEN, then closes after the pour.",
         },
       ],
-      timingNote: "目標時刻と確認できた画面時刻には差があります。",
+      timingNote: "注ぎ終えたら Switch CLOSED に切り替えます。",
     }),
     createHybridR08FixedStep({
       id: "hybrid-r08-fixed-step-3",
       order: 3,
-      startSec: null,
-      title: "200gまで",
-      actionLabel: "200gまで注ぐ / Open",
-      totalWaterGrams: 200,
-      cumulativeWaterGrams: 200,
-      instruction: "透過のまま累計200gまで注ぎます。",
-      nextPreview: "約2:10 に 300gまで注ぎ、Close",
+      startSec: 75,
+      title: "第3投 / Switch CLOSED",
+      actionLabel: `${h3}g 注ぐ / Switch CLOSED`,
+      pourGrams: h3,
+      totalWaterGrams: totalWater,
+      cumulativeWaterGrams: totalWater,
+      nextStepTimeSec: 105,
+      nextPourGrams: null,
+      instruction: "浸漬の注湯（Switch CLOSED）。後半の液温は70-80°C目安です。",
+      nextPreview: "01:45 に Switch OPEN / 落とし切り",
       stepType: "pour",
       timeReferences: [
         {
-          seconds: 90,
-          precision: "approximate",
+          seconds: 75,
+          precision: "exact",
           kind: "instruction_target",
-          label: "約1:30",
-          note: "Narrated approximate target for reaching 200g.",
-        },
-        {
-          seconds: 97,
-          precision: "observed",
-          kind: "observed_example",
-          label: "約1:37",
-          note: "Observed example frame showing 200g and Open.",
+          label: "01:15",
+          note: "Fable5 Hybrid step 3: Switch CLOSED immersion pour.",
         },
       ],
-      timingNote: "目標時刻と確認できた画面時刻には差があります。",
+      timingNote: "70-80°C は液温の目安で、常温水の量や温度を固定表示しません。",
     }),
     createHybridR08FixedStep({
       id: "hybrid-r08-fixed-step-4",
       order: 4,
-      startSec: null,
-      title: "300gまで / Close",
-      actionLabel: "300gまで注ぐ / Close",
-      totalWaterGrams: 300,
-      cumulativeWaterGrams: 300,
-      instruction:
-        "湯温を下げた湯で累計300gまで注ぎ、Switchを閉じて再び浸漬します。後半の湯温は70-80°C目安です。",
-      nextPreview: "約2:45 に Open",
-      stepType: "pour",
-      timeReferences: [
-        {
-          seconds: 130,
-          precision: "approximate",
-          kind: "instruction_target",
-          label: "約2:10",
-          note: "Narrated approximate target for the lower-temperature final pour.",
-        },
-        {
-          seconds: 140,
-          precision: "observed",
-          kind: "observed_example",
-          label: "約2:20",
-          note: "Observed example frame showing 300g and Close.",
-        },
-      ],
-      timingNote: "目標時刻と確認できた画面時刻には差があります。",
-    }),
-    createHybridR08FixedStep({
-      id: "hybrid-r08-fixed-step-5",
-      order: 5,
-      startSec: null,
-      title: "Open / 仕上げ",
-      actionLabel: "Openして落とす",
-      totalWaterGrams: 300,
-      cumulativeWaterGrams: 300,
-      instruction:
-        "約2:45を目安にSwitchを開けます。約3:30を仕上がり目安とし、確認できた画面では約3:34でドリッパーを外しています。",
-      nextPreview: "約3:30を目安に終了",
+      startSec: 105,
+      title: "Switch OPEN / 落とし切り",
+      actionLabel: "Switch OPEN / no water",
+      pourGrams: null,
+      totalWaterGrams: totalWater,
+      cumulativeWaterGrams: totalWater,
+      nextStepTimeSec: 180,
+      nextPourGrams: null,
+      instruction: "Switch を開けて落とし切ります（目安 3:00）。",
+      nextPreview: "03:00 は仕上がり目安です（完了保証ではありません）。",
       stepType: "drawdown",
       timeReferences: [
         {
-          seconds: 165,
-          precision: "approximate",
+          seconds: 105,
+          precision: "exact",
           kind: "instruction_target",
-          label: "約2:45",
-          note: "Narrated approximate final release target.",
-        },
-        {
-          seconds: 169,
-          precision: "observed",
-          kind: "observed_example",
-          label: "約2:49",
-          note: "Observed example frame showing the final Open action.",
+          label: "01:45",
+          note: "Fable5 Hybrid drawdown step: Switch OPEN and no water.",
         },
       ],
-      timingNote: "仕上がり目安と確認できたドリッパー取り外し時刻は別です。",
+      timingNote: "3:00 は target / finish guidance で、正確な完了時刻ではありません。",
     }),
   ];
 }
@@ -701,9 +664,9 @@ function createHybridR08FixedSteps(): BrewStep[] {
 const hybridR08FixedExampleRecipe: BrewRecipe = {
   recipeId: "hybrid-r08-new-hybrid-fixed-example",
   methodId: "hybrid",
-  coffeeGrams: 20,
-  waterGrams: 300,
-  ratio: 15,
+  coffeeGrams: HYBRID_R08_FIXED_COFFEE_GRAMS,
+  waterGrams: HYBRID_R08_FIXED_WATER_GRAMS,
+  ratio: HYBRID_R08_FIXED_RATIO,
   waterTempCelsius: null,
   waterTempCelsiusRange: {
     min: 70,
@@ -713,34 +676,27 @@ const hybridR08FixedExampleRecipe: BrewRecipe = {
     note: "Later lower-temperature guidance only; initial temperature remains unresolved.",
   },
   grindSizeLabel: "Comandante 28 clicks / やや粗め",
-  totalTimeSec: null,
+  totalTimeSec: HYBRID_R08_FINISH_TARGET_SEC,
   totalTimeReferences: [
     {
-      seconds: 210,
+      seconds: HYBRID_R08_FINISH_TARGET_SEC,
       precision: "approximate",
       kind: "finish_target",
-      label: "約3:30",
-      note: "Creator caption target completion; not a guaranteed natural drawdown completion.",
-    },
-    {
-      seconds: 214,
-      precision: "observed",
-      kind: "dripper_removal",
-      label: "約3:34",
-      note: "Observed dripper removal timing from visible frame; not an instruction target.",
+      label: "03:00",
+      note: "Fable5 Hybrid target / finish guidance; not a guaranteed natural drawdown completion.",
     },
   ],
   fixedSetupGate: {
-    coffeeGrams: 20,
-    waterGrams: 300,
-    ratio: 15,
+    coffeeGrams: HYBRID_R08_FIXED_COFFEE_GRAMS,
+    waterGrams: HYBRID_R08_FIXED_WATER_GRAMS,
+    ratio: HYBRID_R08_FIXED_RATIO,
     scalingSupported: false,
     unsupportedSetupBehavior: "placeholder_fallback",
     note: "Source-backed Hybrid R-08 candidate is limited to exact 20g / 300g / 1:15.",
   },
   valuesArePlaceholder: false,
   needsReviewReason:
-    "New Hybrid の 20g / 300g / 1:15 固定例のみ出典付き候補です。時刻は目安、初期湯温は未解決で、任意換算には対応していません。Pourōは非公式で、出典元との提携・監修関係はありません。",
+    "New Hybrid の 20g / 300g / 1:15 固定例のみ Fable5 に合わせた候補です。Switch OPEN/CLOSED を文字で示し、3:00 は仕上がり目安です。70-80°C は液温目安のみで、常温水の量や温度は固定表示しません。Pourōは非公式で、出典元との提携関係はありません。",
   fieldEvidence: {
     recipeId: appGuidanceEvidence("Pourō identifier for the narrow Hybrid R-08 fixed example."),
     methodId: appGuidanceEvidence(
@@ -769,12 +725,13 @@ const hybridR08FixedExampleRecipe: BrewRecipe = {
       "S1",
       "Comandante 28 clicks / somewhat coarse is grinder-specific guidance, not a universal grind setting.",
     ),
-    totalTimeSec: unresolvedEvidence(
-      "No single exact total time is selected because target completion and observed removal differ.",
+    totalTimeSec: hybridSourceOriginalEvidence(
+      "F1",
+      "Fable5 Hybrid targetDrawdownSec is 180 seconds; Pourō treats it as finish guidance, not guaranteed completion.",
     ),
     totalTimeReferences: hybridSourceOriginalEvidence(
-      "S1",
-      "Approximate finish target and observed dripper removal remain separate.",
+      "F1",
+      "The 03:00 target is stored as approximate finish guidance.",
     ),
     fixedSetupGate: appGuidanceEvidence(
       "Pourō limits source-backed selection to exact 20g / 300g / 1:15 and falls back otherwise.",
@@ -783,11 +740,11 @@ const hybridR08FixedExampleRecipe: BrewRecipe = {
       "The exact recipe contains reviewed candidate values while method and variant containers retain caution metadata.",
     ),
     needsReviewReason: appGuidanceEvidence(
-      "Pourō caution copy states fixed-example scope, approximation, unresolved initial temperature, disabled scaling, and non-affiliation.",
+      "Pourō caution copy states fixed-example scope, visible Switch state, liquid-temperature guidance, no fixed room-temperature amount, disabled scaling, and non-affiliation.",
     ),
     steps: hybridSourceOriginalEvidence(
-      "S1",
-      "The fixed example preserves the reviewed phase order, first-pour range, cumulative targets, Switch actions, and separate timing semantics.",
+      "F1",
+      "The fixed example preserves the Fable5 Hybrid 64 / 64 / 172 pours, Switch actions, and 3:00 finish guidance.",
     ),
   },
   steps: createHybridR08FixedSteps(),
