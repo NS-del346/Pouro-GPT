@@ -298,7 +298,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p className="timer-schedule-note">
             <strong>New Hybrid 固定例（20g / 300g）</strong>
             <span>
-              最初の注湯は40-50gの範囲、時刻は目安です。初期湯温は未解決で、後半の低い湯温は70-80°Cの目安です。任意換算には対応していません。Pourōは非公式で、出典元との提携・監修関係はありません。
+              注湯は64g / 64g / 172gです。Switch OPEN/CLOSEDを文字で確認してください。3:00は仕上がり目安で、70-80°Cは液温目安のみです。常温水の量や温度は固定表示しません。任意換算には対応していません。Pourōは非公式で、出典元との提携関係はありません。
             </span>
           </p>
         )}
