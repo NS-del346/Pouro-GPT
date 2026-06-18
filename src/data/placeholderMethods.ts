@@ -124,6 +124,13 @@ const tenPourSources = {
   },
 } as const;
 
+const iceSources = {
+  F1: {
+    sourceId: "F1",
+    sourceTitle: "Pouro-Fable5 app.js RecipeEngine._buildIce",
+  },
+} as const;
+
 function sourceOriginalEvidence(
   sourceId: keyof typeof fourSixSources,
   note: string,
@@ -162,6 +169,14 @@ function tenPourVisualEvidence(note: string): FieldSourceEvidence {
   };
 }
 
+function iceFable5Evidence(note: string): FieldSourceEvidence {
+  return {
+    provenance: "source_original",
+    ...iceSources.F1,
+    note,
+  };
+}
+
 function appCalculatedEvidence(
   calculationNote: string,
   note: string,
@@ -171,6 +186,13 @@ function appCalculatedEvidence(
     calculationNote,
     note,
   };
+}
+
+function iceR10FormulaEvidence(note: string): FieldSourceEvidence {
+  return appCalculatedEvidence(
+    "Fable5 Ice Brew formula: hotWater = round(dose * 7.5), ice = round(dose * 4), five equal HOT pours, and active timer cumulative target uses HOT water only.",
+    note,
+  );
 }
 
 function appGuidanceEvidence(note: string): FieldSourceEvidence {
@@ -948,6 +970,270 @@ const tenPourR09FixedExampleRecipe: BrewRecipe = {
   steps: createTenPourR09FixedSteps(),
 };
 
+const ICE_R10_FIXED_COFFEE_GRAMS = 20;
+const ICE_R10_FIXED_HOT_WATER_GRAMS = Math.round(
+  ICE_R10_FIXED_COFFEE_GRAMS * 7.5,
+);
+const ICE_R10_FIXED_ICE_GRAMS = Math.round(ICE_R10_FIXED_COFFEE_GRAMS * 4);
+const ICE_R10_TOTAL_BEVERAGE_WATER_GRAMS =
+  ICE_R10_FIXED_HOT_WATER_GRAMS + ICE_R10_FIXED_ICE_GRAMS;
+const ICE_R10_HOT_POUR_COUNT = 5;
+const ICE_R10_HOT_POUR_GRAMS = Math.round(
+  ICE_R10_FIXED_HOT_WATER_GRAMS / ICE_R10_HOT_POUR_COUNT,
+);
+const ICE_R10_FINISH_TARGET_SEC = 180;
+const ICE_R10_POUR_STARTS = [0, 30, 60, 90, 120] as const;
+
+function formatIceR10Time(seconds: number): string {
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(
+    seconds % 60,
+  ).padStart(2, "0")}`;
+}
+
+function createIceR10FixedSteps(): BrewStep[] {
+  const pourSteps = ICE_R10_POUR_STARTS.map((startSec, index): BrewStep => {
+    const order = index + 1;
+    const isLastPour = order === ICE_R10_HOT_POUR_COUNT;
+    const cumulativeWaterGrams =
+      isLastPour
+        ? ICE_R10_FIXED_HOT_WATER_GRAMS
+        : ICE_R10_HOT_POUR_GRAMS * order;
+    const nextStepTimeSec = isLastPour
+      ? ICE_R10_FINISH_TARGET_SEC
+      : ICE_R10_POUR_STARTS[index + 1]!;
+
+    return {
+      id: `ice-r10-fixed-step-${order}`,
+      order,
+      startSec,
+      endSec: null,
+      title: `第${order}投 / HOT`,
+      actionLabel: `${ICE_R10_HOT_POUR_GRAMS}g HOT`,
+      pourGrams: ICE_R10_HOT_POUR_GRAMS,
+      totalWaterGrams: cumulativeWaterGrams,
+      cumulativeWaterGrams,
+      nextStepTimeSec,
+      nextPourGrams: isLastPour ? null : ICE_R10_HOT_POUR_GRAMS,
+      stepType: "pour",
+      instruction:
+        order === 1
+          ? `${formatIceR10Time(startSec)} に${ICE_R10_HOT_POUR_GRAMS}g HOTで蒸らし、累計HOT ${cumulativeWaterGrams}gにします。ICE ${ICE_R10_FIXED_ICE_GRAMS}gはサーバーに先入れです。`
+          : `${formatIceR10Time(startSec)} に${ICE_R10_HOT_POUR_GRAMS}g HOTを注ぎ、累計HOT ${cumulativeWaterGrams}gにします。`,
+      nextPreview: isLastPour
+        ? "03:00 急冷・完成ガイド。追加の注湯はありません。"
+        : `${formatIceR10Time(nextStepTimeSec)} に${ICE_R10_HOT_POUR_GRAMS}g HOT`,
+      sourceStatus: "needsReview",
+      verificationLevel: "unverified",
+      isPlaceholder: false,
+      fieldEvidence: {
+        id: appGuidanceEvidence(
+          "Pouro identifier for the narrow R-10 Ice Brew fixed example.",
+        ),
+        order: appGuidanceEvidence(
+          "Pouro ordering for the Fable5-aligned R-10 Ice Brew fixed example.",
+        ),
+        startSec: iceFable5Evidence(
+          "Fable5 Ice Brew runtime uses exact 0:00, 0:30, 1:00, 1:30, and 2:00 HOT pour targets.",
+        ),
+        endSec: appGuidanceEvidence(
+          "No exact pour duration or natural completion second is represented.",
+        ),
+        title: appGuidanceEvidence(
+          "Step title keeps the HOT context visible for Ice Brew.",
+        ),
+        actionLabel: iceR10FormulaEvidence(
+          "Action label uses the fixed HOT pour amount for the exact 20g setup.",
+        ),
+        pourGrams: iceR10FormulaEvidence(
+          "Each active R-10 pour is 30g HOT for the exact 20g setup.",
+        ),
+        totalWaterGrams: iceR10FormulaEvidence(
+          "Timer total is cumulative HOT water only; ICE is not counted as poured water.",
+        ),
+        cumulativeWaterGrams: iceR10FormulaEvidence(
+          "Timer cumulative target is HOT water only and reaches 150g, not 230g.",
+        ),
+        nextStepTimeSec: iceFable5Evidence(
+          "Next target follows the Fable5 Ice Brew timing sequence.",
+        ),
+        nextPourGrams: isLastPour
+          ? appGuidanceEvidence(
+              "There is no next pour after the fifth HOT pour; the next target is chill / finish guidance.",
+            )
+          : iceR10FormulaEvidence(
+              "Next active pour remains 30g HOT in the fixed sequence.",
+            ),
+        stepType: appGuidanceEvidence(
+          "Pouro maps each active R-10 schedule row to the existing pour step type.",
+        ),
+        instruction: iceFable5Evidence(
+          "Instruction preserves HOT pour context and server pre-set ICE context.",
+        ),
+        nextPreview: isLastPour
+          ? iceFable5Evidence(
+              "The 3:00 row is chill / finish guidance with no additional water.",
+            )
+          : iceR10FormulaEvidence(
+              "Preview restates the next HOT-only pour target.",
+            ),
+        sourceStatus: appGuidanceEvidence(
+          "The candidate step remains needsReview at container level.",
+        ),
+        verificationLevel: appGuidanceEvidence(
+          "The candidate step remains unverified at container level.",
+        ),
+        isPlaceholder: appGuidanceEvidence(
+          "This exact-gated step contains Fable5-aligned data rather than the generic placeholder scaffold.",
+        ),
+      },
+    };
+  });
+
+  const finishStep: BrewStep = {
+    id: "ice-r10-fixed-step-6",
+    order: 6,
+    startSec: ICE_R10_FINISH_TARGET_SEC,
+    endSec: null,
+    title: "急冷・完成",
+    actionLabel: "No water / ICE",
+    pourGrams: null,
+    totalWaterGrams: ICE_R10_FIXED_HOT_WATER_GRAMS,
+    cumulativeWaterGrams: ICE_R10_FIXED_HOT_WATER_GRAMS,
+    nextStepTimeSec: null,
+    nextPourGrams: null,
+    stepType: "drawdown",
+    instruction:
+      "スワールして急冷。氷が溶けたら完成の目安です。追加のHOT注湯はありません。",
+    nextPreview: null,
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    isPlaceholder: false,
+    fieldEvidence: {
+      id: appGuidanceEvidence(
+        "Pouro identifier for the R-10 Ice Brew chill / finish guidance row.",
+      ),
+      order: appGuidanceEvidence(
+        "Pouro ordering places chill / finish guidance after the five HOT pours.",
+      ),
+      startSec: iceFable5Evidence(
+        "Fable5 Ice Brew uses 3:00 as chill / finish guidance.",
+      ),
+      endSec: unresolvedEvidence(
+        "No exact natural completion duration is represented.",
+      ),
+      title: iceFable5Evidence("Fable5 labels this row as chill / finish."),
+      actionLabel: appGuidanceEvidence(
+        "The guidance row has no active poured water.",
+      ),
+      pourGrams: appGuidanceEvidence(
+        "No HOT water is poured on the chill / finish guidance row.",
+      ),
+      totalWaterGrams: iceR10FormulaEvidence(
+        "The timer remains at the HOT-only target of 150g.",
+      ),
+      cumulativeWaterGrams: iceR10FormulaEvidence(
+        "ICE remains pre-set server ice and is not added to active timer cumulative water.",
+      ),
+      nextStepTimeSec: appGuidanceEvidence(
+        "There is no next timed pour after the chill / finish guidance row.",
+      ),
+      nextPourGrams: appGuidanceEvidence(
+        "There is no next active HOT pour after the fifth pour.",
+      ),
+      stepType: appGuidanceEvidence(
+        "Pouro uses the existing drawdown step type for no-water finish guidance.",
+      ),
+      instruction: iceFable5Evidence(
+        "Instruction preserves swirl / chill / finish guidance without treating 3:00 as exact completion.",
+      ),
+      nextPreview: appGuidanceEvidence("No next preview after final guidance."),
+      sourceStatus: appGuidanceEvidence(
+        "The candidate step remains needsReview at container level.",
+      ),
+      verificationLevel: appGuidanceEvidence(
+        "The candidate step remains unverified at container level.",
+      ),
+      isPlaceholder: appGuidanceEvidence(
+        "This exact-gated guidance row contains Fable5-aligned data rather than the generic placeholder scaffold.",
+      ),
+    },
+  };
+
+  return [...pourSteps, finishStep];
+}
+
+const iceR10FixedExampleRecipe: BrewRecipe = {
+  recipeId: "ice-brew-r10-fixed-example",
+  methodId: "ice-brew",
+  coffeeGrams: ICE_R10_FIXED_COFFEE_GRAMS,
+  waterGrams: ICE_R10_FIXED_HOT_WATER_GRAMS,
+  ratio: null,
+  waterTempCelsius: null,
+  grindSizeLabel: null,
+  totalTimeSec: ICE_R10_FINISH_TARGET_SEC,
+  totalTimeReferences: [
+    {
+      seconds: ICE_R10_FINISH_TARGET_SEC,
+      precision: "approximate",
+      kind: "finish_target",
+      label: "03:00",
+      note: "Chill / finish guidance only; not an exact natural completion time.",
+    },
+  ],
+  valuesArePlaceholder: false,
+  needsReviewReason:
+    "R-10 Ice Brew is limited to exact 20g with HOT 150g / ICE 80g. Timer targets use HOT water only; ICE is pre-set in the server and is not counted as active poured water. Arbitrary scaling falls back to the placeholder recipe. Pouro is an independent app-organized reference with no affiliation.",
+  fieldEvidence: {
+    recipeId: appGuidanceEvidence(
+      "Pouro identifier for the narrow R-10 Ice Brew fixed example.",
+    ),
+    methodId: appGuidanceEvidence(
+      "PR-RECIPE-03 is limited to the repository R-10 Ice Brew mapping.",
+    ),
+    coffeeGrams: iceR10FormulaEvidence(
+      "20g is the supported fixed dose for this PR-RECIPE-03 Ice Brew example.",
+    ),
+    waterGrams: iceR10FormulaEvidence(
+      "Recipe waterGrams stores active HOT water only: round(20 * 7.5) = 150g.",
+    ),
+    ratio: appGuidanceEvidence(
+      "Ice Brew ignores ratio in the Fable5 runtime formula.",
+    ),
+    waterTempCelsius: unresolvedEvidence(
+      "Exact hot-water temperature is outside PR-RECIPE-03 scope.",
+    ),
+    grindSizeLabel: unresolvedEvidence(
+      "Grind guidance is outside PR-RECIPE-03 scope.",
+    ),
+    totalTimeSec: iceFable5Evidence(
+      "Fable5 Ice Brew targetDrawdownSec is 180 seconds for chill / finish guidance.",
+    ),
+    totalTimeReferences: iceFable5Evidence(
+      "The 3:00 reference is stored as approximate chill / finish guidance.",
+    ),
+    valuesArePlaceholder: appGuidanceEvidence(
+      "The exact recipe contains Fable5-aligned candidate values while method and variant containers retain caution metadata.",
+    ),
+    needsReviewReason: appGuidanceEvidence(
+      "Pouro caution copy states fixed-example scope, HOT-only timer target, pre-set ICE, disabled scaling, and non-affiliation.",
+    ),
+    steps: iceFable5Evidence(
+      "The fixed example preserves the Fable5 Ice Brew 30g x 5 HOT pours and 3:00 chill / finish guidance.",
+    ),
+    hotWater: iceR10FormulaEvidence(
+      "HOT water = round(20 * 7.5) = 150g.",
+    ),
+    ice: iceR10FormulaEvidence("ICE = round(20 * 4) = 80g."),
+    totalBeverageWater: iceR10FormulaEvidence(
+      `Total beverage water equivalent is ${ICE_R10_TOTAL_BEVERAGE_WATER_GRAMS}g, but the active timer target remains ${ICE_R10_FIXED_HOT_WATER_GRAMS}g HOT.`,
+    ),
+    scaling: unresolvedEvidence(
+      "Only the exact 20g / HOT 150g / ICE 80g setup is selected by getRecipeForSetup.",
+    ),
+  },
+  steps: createIceR10FixedSteps(),
+};
+
 function createPlaceholderMethod(seed: PlaceholderMethodSeed): BrewMethod {
   return {
     ...seed,
@@ -1304,9 +1590,39 @@ export const brewVariants: BrewVariant[] = [
     recommendedWaterGrams: null,
     recommendedHotWaterGrams: 150,
     recommendedIceGrams: 80,
-    sourceStatus: "placeholder",
-    verificationLevel: "placeholder",
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
     valuesArePlaceholder: true,
+    fieldEvidence: {
+      recommendedCoffeeGrams: iceR10FormulaEvidence(
+        "20g is the supported fixed dose for PR-RECIPE-03 R-10.",
+      ),
+      recommendedRatio: appGuidanceEvidence(
+        "R-10 Ice Brew uses HOT/ICE fields instead of a ratio in the current setup model.",
+      ),
+      recommendedWaterGrams: appGuidanceEvidence(
+        "R-10 does not use combined waterGrams in setup; HOT water and ICE remain separate.",
+      ),
+      recommendedHotWaterGrams: iceR10FormulaEvidence(
+        "HOT water = round(20 * 7.5) = 150g.",
+      ),
+      recommendedIceGrams: iceR10FormulaEvidence(
+        "ICE = round(20 * 4) = 80g.",
+      ),
+      sourceStatus: appGuidanceEvidence(
+        "R-10 remains caution-gated as an independent app-organized runtime candidate.",
+      ),
+      verificationLevel: appGuidanceEvidence(
+        "R-10 remains unverified rather than final or endorsed.",
+      ),
+      valuesArePlaceholder: appGuidanceEvidence(
+        "The variant container keeps caution metadata while the exact recipe gate returns the fixed runtime candidate.",
+      ),
+      recipe: appGuidanceEvidence(
+        "PR-RECIPE-03 permits the exact R-10 20g / HOT 150g / ICE 80g fixed recipe.",
+      ),
+    },
+    recipe: iceR10FixedExampleRecipe,
   },
 ];
 
@@ -1363,6 +1679,17 @@ export function getRecipeForSetup(
     setup.waterGrams === 300
   ) {
     return getVariantById("R-09")?.recipe ?? method.recipe;
+  }
+
+  if (
+    method.id === "ice-brew" &&
+    setup.methodId === "ice-brew" &&
+    setup.variantId === "R-10" &&
+    setup.coffeeGrams === ICE_R10_FIXED_COFFEE_GRAMS &&
+    setup.hotWaterGrams === ICE_R10_FIXED_HOT_WATER_GRAMS &&
+    setup.iceGrams === ICE_R10_FIXED_ICE_GRAMS
+  ) {
+    return getVariantById("R-10")?.recipe ?? method.recipe;
   }
 
   return method.recipe;
