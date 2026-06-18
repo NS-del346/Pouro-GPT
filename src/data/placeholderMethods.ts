@@ -183,158 +183,258 @@ function unresolvedEvidence(note: string): FieldSourceEvidence {
   };
 }
 
-function createFourSixR01BasicSteps(): BrewStep[] {
-  const starts = [0, 45, 90, 135, 165];
+type FourSixStandardFlavor = "balanced" | "sweet" | "bright";
 
-  return starts.map((startSec, index) => {
+type FourSixStandardRecipeSeed = {
+  variantId: Extract<BrewVariantId, "R-01" | "R-02" | "R-03">;
+  flavor: FourSixStandardFlavor;
+  label: string;
+};
+
+const FOUR_SIX_FIXED_COFFEE_GRAMS = 20;
+const FOUR_SIX_FIXED_RATIO = 15;
+const FOUR_SIX_FIXED_WATER_GRAMS = 300;
+const FOUR_SIX_STANDARD_BACK_POUR_COUNT = 2;
+const FOUR_SIX_STANDARD_STARTS = [0, 45, 90, 135] as const;
+const FOUR_SIX_DRAWDOWN_TARGET_SEC = 210;
+
+const fourSixFlavorNotes: Record<FourSixStandardFlavor, string> = {
+  balanced: "バランス",
+  sweet: "甘め寄り",
+  bright: "明るめ寄り",
+};
+
+function formatFourSixTime(seconds: number): string {
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(
+    seconds % 60,
+  ).padStart(2, "0")}`;
+}
+
+function fourSixFormulaEvidence(note: string): FieldSourceEvidence {
+  return appCalculatedEvidence(
+    "Fable5 4:6 formula: totalWater = round(dose * ratio), frontWater = round(totalWater * 0.4), backWater = totalWater - frontWater, standard backPourCount = 2.",
+    note,
+  );
+}
+
+function getFourSixStandardPourAmounts(
+  flavor: FourSixStandardFlavor,
+): number[] {
+  const totalWater = Math.round(
+    FOUR_SIX_FIXED_COFFEE_GRAMS * FOUR_SIX_FIXED_RATIO,
+  );
+  const frontWater = Math.round(totalWater * 0.4);
+  const backWater = totalWater - frontWater;
+  const firstPour =
+    flavor === "sweet"
+      ? Math.round((frontWater * 5) / 12)
+      : flavor === "bright"
+        ? Math.round((frontWater * 7) / 12)
+        : Math.round(frontWater / 2);
+  const secondPour = frontWater - firstPour;
+  const perBack = Math.round(backWater / FOUR_SIX_STANDARD_BACK_POUR_COUNT);
+  const backPours = Array.from(
+    { length: FOUR_SIX_STANDARD_BACK_POUR_COUNT },
+    (_, index) =>
+      index === FOUR_SIX_STANDARD_BACK_POUR_COUNT - 1
+        ? backWater - perBack * (FOUR_SIX_STANDARD_BACK_POUR_COUNT - 1)
+        : perBack,
+  );
+
+  return [firstPour, secondPour, ...backPours];
+}
+
+function createFourSixStandardSteps(seed: FourSixStandardRecipeSeed): BrewStep[] {
+  const pourAmounts = getFourSixStandardPourAmounts(seed.flavor);
+  let cumulativeWaterGrams = 0;
+
+  return FOUR_SIX_STANDARD_STARTS.map((startSec, index) => {
     const order = index + 1;
-    const cumulativeWaterGrams = order * 60;
-    const isLastPour = order === starts.length;
-    const nextStepTimeSec = isLastPour ? 210 : starts[index + 1];
-    const nextPourGrams = isLastPour ? null : 60;
+    const pourGrams = pourAmounts[index] ?? 0;
+    cumulativeWaterGrams += pourGrams;
+    const isLastPour = order === FOUR_SIX_STANDARD_STARTS.length;
+    const nextStepTimeSec = isLastPour
+      ? FOUR_SIX_DRAWDOWN_TARGET_SEC
+      : FOUR_SIX_STANDARD_STARTS[index + 1]!;
+    const nextPourGrams = isLastPour ? null : (pourAmounts[index + 1] ?? null);
     const nextPreview = isLastPour
-      ? "03:30 にドリッパーを外す（自然な落ち切り完了の保証ではありません）"
-      : `${String(Math.floor(nextStepTimeSec / 60)).padStart(2, "0")}:${String(
-          nextStepTimeSec % 60,
-        ).padStart(2, "0")} に 60g 注ぐ`;
+      ? "03:30 はドローダウン/終了の目安です（自然な完了保証ではありません）"
+      : `${formatFourSixTime(nextStepTimeSec)} に ${nextPourGrams}g 注ぐ`;
 
     return {
-      id: `four-six-r01-basic-step-${order}`,
+      id: `four-six-${seed.variantId.toLowerCase()}-standard-step-${order}`,
       order,
       startSec,
       endSec: null,
       title: `第${order}投`,
-      actionLabel: "60g 注ぐ",
-      pourGrams: 60,
+      actionLabel: `${pourGrams}g 注ぐ`,
+      pourGrams,
       totalWaterGrams: cumulativeWaterGrams,
       cumulativeWaterGrams,
       nextStepTimeSec,
       nextPourGrams,
       stepType: "pour",
-      instruction: isLastPour
-        ? "02:45 に 60g 注ぎ、累計 300g にします。03:30 にドリッパーを外して終了します。"
-        : `${String(Math.floor(startSec / 60)).padStart(2, "0")}:${String(
-            startSec % 60,
-          ).padStart(2, "0")} に 60g 注ぎ、累計 ${cumulativeWaterGrams}g にします。`,
+      instruction: `${formatFourSixTime(
+        startSec,
+      )} に ${pourGrams}g 注ぎ、累計 ${cumulativeWaterGrams}g にします。${
+        isLastPour ? "03:30 はドローダウン/終了の目安です。" : ""
+      }`,
       nextPreview,
       sourceStatus: "needsReview",
       verificationLevel: "unverified",
       isPlaceholder: false,
       fieldEvidence: {
-        id: appGuidanceEvidence("Pourō identifier for the R-01 basic candidate step."),
-        order: appGuidanceEvidence("Pourō ordering for the five source-backed pours."),
-        startSec: sourceOriginalEvidence(
-          "S1",
-          "Basic five-pour timing, limited to the reviewed R-01 source example.",
+        id: appGuidanceEvidence(
+          `Pourō identifier for the ${seed.variantId} 4:6 ${seed.label} fixed example step.`,
+        ),
+        order: appGuidanceEvidence(
+          "Pourō ordering for the Fable5-aligned 4:6 standard fixed example.",
+        ),
+        startSec: fourSixFormulaEvidence(
+          "Fable5 standard timing uses 0:00, 0:45, 1:30, and 2:15 for the four pours.",
         ),
         endSec: appGuidanceEvidence(
-          "No pour-duration or natural drawdown completion claim is represented.",
+          "No pour-duration or exact natural drawdown completion claim is represented.",
         ),
-        title: appGuidanceEvidence("Pourō step label for the source-backed pour."),
-        actionLabel: appGuidanceEvidence(
-          "Pourō action label for the source-backed 60g pour.",
+        title: appGuidanceEvidence("Pourō step label for the 4:6 pour."),
+        actionLabel: fourSixFormulaEvidence(
+          `Action amount for ${seed.label} at 20g / 300g / 1:15.`,
         ),
-        pourGrams: sourceOriginalEvidence(
-          "S2",
-          "One 60g pour in the reviewed 20g / 300g basic example.",
+        pourGrams: fourSixFormulaEvidence(
+          `Calculated pour amount for ${seed.label} at 20g / 300g / 1:15.`,
         ),
-        totalWaterGrams: sourceOriginalEvidence(
-          "S2",
-          "Cumulative water in the reviewed 20g / 300g basic example.",
+        totalWaterGrams: fourSixFormulaEvidence(
+          "Cumulative water after this calculated 4:6 standard pour.",
         ),
-        cumulativeWaterGrams: sourceOriginalEvidence(
-          "S2",
-          "Cumulative water in the reviewed 20g / 300g basic example.",
+        cumulativeWaterGrams: fourSixFormulaEvidence(
+          "Cumulative water after this calculated 4:6 standard pour.",
         ),
-        nextStepTimeSec: sourceOriginalEvidence(
-          "S1",
+        nextStepTimeSec: fourSixFormulaEvidence(
           isLastPour
-            ? "03:30 is the source-backed dripper-removal action, not guaranteed natural drawdown completion."
-            : "Next pour timing in the reviewed R-01 basic example.",
+            ? "03:30 is a drawdown / finish target guidance point, not guaranteed natural completion."
+            : "Next pour timing in the Fable5-aligned 4:6 standard schedule.",
         ),
         nextPourGrams: isLastPour
           ? appGuidanceEvidence(
-              "There is no next pour; the next source-backed action is dripper removal.",
+              "There is no next pour; the next target is drawdown / finish guidance.",
             )
-          : sourceOriginalEvidence(
-              "S2",
-              "Next pour amount in the reviewed 20g / 300g basic example.",
+          : fourSixFormulaEvidence(
+              "Next pour amount in the Fable5-aligned 4:6 standard schedule.",
             ),
         stepType: appGuidanceEvidence(
-          "Pourō maps the source-backed action to the existing pour step type.",
+          "Pourō maps each supported 4:6 standard row to the existing pour step type.",
         ),
-        instruction: sourceOriginalEvidence(
-          "S1",
-          isLastPour
-            ? "The reviewed basic example pours at 02:45 and removes the dripper at 03:30."
-            : "Instruction restates the reviewed basic example timing and amount.",
+        instruction: fourSixFormulaEvidence(
+          `Instruction restates the ${seed.label} fixed-example timing, pour amount, and cumulative target.`,
         ),
-        nextPreview: sourceOriginalEvidence(
-          "S1",
+        nextPreview: fourSixFormulaEvidence(
           isLastPour
-            ? "The preview preserves 03:30 as a dripper-removal action."
-            : "The preview restates the next reviewed basic pour.",
+            ? "The preview preserves 03:30 as target guidance rather than an exact completion guarantee."
+            : "The preview restates the next calculated 4:6 standard pour.",
         ),
         sourceStatus: appGuidanceEvidence(
-          "The candidate step remains needsReview at container level.",
+          "The fixed-example step remains needsReview at container level.",
         ),
         verificationLevel: appGuidanceEvidence(
-          "The candidate step remains unverified at container level.",
+          "The fixed-example step remains unverified at container level.",
         ),
         isPlaceholder: appGuidanceEvidence(
-          "This step contains reviewed candidate data rather than the generic placeholder scaffold.",
+          "This exact-gated step contains calculated Fable5-aligned data rather than the generic placeholder scaffold.",
         ),
       },
     };
   });
 }
 
-const fourSixR01BasicRecipe: BrewRecipe = {
-  recipeId: "four-six-r01-basic-source-example",
-  methodId: "four-six",
-  coffeeGrams: 20,
-  waterGrams: 300,
-  ratio: 15,
-  waterTempCelsius: null,
-  grindSizeLabel: null,
-  totalTimeSec: 210,
-  valuesArePlaceholder: false,
-  needsReviewReason:
-    "R-01 の 20g / 300g / 1:15 基本候補のみ出典付きです。温度、任意比率、他の 4:6 派生は未実装です。",
-  fieldEvidence: {
-    recipeId: appGuidanceEvidence("Pourō identifier for the narrow R-01 candidate."),
-    methodId: appGuidanceEvidence("The approved PR-011E mapping is limited to four-six R-01."),
-    coffeeGrams: sourceOriginalEvidence(
-      "S2",
-      "20g is the cited basic source example, not a universal required dose.",
-    ),
-    waterGrams: sourceOriginalEvidence(
-      "S2",
-      "300g is the cited basic source example paired with 20g at 1:15.",
-    ),
-    ratio: sourceOriginalEvidence(
-      "S1",
-      "1:15 is limited to the reviewed basic R-01 candidate.",
-    ),
-    waterTempCelsius: unresolvedEvidence("Temperature is outside PR-011F scope."),
-    grindSizeLabel: unresolvedEvidence("Grind guidance is outside PR-011F scope."),
-    totalTimeSec: sourceOriginalEvidence(
-      "S1",
-      "210 seconds represents the 03:30 dripper-removal action, not guaranteed natural drawdown completion.",
-    ),
-    valuesArePlaceholder: appGuidanceEvidence(
-      "The R-01 recipe values are source-backed, while the method and unresolved variants retain their caution flags.",
-    ),
-    needsReviewReason: appGuidanceEvidence(
-      "Pourō caution copy limits the candidate to its reviewed scope.",
-    ),
-    steps: sourceOriginalEvidence(
-      "S1",
-      "Five-pour basic schedule and 03:30 dripper-removal action.",
-    ),
-  },
-  steps: createFourSixR01BasicSteps(),
-};
+function createFourSixStandardRecipe(seed: FourSixStandardRecipeSeed): BrewRecipe {
+  return {
+    recipeId: `four-six-${seed.variantId.toLowerCase()}-${seed.flavor}-standard-fixed-example`,
+    methodId: "four-six",
+    coffeeGrams: FOUR_SIX_FIXED_COFFEE_GRAMS,
+    waterGrams: FOUR_SIX_FIXED_WATER_GRAMS,
+    ratio: FOUR_SIX_FIXED_RATIO,
+    waterTempCelsius: null,
+    grindSizeLabel: null,
+    totalTimeSec: FOUR_SIX_DRAWDOWN_TARGET_SEC,
+    totalTimeReferences: [
+      {
+        seconds: FOUR_SIX_DRAWDOWN_TARGET_SEC,
+        precision: "approximate",
+        kind: "finish_target",
+        label: "03:30",
+        note: "Drawdown / finish target guidance only; not exact natural completion.",
+      },
+    ],
+    fixedSetupGate: {
+      coffeeGrams: FOUR_SIX_FIXED_COFFEE_GRAMS,
+      waterGrams: FOUR_SIX_FIXED_WATER_GRAMS,
+      ratio: FOUR_SIX_FIXED_RATIO,
+      scalingSupported: false,
+      unsupportedSetupBehavior: "placeholder_fallback",
+      note: `${seed.variantId} 4:6 ${seed.label} is limited to exact 20g / 300g / 1:15.`,
+    },
+    valuesArePlaceholder: false,
+    needsReviewReason: `${seed.variantId} の ${seed.label} は 20g / 300g / 1:15 の固定例のみアプリ向けに整理しています。任意換算、温度、挽き目、R-04 以降は確認中です。3:30 はドローダウン/終了の目安です。`,
+    fieldEvidence: {
+      recipeId: appGuidanceEvidence(
+        `Pourō identifier for the ${seed.variantId} 4:6 ${seed.label} fixed example.`,
+      ),
+      methodId: appGuidanceEvidence(
+        "PR-RECIPE-01 is limited to four-six R-01/R-02/R-03 standard fixed examples.",
+      ),
+      coffeeGrams: fourSixFormulaEvidence(
+        "20g is the fixed supported dose for this PR-RECIPE-01 4:6 example.",
+      ),
+      waterGrams: fourSixFormulaEvidence(
+        "20g * 15 rounds to 300g total water for the supported fixed setup.",
+      ),
+      ratio: fourSixFormulaEvidence(
+        "1:15 is the fixed supported ratio for this PR-RECIPE-01 4:6 example.",
+      ),
+      waterTempCelsius: unresolvedEvidence("Temperature is outside PR-RECIPE-01 scope."),
+      grindSizeLabel: unresolvedEvidence("Grind guidance is outside PR-RECIPE-01 scope."),
+      totalTimeSec: fourSixFormulaEvidence(
+        "210 seconds represents the 03:30 drawdown / finish target guidance, not guaranteed natural completion.",
+      ),
+      totalTimeReferences: fourSixFormulaEvidence(
+        "The 03:30 reference is stored as approximate finish target guidance.",
+      ),
+      fixedSetupGate: appGuidanceEvidence(
+        "Pourō limits the candidate to exact 20g / 300g / 1:15, disables scaling, and falls back otherwise.",
+      ),
+      valuesArePlaceholder: appGuidanceEvidence(
+        "The exact-gated recipe contains calculated Fable5-aligned data while method and variant containers retain caution metadata.",
+      ),
+      needsReviewReason: appGuidanceEvidence(
+        "Pourō caution copy states fixed-example scope, unresolved fields, disabled scaling, and 03:30 guidance semantics.",
+      ),
+      steps: fourSixFormulaEvidence(
+        `Four-pour standard schedule for ${seed.label}: ${getFourSixStandardPourAmounts(
+          seed.flavor,
+        ).join(" / ")}.`,
+      ),
+    },
+    steps: createFourSixStandardSteps(seed),
+  };
+}
+
+const fourSixR01BasicRecipe = createFourSixStandardRecipe({
+  variantId: "R-01",
+  flavor: "balanced",
+  label: `${fourSixFlavorNotes.balanced} × 標準`,
+});
+
+const fourSixR02SweetStandardRecipe = createFourSixStandardRecipe({
+  variantId: "R-02",
+  flavor: "sweet",
+  label: `${fourSixFlavorNotes.sweet} × 標準`,
+});
+
+const fourSixR03BrightStandardRecipe = createFourSixStandardRecipe({
+  variantId: "R-03",
+  flavor: "bright",
+  label: `${fourSixFlavorNotes.bright} × 標準`,
+});
 
 type HybridR08FixedStepSeed = {
   id: string;
@@ -969,48 +1069,45 @@ export const brewVariants: BrewVariant[] = [
     recommendedCoffeeGrams: 20,
     recommendedRatio: 15,
     recommendedWaterGrams: 300,
-    sourceStatus: "placeholder",
-    verificationLevel: "placeholder",
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
     sourceTitle: "HARIO Coffee Scale POLARIS",
     sourceUrl: "https://global.hario.com/product/new/CST.html",
     sourceNote:
-      "R-01 の基本候補だけを対象にします。R-02 から R-06 は未解決または placeholder のままです。",
+      "R-01 / R-02 / R-03 は 20g / 300g / 1:15 の標準固定例のみアプリ向けに整理しています。R-04 から R-06 は未解決または placeholder のままです。",
     valuesArePlaceholder: true,
     fieldEvidence: {
       displayName: appGuidanceEvidence(
-        "PR-011E maps the source-backed basic candidate to repository variant R-01.",
+        "PR-RECIPE-01 maps balanced + standard to repository variant R-01.",
       ),
       shortLabel: appGuidanceEvidence(
-        "Repository label for the approved narrow R-01 mapping.",
+        "Repository label for the balanced + standard R-01 mapping.",
       ),
       shortDescription: appGuidanceEvidence(
-        "Pourō explanation of the approved narrow R-01 mapping.",
+        "Pourō explanation of the balanced + standard R-01 mapping.",
       ),
-      recommendedCoffeeGrams: sourceOriginalEvidence(
-        "S2",
-        "20g is the cited basic source example, not a universal required dose.",
+      recommendedCoffeeGrams: fourSixFormulaEvidence(
+        "20g is the supported fixed dose for PR-RECIPE-01 R-01.",
       ),
-      recommendedRatio: sourceOriginalEvidence(
-        "S1",
-        "1:15 is limited to the reviewed basic R-01 candidate.",
+      recommendedRatio: fourSixFormulaEvidence(
+        "1:15 is the supported fixed ratio for PR-RECIPE-01 R-01.",
       ),
-      recommendedWaterGrams: sourceOriginalEvidence(
-        "S2",
-        "300g is the cited basic source example paired with 20g at 1:15.",
+      recommendedWaterGrams: fourSixFormulaEvidence(
+        "20g * 15 rounds to 300g for the supported fixed setup.",
       ),
       sourceTitle: sourceOriginalEvidence(
         "S1",
-        "Source metadata for the reviewed R-01 basic candidate only.",
+        "Source metadata retained from the existing 4:6 method reference.",
       ),
       sourceUrl: sourceOriginalEvidence(
         "S1",
-        "Source metadata for the reviewed R-01 basic candidate only.",
+        "Source metadata retained from the existing 4:6 method reference.",
       ),
       sourceNote: appGuidanceEvidence(
-        "Pourō note limits source-backed treatment to R-01.",
+        "Pourō note limits fixed-example treatment to R-01/R-02/R-03 and leaves R-04/R-05/R-06 unresolved.",
       ),
       recipe: appGuidanceEvidence(
-        "PR-011E permits the reviewed basic recipe only for R-01.",
+        "PR-RECIPE-01 permits the balanced + standard fixed recipe for R-01.",
       ),
     },
     recipe: fourSixR01BasicRecipe,
@@ -1025,9 +1122,38 @@ export const brewVariants: BrewVariant[] = [
     recommendedCoffeeGrams: 20,
     recommendedRatio: 15,
     recommendedWaterGrams: 300,
-    sourceStatus: "placeholder",
-    verificationLevel: "placeholder",
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    sourceNote:
+      "R-02 は 20g / 300g / 1:15 の甘め寄り × 標準固定例のみアプリ向けに整理しています。任意換算は未対応です。",
     valuesArePlaceholder: true,
+    fieldEvidence: {
+      displayName: appGuidanceEvidence(
+        "PR-RECIPE-01 maps sweet + standard to repository variant R-02.",
+      ),
+      shortLabel: appGuidanceEvidence(
+        "Repository label for the sweet + standard R-02 mapping.",
+      ),
+      shortDescription: appGuidanceEvidence(
+        "Pourō explanation of the sweet + standard R-02 mapping.",
+      ),
+      recommendedCoffeeGrams: fourSixFormulaEvidence(
+        "20g is the supported fixed dose for PR-RECIPE-01 R-02.",
+      ),
+      recommendedRatio: fourSixFormulaEvidence(
+        "1:15 is the supported fixed ratio for PR-RECIPE-01 R-02.",
+      ),
+      recommendedWaterGrams: fourSixFormulaEvidence(
+        "20g * 15 rounds to 300g for the supported fixed setup.",
+      ),
+      sourceNote: appGuidanceEvidence(
+        "Pourō note limits R-02 to the exact sweet + standard fixed example.",
+      ),
+      recipe: appGuidanceEvidence(
+        "PR-RECIPE-01 permits the sweet + standard fixed recipe for R-02.",
+      ),
+    },
+    recipe: fourSixR02SweetStandardRecipe,
   },
   {
     id: "R-03",
@@ -1039,9 +1165,38 @@ export const brewVariants: BrewVariant[] = [
     recommendedCoffeeGrams: 20,
     recommendedRatio: 15,
     recommendedWaterGrams: 300,
-    sourceStatus: "placeholder",
-    verificationLevel: "placeholder",
+    sourceStatus: "needsReview",
+    verificationLevel: "unverified",
+    sourceNote:
+      "R-03 は 20g / 300g / 1:15 の明るめ寄り × 標準固定例のみアプリ向けに整理しています。任意換算は未対応です。",
     valuesArePlaceholder: true,
+    fieldEvidence: {
+      displayName: appGuidanceEvidence(
+        "PR-RECIPE-01 maps bright + standard to repository variant R-03.",
+      ),
+      shortLabel: appGuidanceEvidence(
+        "Repository label for the bright + standard R-03 mapping.",
+      ),
+      shortDescription: appGuidanceEvidence(
+        "Pourō explanation of the bright + standard R-03 mapping.",
+      ),
+      recommendedCoffeeGrams: fourSixFormulaEvidence(
+        "20g is the supported fixed dose for PR-RECIPE-01 R-03.",
+      ),
+      recommendedRatio: fourSixFormulaEvidence(
+        "1:15 is the supported fixed ratio for PR-RECIPE-01 R-03.",
+      ),
+      recommendedWaterGrams: fourSixFormulaEvidence(
+        "20g * 15 rounds to 300g for the supported fixed setup.",
+      ),
+      sourceNote: appGuidanceEvidence(
+        "Pourō note limits R-03 to the exact bright + standard fixed example.",
+      ),
+      recipe: appGuidanceEvidence(
+        "PR-RECIPE-01 permits the bright + standard fixed recipe for R-03.",
+      ),
+    },
+    recipe: fourSixR03BrightStandardRecipe,
   },
   {
     id: "R-04",
@@ -1210,6 +1365,12 @@ export function getVariantById(
   return brewVariants.find((variant) => variant.id === variantId);
 }
 
+function isFourSixStandardFixedVariant(
+  variantId: BrewVariantId | undefined,
+): variantId is Extract<BrewVariantId, "R-01" | "R-02" | "R-03"> {
+  return variantId === "R-01" || variantId === "R-02" || variantId === "R-03";
+}
+
 export function getRecipeForSetup(
   method: BrewMethod,
   setup: BrewSetup,
@@ -1217,12 +1378,12 @@ export function getRecipeForSetup(
   if (
     method.id === "four-six" &&
     setup.methodId === "four-six" &&
-    setup.variantId === "R-01" &&
+    isFourSixStandardFixedVariant(setup.variantId) &&
     setup.coffeeGrams === 20 &&
     setup.ratio === 15 &&
     setup.waterGrams === 300
   ) {
-    return getVariantById("R-01")?.recipe ?? method.recipe;
+    return getVariantById(setup.variantId)?.recipe ?? method.recipe;
   }
 
   if (
