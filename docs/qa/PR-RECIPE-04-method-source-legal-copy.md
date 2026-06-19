@@ -70,6 +70,9 @@ PASS.
 - R-01 now displays the fixed `20g / 300g / 1:15` balanced + standard example: `60 / 60 / 90 / 90`.
 - R-02 now displays the fixed sweet + standard example: `50 / 70 / 90 / 90`.
 - R-03 now displays the fixed bright + standard example: `70 / 50 / 90 / 90`.
+- 4:6 matrix selection mapping was not expanded: only the standard-center R-01 cell is selectable.
+- R-02/R-03 runtime recipes and setup/timer copy remain available through the existing variant selector, not through new matrix cells.
+- No selection behavior changed from `origin/main`; the unintended R-02/R-03 matrix mapping found during independent verification was reverted.
 - R-04/R-05/R-06 remain unresolved placeholder or needs-review candidates.
 - Arbitrary dose / ratio scaling is described as unsupported.
 - `3:30` remains drawdown / finish guidance, not guaranteed completion.
@@ -179,6 +182,7 @@ PASS.
 
 ## 20. Issues found
 
+- Independent verification found unintended R-02/R-03 matrix cell enablement in `RecipeSetupPage.tsx`; this correction restores the R-01-only matrix mapping.
 - Existing About / Legal / Settings pages contain negative non-affiliation wording with restricted terms. They were not changed because the prompt allowed `NOTICE.md` conditionally only, and existing wording was not incomplete or contradictory.
 
 ## 21. Required fixes

@@ -50,7 +50,7 @@ Final commit SHA is intentionally not embedded in this file because embedding it
 
 - Method descriptions now name the supported fixed examples instead of treating every recipe as generic placeholder data.
 - Exact-gated variants R-01/R-02/R-03/R-08/R-09/R-10 no longer use the variant-level placeholder flag; caution remains through `needsReview` and `unverified`.
-- Recipe Setup now exposes R-01/R-02/R-03 standard fixed examples and adds R-10 HOT/ICE guidance.
+- Recipe Setup copy now aligns R-01/R-02/R-03 standard fixed examples without expanding the 4:6 matrix interaction, and adds R-10 HOT/ICE guidance.
 - Brew Timer now shows fixed-example caution copy for R-01/R-02/R-03 and R-10.
 - Sources page now explains source-backed, app-calculated, app-guidance, unresolved, needsReview, unverified, and placeholder states and preserves existing source links.
 - QA and handoff docs were added.
@@ -68,7 +68,7 @@ Final commit SHA is intentionally not embedded in this file because embedding it
 
 ## 9. Method-by-method copy status
 
-- 4:6: R-01/R-02/R-03 fixed examples shown as `60/60/90/90`, `50/70/90/90`, and `70/50/90/90`; R-04/R-05/R-06 remain unresolved.
+- 4:6: R-01/R-02/R-03 fixed-example copy shows `60/60/90/90`, `50/70/90/90`, and `70/50/90/90`; the 3x3 matrix remains R-01-only, R-02/R-03 remain reachable through the existing variant selector, and R-04/R-05/R-06 remain unresolved.
 - Hybrid: R-08 remains exact `64g / 64g / 172g`, Switch `OPEN/CLOSED`, `70-80°C` liquid-temperature guidance, and `3:00` finish guidance.
 - NEO: R-09 remains 10 pours, `1:45 / 210g`, `2:30 / 300g`, and approximate `3:30` drawdown / finish guidance.
 - Ice: R-10 remains `HOT 150g / ICE 80g`, active timer HOT-only `150g`, and `3:00` chill / finish guidance; `230g` is beverage-water equivalent only.

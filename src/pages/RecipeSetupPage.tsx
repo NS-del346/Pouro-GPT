@@ -20,7 +20,7 @@ const fourSixCombinationRows: {
   variantIds: (BrewVariantId | undefined)[];
 }[] = [
   { strength: "軽め", variantIds: [undefined, undefined, undefined] },
-  { strength: "標準", variantIds: ["R-02", "R-01", "R-03"] },
+  { strength: "標準", variantIds: [undefined, "R-01", undefined] },
   { strength: "しっかり", variantIds: [undefined, undefined, undefined] },
 ];
 
@@ -369,7 +369,7 @@ export function RecipeSetupPage({
                 ))}
               </div>
               <p className="four-six-combination-note">
-                現時点では標準の3方向（R-01 / R-02 / R-03）の固定例のみ対応しています。軽め・しっかり、R-04 以降、任意換算は確認中です。
+                現在のマトリクス操作はR-01のみ対応しています。R-02 / R-03の固定例は既存バリエーションから選択できます。軽め・しっかり、R-04以降、任意換算は確認中です。
               </p>
             </section>
 
