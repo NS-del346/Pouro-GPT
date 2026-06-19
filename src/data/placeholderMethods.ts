@@ -21,10 +21,10 @@ type PlaceholderMethodSeed = {
 };
 
 const commonNeedsReviewReason =
-  "レシピ値、注湯量、手順文は出典確認前のため、確定値として扱いません。";
+  "対応済みの固定例以外は、レシピ値、注湯量、手順文を確認中として扱います。固定例も任意換算には対応していません。";
 
 const commonLegalNote =
-  "このメソッド情報はUI確認用の未確定データです。特定の個人、団体、メーカーによる確認済みデータとして扱わないでください。";
+  "Pourōは独立した非公式の抽出補助アプリです。出典元との提携関係や承認を示すものではありません。";
 
 function createPlaceholderSteps(methodId: BrewMethodId): BrewStep[] {
   const steps: BrewStep[] = [
@@ -915,7 +915,7 @@ const tenPourR09FixedExampleRecipe: BrewRecipe = {
   },
   valuesArePlaceholder: false,
   needsReviewReason:
-    "THE NEO BREW の固定例（20g / 300g / 1:15）のみ確認済み候補です。約3:30は落ち切りの目安で、フィルター、正確な完了時刻、ドリッパー取り外し時刻、任意換算は未解決です。HARIO V60 NEO推奨、V60対応です。Pourōは非公式で、出典元との提携・監修関係はありません。",
+    "THE NEO BREW の固定例（20g / 300g / 1:15）のみ候補として扱います。約3:30は落ち切りの目安で、フィルター、正確な完了時刻、ドリッパー取り外し時刻、任意換算は未解決です。HARIO V60 NEO推奨、V60対応です。Pourōは非公式で、出典元との提携関係はありません。",
   fieldEvidence: {
     recipeId: appGuidanceEvidence(
       "Pourō identifier for the narrow THE NEO BREW R-09 fixed example.",
@@ -1250,9 +1250,9 @@ export const placeholderMethods: BrewMethod[] = [
     displayName: "4:6 Method",
     shortName: "4:6",
     shortDescription:
-      "味わいの組み立てを意識する抽出案として参考表示します。",
+      "20g / 300g / 1:15 の R-01、R-02、R-03 固定例を参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
+      "R-01 は 60 / 60 / 90 / 90、R-02 は 50 / 70 / 90 / 90、R-03 は 70 / 50 / 90 / 90 の固定例です。任意換算には対応せず、R-04 から R-06 は確認中です。3:30 はドローダウン/終了の目安です。",
     iconKey: "method-four-six",
     methodStatus: "needsReview",
     sourceStatus: "placeholder",
@@ -1263,9 +1263,9 @@ export const placeholderMethods: BrewMethod[] = [
     displayName: "Hybrid Method",
     shortName: "Hybrid",
     shortDescription:
-      "浸漬と透過を組み合わせる抽出案として参考表示します。",
+      "New Hybrid の 20g / 300g / 1:15 固定例を参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
+      "R-08 は 64g / 64g / 172g の固定例です。Switch OPEN/CLOSED を文字で示し、3:00 は仕上がり目安として扱います。70-80°C は液温目安のみで、常温水の量や温度は固定しません。",
     iconKey: "method-hybrid",
     methodStatus: "needsReview",
     sourceStatus: "needsReview",
@@ -1276,9 +1276,9 @@ export const placeholderMethods: BrewMethod[] = [
     displayName: "10 Pour Method",
     shortName: "10 Pour",
     shortDescription:
-      "複数回の注湯で構成する抽出案として参考表示します。",
+      "THE NEO BREW の 20g / 300g / 1:15 固定例を参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
+      "R-09 は 30g × 10投の固定例です。1:45 / 累計210g、2:30 / 累計300gを保ち、約3:30 は落ち切り/仕上がりの目安として扱います。任意換算には対応していません。",
     iconKey: "method-ten-pour",
     methodStatus: "candidate",
     sourceStatus: "needsReview",
@@ -1289,9 +1289,9 @@ export const placeholderMethods: BrewMethod[] = [
     displayName: "Ice Brew",
     shortName: "Ice",
     shortDescription:
-      "冷たい抽出の候補として、未確定のまま参考表示します。",
+      "R-10 の HOT 150g / ICE 80g 固定例を参考表示します。",
     longDescription:
-      "レシピ値と手順は確認中です。現時点ではメソッド名のみ候補として扱います。",
+      "R-10 は 20g、HOT 150g、ICE 80g の固定例です。タイマーの累計目標は HOT 注湯のみの 150g で、230g は HOT 150g + ICE 80g の飲用水量目安として扱います。3:00 は急冷/完成ガイドです。",
     iconKey: "method-ice-brew",
     methodStatus: "candidate",
     sourceStatus: "placeholder",
@@ -1318,7 +1318,7 @@ export const brewVariants: BrewVariant[] = [
     sourceUrl: "https://global.hario.com/product/new/CST.html",
     sourceNote:
       "R-01 / R-02 / R-03 は 20g / 300g / 1:15 の標準固定例のみアプリ向けに整理しています。R-04 から R-06 は未解決または placeholder のままです。",
-    valuesArePlaceholder: true,
+    valuesArePlaceholder: false,
     fieldEvidence: {
       displayName: appGuidanceEvidence(
         "PR-RECIPE-01 maps balanced + standard to repository variant R-01.",
@@ -1369,7 +1369,7 @@ export const brewVariants: BrewVariant[] = [
     verificationLevel: "unverified",
     sourceNote:
       "R-02 は 20g / 300g / 1:15 の甘め寄り × 標準固定例のみアプリ向けに整理しています。任意換算は未対応です。",
-    valuesArePlaceholder: true,
+    valuesArePlaceholder: false,
     fieldEvidence: {
       displayName: appGuidanceEvidence(
         "PR-RECIPE-01 maps sweet + standard to repository variant R-02.",
@@ -1412,7 +1412,7 @@ export const brewVariants: BrewVariant[] = [
     verificationLevel: "unverified",
     sourceNote:
       "R-03 は 20g / 300g / 1:15 の明るめ寄り × 標準固定例のみアプリ向けに整理しています。任意換算は未対応です。",
-    valuesArePlaceholder: true,
+    valuesArePlaceholder: false,
     fieldEvidence: {
       displayName: appGuidanceEvidence(
         "PR-RECIPE-01 maps bright + standard to repository variant R-03.",
@@ -1498,8 +1498,8 @@ export const brewVariants: BrewVariant[] = [
     sourceTitle: hybridSources.S1.sourceTitle,
     sourceUrl: hybridSources.S1.sourceUrl,
     sourceNote:
-      "R-08 は New Hybrid の 20g / 300g / 1:15 固定例のみを出典付き候補として扱います。任意換算には対応せず、Pourōは出典元と提携・監修関係のない非公式ガイドです。",
-    valuesArePlaceholder: true,
+      "R-08 は New Hybrid の 20g / 300g / 1:15 固定例のみを出典付き候補として扱います。任意換算には対応せず、Pourōは出典元と提携関係のない非公式ガイドです。",
+    valuesArePlaceholder: false,
     fieldEvidence: {
       recommendedCoffeeGrams: hybridSourceOriginalEvidence(
         "S1",
@@ -1525,7 +1525,7 @@ export const brewVariants: BrewVariant[] = [
         "Pourō note limits source-backed treatment to the exact fixed example and states non-affiliation.",
       ),
       valuesArePlaceholder: appGuidanceEvidence(
-        "The R-08 variant container remains caution-protected despite its exact recipe candidate.",
+        "The exact-gated R-08 variant is not placeholder data; caution remains through needsReview / unverified metadata.",
       ),
       recipe: appGuidanceEvidence(
         "The source-backed candidate is selected only by the exact setup gate.",
@@ -1548,8 +1548,8 @@ export const brewVariants: BrewVariant[] = [
     sourceTitle: tenPourSources.S1.sourceTitle,
     sourceUrl: tenPourSources.S1.sourceUrl,
     sourceNote:
-      "R-09 は THE NEO BREW の 20g / 300g / 1:15 固定例のみを扱うPourō内部候補です。任意換算には対応せず、Pourōは出典元と提携・監修関係のない非公式ガイドです。",
-    valuesArePlaceholder: true,
+      "R-09 は THE NEO BREW の 20g / 300g / 1:15 固定例のみを扱うPourō内部候補です。任意換算には対応せず、Pourōは出典元と提携関係のない非公式ガイドです。",
+    valuesArePlaceholder: false,
     fieldEvidence: {
       recommendedCoffeeGrams: tenPourPrimaryDescriptionEvidence(
         "20g is directly confirmed for the fixed example only.",
@@ -1570,7 +1570,7 @@ export const brewVariants: BrewVariant[] = [
         "Pourō note limits source-backed treatment to the fixed example and states non-affiliation.",
       ),
       valuesArePlaceholder: appGuidanceEvidence(
-        "The R-09 variant container remains caution-protected despite its exact recipe candidate.",
+        "The exact-gated R-09 variant is not placeholder data; caution remains through needsReview / unverified metadata.",
       ),
       recipe: appGuidanceEvidence(
         "The reviewed candidate is selected only by the exact setup gate.",
@@ -1592,7 +1592,9 @@ export const brewVariants: BrewVariant[] = [
     recommendedIceGrams: 80,
     sourceStatus: "needsReview",
     verificationLevel: "unverified",
-    valuesArePlaceholder: true,
+    sourceNote:
+      "R-10 は 20g / HOT 150g / ICE 80g の固定例のみをアプリ向けに整理しています。タイマー目標はHOT 150gのみで、任意換算には対応していません。",
+    valuesArePlaceholder: false,
     fieldEvidence: {
       recommendedCoffeeGrams: iceR10FormulaEvidence(
         "20g is the supported fixed dose for PR-RECIPE-03 R-10.",
@@ -1616,7 +1618,7 @@ export const brewVariants: BrewVariant[] = [
         "R-10 remains unverified rather than final or endorsed.",
       ),
       valuesArePlaceholder: appGuidanceEvidence(
-        "The variant container keeps caution metadata while the exact recipe gate returns the fixed runtime candidate.",
+        "The exact-gated R-10 variant is not placeholder data; caution remains through needsReview / unverified metadata.",
       ),
       recipe: appGuidanceEvidence(
         "PR-RECIPE-03 permits the exact R-10 20g / HOT 150g / ICE 80g fixed recipe.",

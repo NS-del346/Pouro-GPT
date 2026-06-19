@@ -1,5 +1,5 @@
 import { Page } from "../components/layout/Page";
-import { visiblePlaceholderMethods } from "../data";
+import { brewVariants, visiblePlaceholderMethods } from "../data";
 
 export function SourcesPage() {
   return (
@@ -11,18 +11,40 @@ export function SourcesPage() {
       <section className="content-card">
         <h2>現在のデータについて</h2>
         <p>
-          現在のメソッドデータには、仮データ、確認中、第三者情報、調査・要約した
-          情報、Pourō向けに整理した案内が含まれる場合があります。
+          Pourōのメソッドデータには、出典に基づく情報、アプリ内で計算した情報、
+          アプリ向けの案内、未解決の情報が混在します。
         </p>
         <p>
           sourceStatus、verificationLevel、valuesArePlaceholderは、データの
           信頼度と確認状況を示すためのメタデータです。実際のメタデータが示さない
-          限り、確認済み・公式の情報として扱いません。
+          限り、確認済みの値として扱いません。
         </p>
         <p>
-          未確認または仮の値は、公式の原典レシピや完全な再現手順ではありません。
-          正確さや忠実な再現が重要な場合は、原典を確認してください。
+          出典名、人物名、ブランド名、器具名の表示は、参照元の識別と出典表示の
+          ためです。出典元との提携関係や承認を示すものではありません。
         </p>
+      </section>
+
+      <section className="content-card">
+        <h2>値の扱い</h2>
+        <dl className="detail-list">
+          <div>
+            <dt>source-backed</dt>
+            <dd>出典で確認できる値や説明です。</dd>
+          </div>
+          <div>
+            <dt>app-calculated</dt>
+            <dd>出典で確認できる入力値や式から、Pourōが計算した値です。</dd>
+          </div>
+          <div>
+            <dt>app guidance</dt>
+            <dd>画面表示、注意書き、操作案内など、Pourōが整理した案内です。</dd>
+          </div>
+          <div>
+            <dt>unresolved</dt>
+            <dd>まだ値を固定しない項目です。</dd>
+          </div>
+        </dl>
       </section>
 
       <section className="content-card">
@@ -42,7 +64,7 @@ export function SourcesPage() {
           </div>
           <div>
             <dt>verified</dt>
-            <dd>確認済み</dd>
+            <dd>確認済みとして扱えるデータ</dd>
           </div>
         </dl>
       </section>
@@ -80,7 +102,7 @@ export function SourcesPage() {
           </div>
           <div>
             <dt>official</dt>
-            <dd>公式情報</dd>
+            <dd>原典・提供元の直接発信</dd>
           </div>
         </dl>
       </section>
@@ -88,8 +110,21 @@ export function SourcesPage() {
       <section className="content-card">
         <h2>仮の値（valuesArePlaceholder）</h2>
         <p>
-          trueの場合、レシピ値に確認用の仮データが含まれます。公式の値や確認済みの
-          原典レシピとして扱わないでください。
+          trueの場合、レシピ値に確認用の仮データが含まれます。falseでも、
+          sourceStatusやverificationLevelがneedsReview / unverifiedの場合は、
+          固定例として整理済みであっても最終確定や承認を意味しません。
+        </p>
+      </section>
+
+      <section className="content-card">
+        <h2>needsReview / unverified / placeholder</h2>
+        <p>
+          needsReviewとunverifiedは、候補データがあるが出典・解釈の注意が残る状態です。
+          falseや無効という意味ではありません。
+        </p>
+        <p>
+          placeholderは、実行用の値や手順がまだ固定されていない状態に使います。
+          対応済みの固定例は、必要な注意を残しながらplaceholderとは分けて扱います。
         </p>
       </section>
 
@@ -102,6 +137,41 @@ export function SourcesPage() {
               <dd>
                 出典状態: {method.sourceStatus} / 確認段階:{" "}
                 {method.verificationLevel}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="content-card">
+        <h2>現在のバリエーション出典</h2>
+        <dl className="detail-list">
+          {brewVariants.map((variant) => (
+            <div key={variant.id}>
+              <dt>
+                {variant.id} / {variant.displayName}
+              </dt>
+              <dd>
+                <span>
+                  出典状態: {variant.sourceStatus} / 確認段階:{" "}
+                  {variant.verificationLevel}
+                </span>
+                {variant.sourceUrl && variant.sourceTitle && (
+                  <>
+                    {" "}
+                    <a
+                      href={variant.sourceUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {variant.sourceTitle}
+                    </a>
+                  </>
+                )}
+                {variant.sourceTitle && !variant.sourceUrl && (
+                  <> {variant.sourceTitle}</>
+                )}
+                {variant.sourceNote && <p>{variant.sourceNote}</p>}
               </dd>
             </div>
           ))}

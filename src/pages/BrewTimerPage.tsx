@@ -62,6 +62,38 @@ function getTimerTipRecipeCode(setup: BrewSetup): CoffeeTipRecipeCode {
   return "ALL";
 }
 
+function getFourSixTimerCopy(variantId: BrewSetup["variantId"]): {
+  badge: string;
+  title: string;
+  schedule: string;
+} | null {
+  if (variantId === "R-01") {
+    return {
+      badge: "R-01 固定例候補",
+      title: "R-01 バランス × 標準固定例（20g / 300g / 1:15）",
+      schedule: "60g / 60g / 90g / 90g",
+    };
+  }
+
+  if (variantId === "R-02") {
+    return {
+      badge: "R-02 固定例候補",
+      title: "R-02 甘め寄り × 標準固定例（20g / 300g / 1:15）",
+      schedule: "50g / 70g / 90g / 90g",
+    };
+  }
+
+  if (variantId === "R-03") {
+    return {
+      badge: "R-03 固定例候補",
+      title: "R-03 明るめ寄り × 標準固定例（20g / 300g / 1:15）",
+      schedule: "70g / 50g / 90g / 90g",
+    };
+  }
+
+  return null;
+}
+
 export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps) {
   const navigate = useNavigate();
   const method = visiblePlaceholderMethods.find(
@@ -136,15 +168,22 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
   const isPlaceholderSchedule =
     currentRecipe.valuesArePlaceholder ||
     steps.some((step) => step.isPlaceholder);
-  const isFourSixR01 =
-    currentSetup.methodId === "four-six" && currentSetup.variantId === "R-01";
-  const isR01BasicCandidate = isFourSixR01 && !isPlaceholderSchedule;
+  const fourSixTimerCopy =
+    currentSetup.methodId === "four-six"
+      ? getFourSixTimerCopy(currentSetup.variantId)
+      : null;
+  const isFourSixFixedVariant = fourSixTimerCopy !== null;
+  const isFourSixFixedCandidate =
+    isFourSixFixedVariant && !isPlaceholderSchedule;
   const isHybridR08 =
     currentSetup.methodId === "hybrid" && currentSetup.variantId === "R-08";
   const isHybridR08Candidate = isHybridR08 && !isPlaceholderSchedule;
   const isTenPourR09 =
     currentSetup.methodId === "ten-pour" && currentSetup.variantId === "R-09";
   const isTenPourR09Candidate = isTenPourR09 && !isPlaceholderSchedule;
+  const isIceBrewR10 =
+    currentSetup.methodId === "ice-brew" && currentSetup.variantId === "R-10";
+  const isIceBrewR10Candidate = isIceBrewR10 && !isPlaceholderSchedule;
   const timerTipRecipeCode = getTimerTipRecipeCode(currentSetup);
   const recipeSpecificTimerTips =
     timerTipRecipeCode === "ALL"
@@ -268,28 +307,30 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
             <p className="eyebrow">{statusLabel[timerStatus]}</p>
             <h2 id="timer-method-title">{method.displayName}</h2>
             <span className="status-pill">
-              {isR01BasicCandidate
-                ? "R-01 基本候補"
+              {isFourSixFixedCandidate
+                ? fourSixTimerCopy?.badge
                 : isHybridR08Candidate
                   ? "R-08 固定例候補"
                   : isTenPourR09Candidate
                     ? "R-09 固定例候補"
-                    : "レシピ値確認中"}
+                    : isIceBrewR10Candidate
+                      ? "R-10 HOT固定例候補"
+                      : "レシピ値確認中"}
             </span>
           </div>
 
-        {isR01BasicCandidate && (
+        {isFourSixFixedCandidate && fourSixTimerCopy && (
           <p className="timer-schedule-note">
-            <strong>20g / 300g / 1:15 の出典付き候補</strong>
+            <strong>{fourSixTimerCopy.title}</strong>
             <span>
-              03:30 はドリッパーを外す操作です。自然な落ち切り完了を保証する時刻ではありません。ほかの 4:6 派生は確認中です。
+              注湯は {fourSixTimerCopy.schedule} です。03:30 はドローダウン/終了の目安で、任意換算には対応していません。R-04 以降は確認中です。
             </span>
           </p>
         )}
 
-        {isFourSixR01 && isPlaceholderSchedule && (
+        {isFourSixFixedVariant && isPlaceholderSchedule && fourSixTimerCopy && (
           <p className="timer-schedule-note">
-            <strong>R-01 の出典付き候補は 20g / 300g / 1:15 のみです</strong>
+            <strong>{currentSetup.variantId} の出典付き候補は 20g / 300g / 1:15 のみです</strong>
             <span>この設定の詳細スケジュールは確認中です。</span>
           </p>
         )}
@@ -306,7 +347,7 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
         {isHybridR08 && isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>New Hybrid の出典付き候補は 20g / 300g / 1:15 のみです</strong>
-            <span>この設定ではplaceholder手順を表示しています。</span>
+            <span>この設定では確認中手順を表示しています。</span>
           </p>
         )}
 
@@ -314,25 +355,42 @@ export function BrewTimerPage({ activeSetup, onFinishBrew }: BrewTimerPageProps)
           <p className="timer-schedule-note">
             <strong>THE NEO BREW 固定例（20g / 300g / 1:15）</strong>
             <span>
-              THE NEO BREW固定例のみです。約3:30は落ち切り目安で、正確な完了時刻ではありません。フィルターは未解決、任意換算は非対応です。Pourōは非公式で、出典元との提携・監修関係はありません。
+              THE NEO BREW固定例のみです。約3:30は落ち切り目安で、正確な完了時刻ではありません。フィルターは未解決、任意換算は非対応です。Pourōは非公式で、出典元との提携関係はありません。
             </span>
           </p>
         )}
 
         {isTenPourR09 && isPlaceholderSchedule && (
           <p className="timer-schedule-note">
-            <strong>THE NEO BREW の確認済み候補は 20g / 300g / 1:15 のみです</strong>
-            <span>この設定はplaceholderガイドです。</span>
+            <strong>THE NEO BREW の固定例候補は 20g / 300g / 1:15 のみです</strong>
+            <span>この設定は確認中ガイドです。</span>
           </p>
         )}
 
-        {!isFourSixR01 &&
+        {isIceBrewR10Candidate && (
+          <p className="timer-schedule-note">
+            <strong>R-10 急冷式アイス固定例（20g / HOT 150g / ICE 80g）</strong>
+            <span>
+              タイマー累計目標はHOT注湯のみの150gです。ICE 80gはサーバーに先入れし、230gはHOT 150g + ICE 80gの飲用水量目安として扱います。3:00は急冷/完成ガイドです。
+            </span>
+          </p>
+        )}
+
+        {isIceBrewR10 && isPlaceholderSchedule && (
+          <p className="timer-schedule-note">
+            <strong>R-10 の固定例は 20g / HOT 150g / ICE 80g のみです</strong>
+            <span>この設定では確認中手順を表示しています。</span>
+          </p>
+        )}
+
+        {!isFourSixFixedVariant &&
           !isHybridR08 &&
           !isTenPourR09 &&
+          !isIceBrewR10 &&
           isPlaceholderSchedule && (
           <p className="timer-schedule-note">
             <strong>このメソッドの詳細スケジュールは確認中です</strong>
-            <span>現在はplaceholder手順で表示しています</span>
+            <span>現在は確認中手順で表示しています</span>
           </p>
           )}
 
