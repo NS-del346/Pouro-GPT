@@ -9,7 +9,7 @@ No blocker was found during post-merge smoke QA of PR-RECIPE-01 through PR-RECIP
 Notes:
 
 - This PR is documentation-only.
-- GitHub Actions are PENDING until PR-RECIPE-05 is opened.
+- Draft PR #103 is open. GitHub Actions must be checked on the final PR head before merge.
 - Export controls were verified as reachable with saved history, but export downloads were not triggered.
 
 ## 2. Closeout date
@@ -28,9 +28,7 @@ Notes:
 - PR #100 PR-RECIPE-02: Hybrid Runtime Truth Alignment
 - PR #101 PR-RECIPE-03: Ice Brew Runtime Truth Alignment
 - PR #102 PR-RECIPE-04: Method Detail / Source / Legal Copy Alignment
-- PR #TBD PR-RECIPE-05: Recipe Truth Refresh Post-Merge Smoke QA & Closeout
-
-PR-RECIPE-05 number must be updated after the Draft PR is opened.
+- PR #103 PR-RECIPE-05: Recipe Truth Refresh Post-Merge Smoke QA & Closeout
 
 ## 5. Final supported exact examples
 
@@ -117,7 +115,7 @@ PASS WITH NOTES.
 - `npm.cmd run build` passed.
 - No app code, `public/*`, manifest, service worker, Vite config, package file, lockfile, or GitHub workflow file was edited for this PR.
 - Final diff should contain only the two PR-RECIPE-05 documentation files.
-- GitHub Actions are PENDING until the Draft PR is opened.
+- GitHub Actions must be checked on the final PR #103 head before merge.
 
 ## 12. Final QA results
 
@@ -145,7 +143,7 @@ PASS WITH NOTES.
 | Mobile 375 x 667 | PASS |
 | Mobile 390 x 844 | PASS |
 | PWA/local build | PASS |
-| GitHub Actions | PENDING |
+| GitHub Actions | CHECK FINAL PR HEAD |
 
 ## 13. Known limitations
 

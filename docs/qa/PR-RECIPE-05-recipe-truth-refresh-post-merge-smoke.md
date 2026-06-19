@@ -9,7 +9,7 @@ Post-merge smoke QA found no blocker in the merged Recipe Truth Refresh series. 
 - `npm.cmd ci` initially hit an `EPERM` unlink on a repo-local stale Vite/esbuild process, then passed after stopping only that repo-local process and rerunning.
 - `lint`, `typecheck`, and `test` package scripts are not present in `package.json`; they are recorded as NOT AVAILABLE.
 - Export controls were verified as reachable with a saved history entry, but export files were not downloaded.
-- GitHub Actions are PENDING until the Draft PR is opened.
+- Draft PR #103 was opened after the initial docs commit. GitHub Actions must be checked on the final PR head before merge.
 
 ## 2. Tested main commit
 
@@ -361,7 +361,7 @@ git diff --check
 
 At document creation time, app code, package files, public assets, service worker, manifest, Vite config, and GitHub workflow files were not edited.
 
-GitHub Actions: PENDING until the Draft PR is opened.
+GitHub Actions: check final PR #103 head before merge.
 
 ## 23. Mobile viewport verification
 
@@ -406,7 +406,7 @@ Non-blocking notes:
 
 - `npm.cmd ci` needed one retry after stopping a stale repo-local preview/esbuild process.
 - Export controls were verified, but export files were not downloaded.
-- GitHub Actions are PENDING until the Draft PR exists.
+- GitHub Actions must be checked on the final PR #103 head before merge.
 
 ## 25. Required fixes
 
