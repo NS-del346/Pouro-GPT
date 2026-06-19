@@ -24,6 +24,25 @@ const fourSixCombinationRows: {
   { strength: "しっかり", variantIds: [undefined, undefined, undefined] },
 ];
 
+function getFourSixFixedCopy(variantId: BrewVariantId): {
+  label: string;
+  schedule: string;
+} | null {
+  if (variantId === "R-01") {
+    return { label: "バランス × 標準", schedule: "60g / 60g / 90g / 90g" };
+  }
+
+  if (variantId === "R-02") {
+    return { label: "甘め寄り × 標準", schedule: "50g / 70g / 90g / 90g" };
+  }
+
+  if (variantId === "R-03") {
+    return { label: "明るめ寄り × 標準", schedule: "70g / 50g / 90g / 90g" };
+  }
+
+  return null;
+}
+
 interface RecipeSetupPageProps {
   onStartBrew: (setup: BrewSetup) => void;
   replaySetupDraft: BrewSetup | null;
@@ -181,10 +200,11 @@ export function RecipeSetupPage({
     (tip) => tip.recipeCode === "ALL",
   );
   const setupTips = [...recipeSpecificSetupTips, ...globalSetupTips].slice(0, 2);
-  const isFourSixR01 =
-    setupMethodId === "four-six" && setupVariant.id === "R-01";
-  const isExactFourSixR01Setup =
-    isFourSixR01 &&
+  const fourSixFixedCopy =
+    setupMethodId === "four-six" ? getFourSixFixedCopy(setupVariant.id) : null;
+  const isFourSixFixedVariant = fourSixFixedCopy !== null;
+  const isExactFourSixFixedSetup =
+    isFourSixFixedVariant &&
     coffeeGrams === 20 &&
     ratio === 15 &&
     waterGrams === 300;
@@ -202,6 +222,13 @@ export function RecipeSetupPage({
     coffeeGrams === 20 &&
     ratio === 15 &&
     waterGrams === 300;
+  const isIceBrewR10 =
+    setupMethodId === "ice-brew" && setupVariant.id === "R-10";
+  const isExactIceBrewR10Setup =
+    isIceBrewR10 &&
+    coffeeGrams === 20 &&
+    hotWaterGrams === 150 &&
+    iceGrams === 80;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -279,8 +306,8 @@ export function RecipeSetupPage({
                 <span>現在の選択</span>
                 <strong>{selectedVariant.shortLabel}</strong>
                 <small>
-                  {selectedVariant.id === "R-01"
-                    ? "標準 × 標準（暫定対応）"
+                  {fourSixFixedCopy
+                    ? `${fourSixFixedCopy.label}（固定例）`
                     : "9組み合わせへの対応確認中"}
                 </small>
               </div>
@@ -342,7 +369,7 @@ export function RecipeSetupPage({
                 ))}
               </div>
               <p className="four-six-combination-note">
-                現時点では「基本形」のみ中央セルへ暫定対応しています。新しいレシピ値や抽出手順は追加していません。
+                現在のマトリクス操作はR-01のみ対応しています。R-02 / R-03の固定例は既存バリエーションから選択できます。軽め・しっかり、R-04以降、任意換算は確認中です。
               </p>
             </section>
 
@@ -393,11 +420,11 @@ export function RecipeSetupPage({
           </div>
           <strong>{selectedVariant.displayName}</strong>
           <p>{selectedVariant.shortDescription}</p>
-          {isFourSixR01 && (
+          {fourSixFixedCopy && (
             <p className="recommendation-note">
-              {isExactFourSixR01Setup
-                ? "20g / 300g / 1:15 の R-01 基本候補のみ出典付きです。ほかの 4:6 派生は確認中です。"
-                : "R-01 の出典付き候補は 20g / 300g / 1:15 のみです。この設定では詳細スケジュールを確認中として表示します。"}
+              {isExactFourSixFixedSetup
+                ? `${setupVariant.id} ${fourSixFixedCopy.label}の固定例です。20g / 300g / 1:15、注湯は ${fourSixFixedCopy.schedule} です。任意換算には対応していません。`
+                : `${setupVariant.id} の出典付き候補は 20g / 300g / 1:15 のみです。この設定では詳細スケジュールを確認中として表示します。`}
             </p>
           )}
           {isHybridR08 && (
@@ -411,7 +438,14 @@ export function RecipeSetupPage({
             <p className="recommendation-note">
               {isExactTenPourR09Setup
                 ? "THE NEO BREWは20g / 300g / 1:15の固定例のみ表示します。約3:30は落ち切り目安で、任意換算は未対応です。"
-                : "確認済み候補は20g / 300g / 1:15のみです。この設定ではplaceholderガイドを表示します。"}
+                : "固定例候補は20g / 300g / 1:15のみです。この設定では確認中ガイドを表示します。"}
+            </p>
+          )}
+          {isIceBrewR10 && (
+            <p className="recommendation-note">
+              {isExactIceBrewR10Setup
+                ? "R-10 は20g / HOT 150g / ICE 80gの固定例です。タイマー累計目標はHOT注湯のみの150gで、ICEはサーバーに先入れします。"
+                : "R-10 の固定例は20g / HOT 150g / ICE 80gのみです。この設定では詳細スケジュールを確認中として表示します。"}
             </p>
           )}
           {selectedVariant.isAdvanced && (
