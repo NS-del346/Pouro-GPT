@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "defaultDimensionTolerance": 2,
+  "nearDuplicateThreshold": 0.96,
+  "contactSheetColumns": 3,
+  "screens": [
+    { "id": "home-empty", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Home Empty (393x852)"] },
+    { "id": "home-previous-brew", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Home / Previous Brew", "home_previous_brew_393x852"] },
+    { "id": "home-my-recipes", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Home My Recipes (393x852)"] },
+    { "id": "recipe-setup-four-six", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Recipe Setup 4 6", "recipe_setup_4_6_393x852"] },
+    { "id": "recipe-setup-hybrid", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Recipe Setup Hybrid (393x852)"] },
+    { "id": "recipe-setup-ten-pour", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Recipe Setup 10 Pour", "recipe_setup_ten_pour_393x852"] },
+    { "id": "recipe-setup-ice-brew", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Recipe Setup Ice Brew (393x852)"] },
+    { "id": "recipe-setup-unsupported-fallback", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Recipe Setup Unsupported Fallback (393x852)"] },
+    { "id": "active-brew-idle", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Idle (393x852)"] },
+    { "id": "active-brew-pouring", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Pouring (393x852)"] },
+    { "id": "active-brew-waiting", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Waiting (393x852)"] },
+    { "id": "active-brew-paused", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Paused (393x852)"] },
+    { "id": "active-brew-transition", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Transition (393x852)"] },
+    { "id": "active-brew-drawdown", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Drawdown (393x852)"] },
+    { "id": "active-brew-completed", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Completed (393x852)"] },
+    { "id": "active-brew-fallback", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Active Brew Fallback (393x852)"] },
+    { "id": "finish-unsaved", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Finish Unsaved (393x852)"] },
+    { "id": "finish-saving", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Finish Saving (393x852)"] },
+    { "id": "finish-saved", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Finish Saved (393x852)"] },
+    { "id": "finish-save-as-my-recipe", "sets": ["set-a"], "kind": "primary", "expectedViewport": { "width": 393, "height": 852 }, "aliases": ["Finish Save As My Recipe (393x852)"] },
+    { "id": "home-previous-brew-375x667", "sets": ["set-a"], "kind": "responsive", "expectedViewport": { "width": 375, "height": 667 }, "aliases": ["Home Previous Brew (375x667)", "home_previous_brew_375x667"] },
+    { "id": "recipe-setup-four-six-375x667", "sets": ["set-a"], "kind": "responsive", "expectedViewport": { "width": 375, "height": 667 }, "aliases": ["Recipe Setup 4 6 (375x667)", "recipe_setup_4_6_375x667"] },
+    { "id": "active-brew-pouring-375x667", "sets": ["set-a"], "kind": "responsive", "expectedViewport": { "width": 375, "height": 667 }, "aliases": ["Active Brew Pouring (375x667)", "active_brew_pouring_375x667"] },
+    { "id": "active-brew-waiting-375x667", "sets": ["set-a"], "kind": "responsive", "expectedViewport": { "width": 375, "height": 667 }, "aliases": ["Active Brew Waiting (375x667)", "active_brew_waiting_375x667"] },
+    { "id": "finish-unsaved-375x667", "sets": ["set-a"], "kind": "responsive", "expectedViewport": { "width": 375, "height": 667 }, "aliases": ["Finish Unsaved (375x667)", "finish_unsaved_375x667"] }
+  ]
+}

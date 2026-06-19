@@ -1,0 +1,91 @@
+name: Stitch Audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: Run ID containing the stitch-export artifact
+        required: true
+        type: string
+      set:
+        description: Audit set
+        required: true
+        default: set-a
+        type: choice
+        options:
+          - set-a
+          - set-b
+          - set-c
+          - all
+      strict:
+        description: Enable strict mode
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download Stitch export artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: stitch-export
+          path: incoming/stitch-export
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.artifact_run_id }}
+
+      - name: Locate the single ZIP
+        id: zip
+        shell: bash
+        run: |
+          mapfile -t ZIP_FILES < <(find incoming/stitch-export -type f -iname '*.zip' -print)
+          if [ "${#ZIP_FILES[@]}" -ne 1 ]; then
+            echo "Expected exactly one ZIP in stitch-export; found ${#ZIP_FILES[@]}." >&2
+            exit 2
+          fi
+          echo "path=${ZIP_FILES[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Run audit tests
+        run: npm run stitch:audit:test
+
+      - name: Audit Stitch export
+        shell: bash
+        run: |
+          ARGS=("${{ steps.zip.outputs.path }}" --set "${{ inputs.set }}" --output artifacts/stitch-audit)
+          if [ "${{ inputs.strict }}" = "true" ]; then
+            ARGS+=(--strict)
+          fi
+          npm run stitch:audit -- "${ARGS[@]}"
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stitch-audit-report
+          path: |
+            artifacts/stitch-audit/report.json
+            artifacts/stitch-audit/report.md
+            artifacts/stitch-audit/contact-sheet.png
+            artifacts/stitch-audit/extracted-text.json
+            artifacts/stitch-audit/screen-inventory.json
+          if-no-files-found: warn
+          retention-days: 14

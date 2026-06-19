@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "categories": [
+    {
+      "id": "copy.invented-device-behavior",
+      "category": "invented device behavior",
+      "severity": "error",
+      "strings": ["maximum extraction 600ml", "maximum extraction 600 ml", "minimum temperature 85°C", "maximum step count 5", "establishing connection", "connecting", "Manual Override"]
+    },
+    {
+      "id": "copy.unsupported-product-features",
+      "category": "unsupported product features",
+      "severity": "error",
+      "strings": ["Bluetooth scale", "scale connected", "account login", "AI diagnosis", "community feed"]
+    },
+    {
+      "id": "copy.wrong-recipe-values",
+      "category": "wrong recipe values",
+      "severity": "warning",
+      "strings": ["18g", "250g", "92°C", "93°C", "2:45"]
+    },
+    {
+      "id": "copy.wrong-method-names",
+      "category": "wrong method names",
+      "severity": "error",
+      "strings": ["Standard", "Flash Brew", "Osmotic", "French Press", "V60 Standard", "Ice Pour Over"]
+    },
+    {
+      "id": "copy.forbidden-legal-claims",
+      "category": "forbidden legal claims",
+      "severity": "error",
+      "strings": ["officially endorsed", "official partner", "certified recipe", "guaranteed result", "公式認定", "公式提携"]
+    },
+    {
+      "id": "copy.english-primary-operational",
+      "category": "English-primary operational copy",
+      "severity": "warning",
+      "strings": ["READY TO BREW", "NEXT STEP", "POUR", "TARGET", "Save Log", "Discard", "Finish Early"],
+      "exceptions": ["10 Pour Method", "10 Pour", "Pourō"]
+    },
+    {
+      "id": "copy.cloud-implication",
+      "category": "cloud implication",
+      "severity": "error",
+      "strings": ["cloud_sync", "cloud sync", "server sync", "account backup", "cloud backup"]
+    },
+    {
+      "id": "copy.brand-source-overemphasis",
+      "category": "brand/source overemphasis",
+      "severity": "error",
+      "strings": ["V60 Light Roast", "Tetsu Kasuya Signature Profile"]
+    }
+  ]
+}
