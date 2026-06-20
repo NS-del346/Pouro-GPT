@@ -39,10 +39,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Download Stitch export artifact
         uses: actions/download-artifact@v4
@@ -66,15 +62,21 @@ jobs:
 
       - name: Run audit tests
         run: npm run stitch:audit:test
+        working-directory: tools/stitch-audit
+
+      - name: Run synthetic fixture tests
+        run: npm run stitch:audit:fixtures
+        working-directory: tools/stitch-audit
 
       - name: Audit Stitch export
         shell: bash
         run: |
-          ARGS=("${{ steps.zip.outputs.path }}" --set "${{ inputs.set }}" --output artifacts/stitch-audit)
+          ARGS=("${{ github.workspace }}/${{ steps.zip.outputs.path }}" --set "${{ inputs.set }}" --output "${{ github.workspace }}/artifacts/stitch-audit")
           if [ "${{ inputs.strict }}" = "true" ]; then
             ARGS+=(--strict)
           fi
           npm run stitch:audit -- "${ARGS[@]}"
+        working-directory: tools/stitch-audit
 
       - name: Upload audit report
         if: always()

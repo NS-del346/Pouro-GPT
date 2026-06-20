@@ -2,59 +2,63 @@
 
 ## Scope
 
-- Deterministic Stitch ZIP audit CLI
-- Set A manifest and config-driven Recipe Truth
-- Visible HTML text / numeric extraction
-- PNG viewport, SHA-256, dHash inspection
-- exact / near duplicate detection
-- JSON, Markdown, contact sheet, inventory, extracted-text artifacts
-- small generated valid / invalid fixtures
-- manual GitHub Actions workflow
+This PR adds a deterministic Stitch artifact audit runner and its manual workflow. It does not change `src/**`, `public/**`, app UI/runtime, Recipe Setup behavior, Timer behavior, History/storage, PWA, or deployment behavior.
 
-## App/runtime status
+## Correction PR-UI-AUDIT-01-CORRECTION-001
 
-No application code, application UI, recipe runtime, History, storage, export schema, route, PWA manifest, service worker, or GitHub Pages base path is changed.
+Protected-file strategy: **Option 1 — dependency-free runner**.
+
+- Root `package.json` and `package-lock.json` are restored to `main`.
+- The runner uses Node.js standard-library APIs only.
+- Tool-local scripts live in `tools/stitch-audit/package.json`.
+- `.github/workflows/pr-guard.yml` is unchanged.
+- Human Gate for protected-file changes is not required because this PR no longer changes protected files.
+
+## Finding closure
+
+- IV-104-B01: package changes removed without weakening PR Guard.
+- IV-104-B02: canonical state IDs and legacy-to-current mapping corrected.
+- IV-104-B03: dimension tolerance is `0`; exact and ±1px cases are tested.
+- IV-104-B04: ZIP-root `manifest.json` is mandatory and file parity is enforced.
+- IV-104-B05: `<state-id>__<width>x<height>.png` is enforced.
+- IV-104-B06: reports include ZIP SHA-256, tool/schema/config versions, Authority revisions, audit options, timestamp, and Node version.
+- IV-104-B07: all eight required `375x667` states are configured and tested without viewport suffixes in `stateId`.
 
 ## Automated coverage
 
-Unit tests cover:
+The unit suite covers:
 
-- folder normalization and alias resolution
-- inventory and missing screen detection
-- incorrect viewport
-- exact duplicate detection
-- visible text / gram / time / ratio extraction
-- hidden script / element suppression
-- 4:6 invalid `18g` and `1 / 5`
-- Hybrid missing `3:00`
-- Ice missing `30g × 5`
-- fallback invented device behavior
-- Finish wrong values/source-heavy label
-- local save cloud implication
-- Markdown and JSON reporting
+- canonical state IDs
+- complete eight-state `375x667` inventory
+- exact dimensions and four ±1px failure cases
+- missing/invalid artifact manifest
+- manifest/file mismatch and undeclared file rejection
+- deterministic filename contract
+- duplicate state/filename detection
+- unsupported runnable state rejection
+- input ZIP SHA-256 and config/Authority metadata
+- same-input deterministic findings/verdict
+- traversal, absolute path, and symlink rejection
+- exact duplicate failure and near-duplicate warning
+- Document 10 fixed Recipe Truth examples
+- valid fixture PASS and invalid fixture FAIL
 
 ## Validation record
 
-| Command | Result | Notes |
-| --- | --- | --- |
-| `npm.cmd ci` | PASS | 134 packages installed; 0 vulnerabilities |
-| `npm.cmd run build` | PASS | App production build completed; 73 modules transformed |
-| `npm.cmd run stitch:audit:test` | PASS | 5 files / 24 tests passed; includes tool TypeScript check |
-| `npm.cmd run stitch:audit:fixtures` | PASS | Small valid and invalid ZIPs regenerated |
-| valid fixture, Set A, strict | PASS | Exit 0; 25/25 screens; 0 errors; 0 warnings; contact sheet readable |
-| invalid fixture, Set A, strict | PASS | Audit verdict FAIL and exit 1 as expected; 20 errors; 1 missing screen; 1 exact duplicate |
-| `--json-only --no-contact-sheet` smoke | PASS | JSON stdout parsed; contact sheet omitted and report field was null |
-| `git diff --check` | PASS | No whitespace errors |
+To be finalized on the correction commit:
 
-Root `lint`, standalone `typecheck`, and root `test` scripts are NOT AVAILABLE. Tool type checking and tests run through `stitch:audit:test`.
+| Check | Result |
+| --- | --- |
+| `npm.cmd ci` | PASS |
+| `npm.cmd run build` | PASS |
+| `npm.cmd --prefix tools/stitch-audit run stitch:audit:test` | PASS |
+| `npm.cmd --prefix tools/stitch-audit run stitch:audit:fixtures` | PASS |
+| `git diff --check` | PASS |
+| PR Guard | Verify on the live PR head |
+| CI | Verify on the live PR head |
 
-## Manual QA
+Manual browser/mobile QA: **NOT RUN**. This correction changes no app UI/runtime; machine artifact audit is not visual approval.
 
-Application browser QA: NOT RUN. No app source or UI is changed. Contact sheet readability was checked visually, and PNG integrity is also verified by reopening generated output through Sharp metadata inspection.
+## Synthetic fixture safety
 
-## Safety notes
-
-- ZIP extraction rejects traversal, absolute paths, and symbolic links.
-- Generated outputs are not committed.
-- Fixtures contain generated images and short synthetic HTML only, not Stitch design exports.
-- GitHub Actions downloads an existing artifact; it does not require committing a ZIP.
+Fixture PNGs and HTML are generated locally from deterministic patterns and text. They contain no private Stitch export, screenshot, Figma asset, or production user data.

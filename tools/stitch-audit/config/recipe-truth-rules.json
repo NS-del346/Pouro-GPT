@@ -1,11 +1,11 @@
 {
-  "version": "1.0",
+  "version": "2.0.0",
   "rules": [
     {
       "id": "set-a.home.methods-and-navigation",
       "description": "Set A Home method inventory and global navigation",
       "sets": ["set-a"],
-      "screenIds": ["home-empty", "home-previous-brew", "home-my-recipes", "home-previous-brew-375x667"],
+      "screenIds": ["home-empty", "home-previous-brew", "home-my-recipes"],
       "required": {
         "text": ["Hybrid", "10 Pour", "Ice Brew"],
         "ratios": ["4:6"],
@@ -24,7 +24,7 @@
       "id": "set-a.four-six.setup",
       "description": "4:6 R-01/R-02/R-03 fixed examples",
       "sets": ["set-a"],
-      "screenIds": ["recipe-setup-four-six", "recipe-setup-four-six-375x667"],
+      "screenIds": ["setup-four-six"],
       "required": {
         "grams": ["20g", "300g"],
         "ratios": ["1:15"],
@@ -39,7 +39,7 @@
       "id": "set-a.hybrid.setup",
       "description": "Hybrid R-08 exact fixed example",
       "sets": ["set-a"],
-      "screenId": "recipe-setup-hybrid",
+      "screenId": "setup-hybrid",
       "required": {
         "grams": ["20g", "300g", "64g", "172g"],
         "ratios": ["1:15"],
@@ -53,7 +53,7 @@
       "id": "set-a.ten-pour.setup",
       "description": "THE NEO BREW R-09 exact fixed example",
       "sets": ["set-a"],
-      "screenId": "recipe-setup-ten-pour",
+      "screenId": "setup-ten-pour",
       "required": {
         "grams": ["20g", "300g", "30g", "210g"],
         "ratios": ["1:15"],
@@ -66,7 +66,7 @@
       "id": "set-a.ten-pour.optional-guidance-warning",
       "description": "10 Pour optional temperature or grind guidance",
       "sets": ["set-a"],
-      "screenId": "recipe-setup-ten-pour",
+      "screenId": "setup-ten-pour",
       "severity": "warning",
       "forbidden": { "temperatures": ["93°C"], "text": ["Med-Fine"] }
     },
@@ -74,7 +74,7 @@
       "id": "set-a.ice.setup",
       "description": "Ice R-10 HOT-only active target and pre-set ICE",
       "sets": ["set-a"],
-      "screenId": "recipe-setup-ice-brew",
+      "screenId": "setup-ice-brew",
       "required": {
         "grams": ["20g", "150g", "80g", "30g"],
         "numbers": ["5"],
@@ -92,7 +92,7 @@
       "id": "set-a.active.pouring",
       "description": "4:6 pouring state",
       "sets": ["set-a"],
-      "screenIds": ["active-brew-pouring", "active-brew-pouring-375x667"],
+      "screenIds": ["brew-pouring"],
       "required": {
         "grams": ["60g"],
         "times": ["0:45"],
@@ -109,7 +109,7 @@
       "id": "set-a.active.waiting",
       "description": "4:6 waiting current and next targets",
       "sets": ["set-a"],
-      "screenIds": ["active-brew-waiting", "active-brew-waiting-375x667"],
+      "screenIds": ["brew-waiting"],
       "required": {
         "grams": ["+60g"],
         "times": ["0:45"],
@@ -125,7 +125,7 @@
       "id": "set-a.active.paused",
       "description": "4:6 paused state step count",
       "sets": ["set-a"],
-      "screenId": "active-brew-paused",
+      "screenId": "brew-paused",
       "required": { "sequences": ["2 / 4"] },
       "forbidden": { "sequences": ["2 / 5"] }
     },
@@ -133,7 +133,7 @@
       "id": "set-a.hybrid.transition",
       "description": "Hybrid supported transition",
       "sets": ["set-a"],
-      "screenId": "active-brew-transition",
+      "screenId": "brew-transition",
       "requiredAnyOf": [
         { "times": ["0:30"], "text": ["CLOSE"], "grams": ["128g"] },
         { "times": ["1:45"], "text": ["OPEN", "drawdown"], "grams": ["300g"] }
@@ -143,7 +143,7 @@
       "id": "set-a.hybrid.drawdown",
       "description": "Hybrid OPEN drawdown and finish guidance",
       "sets": ["set-a"],
-      "screenId": "active-brew-drawdown",
+      "screenId": "brew-drawdown",
       "required": {
         "times": ["1:45", "3:00"],
         "grams": ["300g"],
@@ -156,7 +156,7 @@
       "id": "set-a.finish.snapshot",
       "description": "R-01 final snapshot",
       "sets": ["set-a"],
-      "screenIds": ["finish-unsaved", "finish-saving", "finish-saved", "finish-save-as-my-recipe", "finish-unsaved-375x667"],
+      "screenIds": ["finish-unsaved", "finish-saving", "finish-saved", "finish-save-my-recipe"],
       "required": {
         "ratios": ["4:6", "1:15"],
         "grams": ["20g", "300g"],
