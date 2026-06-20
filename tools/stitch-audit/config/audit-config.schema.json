@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pouro.invalid/stitch-audit/audit-config.schema.json",
+  "title": "Pourō Stitch audit Recipe Truth configuration",
+  "type": "object",
+  "required": ["version", "rules"],
+  "properties": {
+    "version": { "type": "string" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "sets"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "sets": { "type": "array", "items": { "enum": ["set-a", "set-b", "set-c"] }, "minItems": 1 },
+          "screenId": { "type": "string" },
+          "screenIds": { "type": "array", "items": { "type": "string" } },
+          "severity": { "enum": ["error", "warning"] },
+          "required": { "$ref": "#/$defs/fields" },
+          "forbidden": { "$ref": "#/$defs/fields" },
+          "requiredAnyOf": { "type": "array", "items": { "$ref": "#/$defs/fields" }, "minItems": 1 }
+        },
+        "oneOf": [
+          { "required": ["screenId"] },
+          { "required": ["screenIds"] }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "fields": {
+      "type": "object",
+      "properties": {
+        "text": { "$ref": "#/$defs/stringList" },
+        "textAny": { "type": "array", "items": { "$ref": "#/$defs/stringList" } },
+        "grams": { "$ref": "#/$defs/stringList" },
+        "times": { "$ref": "#/$defs/stringList" },
+        "ratios": { "$ref": "#/$defs/stringList" },
+        "temperatures": { "$ref": "#/$defs/stringList" },
+        "numbers": { "$ref": "#/$defs/stringList" },
+        "sequences": { "$ref": "#/$defs/stringList" },
+        "buttons": { "$ref": "#/$defs/stringList" },
+        "headings": { "$ref": "#/$defs/stringList" }
+      },
+      "additionalProperties": false
+    },
+    "stringList": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,115 @@
+name: Stitch Audit
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/stitch-audit.yml"
+      - "tools/stitch-audit/**"
+      - "docs/qa/stitch-audit/**"
+
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: Run ID containing the stitch-export artifact
+        required: true
+        type: string
+      set:
+        description: Audit set
+        required: true
+        default: set-a
+        type: choice
+        options:
+          - set-a
+          - set-b
+          - set-c
+          - all
+      strict:
+        description: Enable strict mode
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run audit unit tests
+        working-directory: tools/stitch-audit
+        run: npm run stitch:audit:test
+
+      - name: Run synthetic fixture tests
+        working-directory: tools/stitch-audit
+        run: npm run stitch:audit:fixtures
+
+  audit:
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Download Stitch export artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: stitch-export
+          path: incoming/stitch-export
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.artifact_run_id }}
+
+      - name: Locate the single ZIP
+        id: zip
+        shell: bash
+        run: |
+          mapfile -t ZIP_FILES < <(find incoming/stitch-export -type f -iname '*.zip' -print)
+          if [ "${#ZIP_FILES[@]}" -ne 1 ]; then
+            echo "Expected exactly one ZIP in stitch-export; found ${#ZIP_FILES[@]}." >&2
+            exit 2
+          fi
+          echo "path=${ZIP_FILES[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Audit Stitch export
+        shell: bash
+        run: |
+          ARGS=("${{ github.workspace }}/${{ steps.zip.outputs.path }}" --set "${{ inputs.set }}" --output "${{ github.workspace }}/artifacts/stitch-audit")
+          if [ "${{ inputs.strict }}" = "true" ]; then
+            ARGS+=(--strict)
+          fi
+          npm run stitch:audit -- "${ARGS[@]}"
+        working-directory: tools/stitch-audit
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stitch-audit-report
+          path: |
+            artifacts/stitch-audit/report.json
+            artifacts/stitch-audit/report.md
+            artifacts/stitch-audit/contact-sheet.png
+            artifacts/stitch-audit/extracted-text.json
+            artifacts/stitch-audit/screen-inventory.json
+          if-no-files-found: warn
+          retention-days: 14

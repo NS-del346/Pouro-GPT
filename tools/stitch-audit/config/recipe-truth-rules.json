@@ -1,0 +1,181 @@
+{
+  "version": "2.0.0",
+  "rules": [
+    {
+      "id": "set-a.home.methods-and-navigation",
+      "description": "Set A Home method inventory and global navigation",
+      "sets": ["set-a"],
+      "screenIds": ["home-empty", "home-previous-brew", "home-my-recipes"],
+      "required": {
+        "text": ["Hybrid", "10 Pour", "Ice Brew"],
+        "ratios": ["4:6"],
+        "textAny": [
+          ["Home", "ホーム"],
+          ["Tools", "ツール"],
+          ["History", "履歴"],
+          ["Settings", "設定"]
+        ]
+      },
+      "forbidden": {
+        "text": ["Standard", "Flash Brew", "Osmotic", "French Press", "V60 Standard", "Ice Pour Over"]
+      }
+    },
+    {
+      "id": "set-a.four-six.setup",
+      "description": "4:6 R-01/R-02/R-03 fixed examples",
+      "sets": ["set-a"],
+      "screenIds": ["setup-four-six"],
+      "required": {
+        "grams": ["20g", "300g"],
+        "ratios": ["1:15"],
+        "text": ["R-01", "R-02", "R-03"],
+        "sequences": ["60 / 60 / 90 / 90", "50 / 70 / 90 / 90", "70 / 50 / 90 / 90"]
+      },
+      "forbidden": {
+        "text": ["L-01", "M-01", "H-01", "L-02", "H-02", "L-03", "M-03", "H-03"]
+      }
+    },
+    {
+      "id": "set-a.hybrid.setup",
+      "description": "Hybrid R-08 exact fixed example",
+      "sets": ["set-a"],
+      "screenId": "setup-hybrid",
+      "required": {
+        "grams": ["20g", "300g", "64g", "172g"],
+        "ratios": ["1:15"],
+        "times": ["0:00", "0:30", "1:15", "1:45", "3:00"],
+        "text": ["OPEN", "CLOSED"],
+        "sequences": ["64g / 64g / 172g"]
+      },
+      "forbidden": { "text": ["50g final pour", "2:15 finish"] }
+    },
+    {
+      "id": "set-a.ten-pour.setup",
+      "description": "THE NEO BREW R-09 exact fixed example",
+      "sets": ["set-a"],
+      "screenId": "setup-ten-pour",
+      "required": {
+        "grams": ["20g", "300g", "30g", "210g"],
+        "ratios": ["1:15"],
+        "numbers": ["10"],
+        "times": ["1:45", "2:30", "3:30"],
+        "sequences": ["30g × 10"]
+      }
+    },
+    {
+      "id": "set-a.ten-pour.optional-guidance-warning",
+      "description": "10 Pour optional temperature or grind guidance",
+      "sets": ["set-a"],
+      "screenId": "setup-ten-pour",
+      "severity": "warning",
+      "forbidden": { "temperatures": ["93°C"], "text": ["Med-Fine"] }
+    },
+    {
+      "id": "set-a.ice.setup",
+      "description": "Ice R-10 HOT-only active target and pre-set ICE",
+      "sets": ["set-a"],
+      "screenId": "setup-ice-brew",
+      "required": {
+        "grams": ["20g", "150g", "80g", "30g"],
+        "numbers": ["5"],
+        "times": ["3:00"],
+        "text": ["HOT", "ICE"],
+        "textAny": [
+          ["150g HOT", "HOT 150g", "HOTの累計目標は150g", "active target is 150g HOT"],
+          ["ICE is pre-set", "ICE preset", "ICEはセット済み", "氷を先にセット"]
+        ],
+        "sequences": ["30g × 5"]
+      },
+      "forbidden": { "text": ["230g active target", "active target 230g", "累計目標 230g"] }
+    },
+    {
+      "id": "set-a.active.pouring",
+      "description": "4:6 pouring state",
+      "sets": ["set-a"],
+      "screenIds": ["brew-pouring"],
+      "required": {
+        "grams": ["60g"],
+        "times": ["0:45"],
+        "sequences": ["60 / 300g", "1 / 4"]
+      },
+      "forbidden": {
+        "grams": ["18g", "250g"],
+        "temperatures": ["93°C"],
+        "sequences": ["1 / 5"],
+        "text": ["OPEN", "CLOSED"]
+      }
+    },
+    {
+      "id": "set-a.active.waiting",
+      "description": "4:6 waiting current and next targets",
+      "sets": ["set-a"],
+      "screenIds": ["brew-waiting"],
+      "required": {
+        "grams": ["+60g"],
+        "times": ["0:45"],
+        "sequences": ["60 / 300g", "120 / 300g"]
+      },
+      "forbidden": {
+        "grams": ["250g"],
+        "temperatures": ["93°C"],
+        "text": ["Current 120g", "現在 120g", "今回 120g"]
+      }
+    },
+    {
+      "id": "set-a.active.paused",
+      "description": "4:6 paused state step count",
+      "sets": ["set-a"],
+      "screenId": "brew-paused",
+      "required": { "sequences": ["2 / 4"] },
+      "forbidden": { "sequences": ["2 / 5"] }
+    },
+    {
+      "id": "set-a.hybrid.transition",
+      "description": "Hybrid supported transition",
+      "sets": ["set-a"],
+      "screenId": "brew-transition",
+      "requiredAnyOf": [
+        { "times": ["0:30"], "text": ["CLOSE"], "grams": ["128g"] },
+        { "times": ["1:45"], "text": ["OPEN", "drawdown"], "grams": ["300g"] }
+      ]
+    },
+    {
+      "id": "set-a.hybrid.drawdown",
+      "description": "Hybrid OPEN drawdown and finish guidance",
+      "sets": ["set-a"],
+      "screenId": "brew-drawdown",
+      "required": {
+        "times": ["1:45", "3:00"],
+        "grams": ["300g"],
+        "text": ["OPEN"],
+        "textAny": [["no water", "注湯なし", "水は注がない"], ["drawdown", "落とし切り"]]
+      },
+      "forbidden": { "text": ["2:15 target", "Finish Early"] }
+    },
+    {
+      "id": "set-a.finish.snapshot",
+      "description": "R-01 final snapshot",
+      "sets": ["set-a"],
+      "screenIds": ["finish-unsaved", "finish-saving", "finish-saved", "finish-save-my-recipe"],
+      "required": {
+        "ratios": ["4:6", "1:15"],
+        "grams": ["20g", "300g"],
+        "sequences": ["60 / 60 / 90 / 90"]
+      },
+      "forbidden": {
+        "grams": ["18g", "250g"],
+        "temperatures": ["92°C", "93°C"],
+        "times": ["2:45"],
+        "text": ["V60 Light Roast", "Tetsu Kasuya Signature Profile"]
+      }
+    },
+    {
+      "id": "set-a.finish.local-save",
+      "description": "Local-device save semantics",
+      "sets": ["set-a"],
+      "screenIds": ["finish-saving", "finish-saved"],
+      "required": { "textAny": [["local", "device", "端末内"]] },
+      "forbidden": { "text": ["cloud_sync", "cloud sync", "server sync", "account backup"] }
+    }
+  ]
+}
