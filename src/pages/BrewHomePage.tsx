@@ -1,24 +1,43 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getMethodIconSrc } from "../assets/methods/methodIcons";
 import { getVariantsByMethodId, visiblePlaceholderMethods } from "../data";
 import { getBrewHistory } from "../repositories";
-import type { BrewSetup } from "../types";
-import {
-  formatDateTime,
-  getSessionMethodLabel,
-  getSessionSetupSummary,
-  getSessionVariantLabel,
-} from "../utils";
-import {
-  getRecipeStatusLabel,
-  getSourceStatusLabel,
-  getVerificationLevelLabel,
-  requiresReviewLabel,
-} from "../utils/sourceStatus";
+import type { BrewMethodId, BrewSetup } from "../types";
+import { getSessionMethodLabel, getSessionSetupSummary } from "../utils";
+import { getRecipeStatusLabel } from "../utils/sourceStatus";
 
 interface BrewHomePageProps {
   onReplayBrew: (setup: BrewSetup) => void;
+}
+
+function getRecipeSignature(methodId: BrewMethodId): string {
+  const variant = getVariantsByMethodId(methodId)[0];
+
+  if (!variant) return "参考レシピ";
+
+  const coffee = variant.recommendedCoffeeGrams;
+
+  if (
+    methodId === "ice-brew" &&
+    coffee !== null &&
+    variant.recommendedHotWaterGrams !== null &&
+    variant.recommendedHotWaterGrams !== undefined &&
+    variant.recommendedIceGrams !== null &&
+    variant.recommendedIceGrams !== undefined
+  ) {
+    return `${coffee}g · HOT ${variant.recommendedHotWaterGrams}g · ICE ${variant.recommendedIceGrams}g`;
+  }
+
+  const water = variant.recommendedWaterGrams;
+  const ratio = variant.recommendedRatio;
+
+  if (coffee !== null && water !== null && ratio !== null) {
+    return `${coffee}g · ${water}g · 1:${ratio}`;
+  }
+
+  return "固定例・確認中";
 }
 
 export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
@@ -26,6 +45,8 @@ export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
   const firstMethodId = visiblePlaceholderMethods[0]?.id ?? "";
   const [selectedMethodId, setSelectedMethodId] = useState(firstMethodId);
   const latestSession = useMemo(() => getBrewHistory()[0] ?? null, []);
+  const selectedCtaRef = useRef<HTMLAnchorElement>(null);
+  const shouldCheckCtaVisibilityRef = useRef(false);
 
   const selectedMethod = useMemo(
     () =>
@@ -33,6 +54,39 @@ export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
       visiblePlaceholderMethods[0],
     [selectedMethodId],
   );
+
+  useLayoutEffect(() => {
+    if (!shouldCheckCtaVisibilityRef.current) return;
+
+    shouldCheckCtaVisibilityRef.current = false;
+    const frameId = window.requestAnimationFrame(() => {
+      const cta = selectedCtaRef.current;
+      if (!cta) return;
+
+      const ctaRect = cta.getBoundingClientRect();
+      const bottomTabs = document.querySelector<HTMLElement>(".bottom-tabs");
+      const bottomTabsRect = bottomTabs?.getBoundingClientRect();
+      const viewportBottom = window.innerHeight;
+      const visibleBottom =
+        bottomTabsRect && bottomTabsRect.top < viewportBottom && bottomTabsRect.bottom > 0
+          ? Math.min(viewportBottom, bottomTabsRect.top)
+          : viewportBottom;
+      const safetyMargin = 12;
+      const hiddenAmount = ctaRect.bottom + safetyMargin - visibleBottom;
+
+      if (hiddenAmount <= 0) return;
+
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      window.scrollBy({
+        top: hiddenAmount,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [selectedMethodId]);
 
   function handleReplayLatest() {
     if (!latestSession) return;
@@ -44,8 +98,15 @@ export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
     navigate(`/setup/${latestSession.methodId}`);
   }
 
-  const latestVariantLabel = latestSession
-    ? getSessionVariantLabel(latestSession)
+  function handleMethodSelect(methodId: BrewMethodId) {
+    if (methodId === selectedMethodId) return;
+
+    shouldCheckCtaVisibilityRef.current = true;
+    setSelectedMethodId(methodId);
+  }
+
+  const latestSummary = latestSession
+    ? getSessionSetupSummary(latestSession).replaceAll(" / ", " · ")
     : null;
 
   return (
@@ -63,107 +124,105 @@ export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
           </span>
         </h1>
         <p className="home-tagline">Pour slowly. Brew deeply.</p>
-        <p>
-          抽出メソッドを選び、次の画面であなたの抽出条件を設定します。
-        </p>
+        <p>抽出メソッドを選び、次の画面であなたの抽出条件を設定します。</p>
       </header>
 
-      {latestSession && (
-        <article className="last-brew-card" aria-labelledby="last-brew-title">
-          <header className="last-brew-card__header">
-            <p className="eyebrow">Last Brew</p>
-            <h2 id="last-brew-title">前回の条件で再抽出</h2>
-          </header>
-          <div className="last-brew-card__summary">
+      {latestSession && latestSummary && (
+        <button
+          aria-label={`前回の条件を確認する。${getSessionMethodLabel(
+            latestSession,
+          )}、${latestSummary}`}
+          className="last-brew-strip"
+          onClick={handleReplayLatest}
+          type="button"
+        >
+          <span className="last-brew-strip__summary">
+            <span>前回：</span>
             <strong>{getSessionMethodLabel(latestSession)}</strong>
-            {latestVariantLabel && <span>{latestVariantLabel}</span>}
-            <p>{getSessionSetupSummary(latestSession)}</p>
-          </div>
-          <p className="last-brew-card__meta">
-            完了 {formatDateTime(latestSession.finishedAtIso)}
-          </p>
-          <button
-            className="last-brew-card__button"
-            onClick={handleReplayLatest}
-            type="button"
-          >
-            前回の条件を確認する
-          </button>
-        </article>
+            <span aria-hidden="true"> · </span>
+            <span>{latestSummary}</span>
+          </span>
+          <span className="last-brew-strip__arrow" aria-hidden="true">
+            ›
+          </span>
+        </button>
       )}
 
-      <div className="method-grid" aria-label="抽出メソッド">
-        {visiblePlaceholderMethods.map((method) => {
+      <div className="method-deck" aria-label="抽出メソッド">
+        {visiblePlaceholderMethods.map((method, index) => {
           const isSelected = method.id === selectedMethod?.id;
-          const statusLabel = getRecipeStatusLabel(method);
-          const variantCount = getVariantsByMethodId(method.id).length;
+          const triggerId = `method-${method.id}-trigger`;
+          const panelId = `method-${method.id}-panel`;
 
           return (
-            <button
-              aria-pressed={isSelected}
-              className={`method-card${isSelected ? " method-card--selected" : ""}`}
+            <article
+              className={`method-deck-card${
+                isSelected ? " method-deck-card--selected" : ""
+              }`}
               key={method.id}
-              onClick={() => setSelectedMethodId(method.id)}
-              type="button"
+              style={{ "--method-index": index } as CSSProperties}
             >
-              <span className="method-icon-frame" aria-hidden="true">
-                <img
-                  alt=""
-                  aria-hidden="true"
-                  className="method-icon"
-                  src={getMethodIconSrc(method.id)}
-                />
-              </span>
-              <span className="method-card__name">{method.displayName}</span>
-              <span className="method-card__description">
-                {method.shortDescription}
-              </span>
-              {variantCount > 1 && (
-                <span className="method-card__meta">{variantCount} variants</span>
-              )}
-              <span className="status-pill">{statusLabel}</span>
-            </button>
+              <button
+                aria-controls={panelId}
+                aria-expanded={isSelected}
+                aria-pressed={isSelected}
+                className="method-deck-card__tab"
+                id={triggerId}
+                onClick={() => handleMethodSelect(method.id)}
+                type="button"
+              >
+                <span className="method-deck-card__tab-icon" aria-hidden="true">
+                  <img
+                    alt=""
+                    aria-hidden="true"
+                    src={getMethodIconSrc(method.id)}
+                  />
+                </span>
+                <span className="method-deck-card__tab-name">{method.displayName}</span>
+                <span className="method-deck-card__marker" aria-hidden="true">
+                  {isSelected ? "✓" : ""}
+                </span>
+              </button>
+
+              <div
+                aria-labelledby={triggerId}
+                className="method-deck-card__front"
+                hidden={!isSelected}
+                id={panelId}
+                role="region"
+              >
+                <div className="method-deck-card__identity">
+                  <span className="method-deck-card__front-icon" aria-hidden="true">
+                    <img
+                      alt=""
+                      aria-hidden="true"
+                      src={getMethodIconSrc(method.id)}
+                    />
+                  </span>
+                  <div>
+                    <h2>{method.displayName}</h2>
+                    <p className="method-deck-card__signature">
+                      {getRecipeSignature(method.id)}
+                    </p>
+                  </div>
+                </div>
+                <p className="method-deck-card__description">{method.shortDescription}</p>
+                <span className="status-pill">{getRecipeStatusLabel(method)}</span>
+                <Link
+                  aria-disabled={!selectedMethod}
+                  className={`method-deck-card__cta${
+                    !selectedMethod ? " method-deck-card__cta--disabled" : ""
+                  }`}
+                  ref={isSelected ? selectedCtaRef : undefined}
+                  to={selectedMethod ? `/setup/${selectedMethod.id}` : "/"}
+                >
+                  レシピ設定へ
+                </Link>
+              </div>
+            </article>
           );
         })}
       </div>
-
-      {selectedMethod && (
-        <article className="selected-method-card">
-          <div className="section-heading">
-            <p className="eyebrow">選択中</p>
-            <h2>{selectedMethod.displayName}</h2>
-          </div>
-          <div className="status-row">
-            <span className="status-pill">
-              {getRecipeStatusLabel(selectedMethod)}
-            </span>
-            {requiresReviewLabel(selectedMethod) && (
-              <span className="status-note">確認中の参考情報です</span>
-            )}
-          </div>
-          <p>{selectedMethod.longDescription}</p>
-          <dl className="source-status-list">
-            <div>
-              <dt>出典状態</dt>
-              <dd>{getSourceStatusLabel(selectedMethod.sourceStatus)}</dd>
-            </div>
-            <div>
-              <dt>確認段階</dt>
-              <dd>
-                {getVerificationLevelLabel(selectedMethod.verificationLevel)}
-              </dd>
-            </div>
-          </dl>
-        </article>
-      )}
-
-      <Link
-        aria-disabled={!selectedMethod}
-        className={`primary-cta${!selectedMethod ? " primary-cta--disabled" : ""}`}
-        to={selectedMethod ? `/setup/${selectedMethod.id}` : "/"}
-      >
-        レシピ設定へ
-      </Link>
     </section>
   );
 }
