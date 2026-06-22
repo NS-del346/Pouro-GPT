@@ -1,10 +1,14 @@
 import { NavLink, useLocation } from "react-router-dom";
+import navBrewIcon from "../../assets/navigation/nav-brew.png";
+import navHistoryIcon from "../../assets/navigation/nav-history.png";
+import navSettingsIcon from "../../assets/navigation/nav-settings.png";
+import navToolsIcon from "../../assets/navigation/nav-tools.png";
 
 const tabs = [
-  { icon: "brew", label: "抽出", to: "/" },
-  { icon: "tools", label: "ツール", to: "/tools" },
-  { icon: "history", label: "履歴", to: "/history" },
-  { icon: "settings", label: "設定", to: "/settings" },
+  { icon: navBrewIcon, label: "抽出", to: "/" },
+  { icon: navToolsIcon, label: "ツール", to: "/tools" },
+  { icon: navHistoryIcon, label: "履歴", to: "/history" },
+  { icon: navSettingsIcon, label: "設定", to: "/settings" },
 ];
 
 export function BottomTabs() {
@@ -27,10 +31,14 @@ export function BottomTabs() {
           key={tab.to}
           to={tab.to}
         >
-          <span
-            aria-hidden="true"
-            className={`bottom-tab__icon bottom-tab__icon--${tab.icon}`}
-          />
+          <span className="bottom-tab__icon-frame" aria-hidden="true">
+            <img
+              alt=""
+              aria-hidden="true"
+              className="bottom-tab__icon"
+              src={tab.icon}
+            />
+          </span>
           <span>{tab.label}</span>
         </NavLink>
       ))}
