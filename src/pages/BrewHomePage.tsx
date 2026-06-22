@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getMethodIconSrc } from "../assets/methods/methodIcons";
 import { getVariantsByMethodId, visiblePlaceholderMethods } from "../data";
 import { getBrewHistory } from "../repositories";
 import type { BrewSetup } from "../types";
@@ -15,13 +16,6 @@ import {
   getVerificationLevelLabel,
   requiresReviewLabel,
 } from "../utils/sourceStatus";
-
-const methodGlyphLabels: Record<string, string> = {
-  "four-six": "4:6",
-  hybrid: "Hy",
-  "ten-pour": "10",
-  "ice-brew": "Ice",
-};
 
 interface BrewHomePageProps {
   onReplayBrew: (setup: BrewSetup) => void;
@@ -112,8 +106,13 @@ export function BrewHomePage({ onReplayBrew }: BrewHomePageProps) {
               onClick={() => setSelectedMethodId(method.id)}
               type="button"
             >
-              <span className="method-glyph" aria-hidden="true">
-                {methodGlyphLabels[method.id] ?? method.shortName.slice(0, 2)}
+              <span className="method-icon-frame" aria-hidden="true">
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  className="method-icon"
+                  src={getMethodIconSrc(method.id)}
+                />
               </span>
               <span className="method-card__name">{method.displayName}</span>
               <span className="method-card__description">
