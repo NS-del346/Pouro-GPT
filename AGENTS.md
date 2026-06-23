@@ -379,6 +379,19 @@ Design/Specification → Implementation → Independent Verification → Regress
 
 Preserve one writer for every write-capable session. The implementation role is the sole writer; specification, verifier, and regression roles remain read-only. Do not let verifier or regression roles submit reviews, mutate pull requests, or implement fixes during their audit. Agent roles must not depend on recursively spawning other agents.
 
+Native project roles require an explicit `agent_type` in each agent-spawn request. `task_name` is an identifier only; it is not a role selector. Generic-agent fallback is prohibited. If the active tool schema does not expose `agent_type`, stop before spawning, report the role execution `NOT RUN`, and do not substitute a generic agent.
+
+On Codex CLI 0.142.0, spawn metadata is hidden by default. For a session that requires native project roles, expose it with the supported session-only override shown below. Persistent global configuration is not the default. Select `pouro-build` for the implementation writer and `pouro-audit` for specification, verifier, and regression. Replace every angle-bracket placeholder before use; this is a template and is not directly executable as written:
+
+```powershell
+codex --profile <pouro-build|pouro-audit> --strict-config `
+  -c 'approvals_reviewer="user"' `
+  -c 'features.multi_agent_v2.hide_spawn_agent_metadata=false' `
+  -C '<repository-root>'
+```
+
+This session override is user-local runtime setup, not a repository requirement. A clone must remain safe when the profile, override, Hook, approval reviewer, or other user-level configuration is absent.
+
 Keep Human Gates separate from automated evidence. UI review, physical-device checks, assistive-technology checks, and subjective acceptance remain `NOT RUN` until the responsible human supplies direct evidence. Never use an automated check to clear a Human Gate.
 
 Do not auto-merge. Marking a pull request Ready, merging, closing, enabling auto-merge, publishing a release, or performing another external mutation requires explicit user authorization for that exact action.

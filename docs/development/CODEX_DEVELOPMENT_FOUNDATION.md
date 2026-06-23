@@ -73,7 +73,17 @@ The verifier performs an implementation-independent, read-only audit of the spec
 
 The regression role audits protected behavior and compatibility risks independently and read-only. It does not fix findings or broaden the implementation scope.
 
-Role files use only the v0.141.0-discovered role metadata (`name`, `description`) and the supported `developer_instructions` config key. Model, reasoning, sandbox, and approval overrides are intentionally not embedded; roles inherit the invoking session's supported effective configuration.
+Role files use the discovered role metadata (`name`, `description`) and the supported `developer_instructions` config key. Model, reasoning, sandbox, and approval overrides are intentionally not embedded; roles inherit the invoking session's supported effective configuration.
+
+## Native role invocation contract
+
+The current operational baseline is Codex CLI 0.142.0. Native project roles must be selected with an explicit `agent_type`; `task_name` identifies a task but does not select a role. Generic-agent fallback is prohibited because it cannot prove that the intended role instructions were applied. If `agent_type` is absent from the active spawn schema, stop before spawning and report the role execution `NOT RUN`.
+
+In 0.142.0, `features.multi_agent_v2.hide_spawn_agent_metadata` defaults to `true`. A role-required session may set the supported session-only override to `false` so the spawn schema exposes role metadata. Use `pouro-build` for implementation and `pouro-audit` for specification, verifier, and regression. Do not make a persistent global configuration change by default, and do not apply the override to sessions that do not require native project roles.
+
+The explicit `agent_type` runtime validation completed 4/4 roles with `PASS_WITH_NOTES`. It proves the tested role markers and bounded outputs under the recorded session configuration. It does not prove the effective child sandbox, model, reasoning level, Hook trust UI, or a workspace-write application pilot; those remain `UNCONFIRMED` or `NOT RUN` as recorded in QA.
+
+Historical limitation: Stage 8 on Codex CLI 0.141.0 was `NOT_PASS` because the normal runtime spawn surface lacked an explicit role selector. That result remains historical evidence and is not rewritten as a 0.142.0 pass.
 
 ## Project Skill routing
 
@@ -120,15 +130,17 @@ The foundation remains useful without user-level automation because its roles, S
 
 ## Setup and discovery validation
 
-For Codex CLI v0.141.0:
+For the current Codex CLI 0.142.0 baseline:
 
-1. Confirm `codex --version` reports `0.141.0` before using the pinned sources below.
-2. Verify repository root, branch, HEAD, worktree, upstream, and intended remote.
-3. Start a fresh process from the repository root with strict config parsing and a read-only profile.
-4. Confirm the process loads repository `AGENTS.md` after user instructions, discovers the four `.codex/agents/*.toml` roles, discovers the three `.agents/skills/*/SKILL.md` Skills, and reports no startup parse warning.
-5. Run `codex execpolicy check` with the project Rule alone and then together with the intended user Rule files. Supply fixture tokens only; do not execute fixture commands.
+1. Confirm `codex --version` reports `0.142.0` before using the pinned sources below.
+2. Verify repository root, branch, HEAD, worktree, upstream, intended remote, exact scope, and writer exclusivity.
+3. Start a fresh process from the repository root with strict configuration parsing and the appropriate user-local profile.
+4. For a role-required session only, set `features.multi_agent_v2.hide_spawn_agent_metadata=false` as a session override and confirm that the active spawn schema exposes `agent_type` before spawning.
+5. Pass the exact role name through `agent_type`; use `task_name` only as the task identifier. Stop and report `NOT RUN` if the role selector is absent or the requested role is unavailable. Do not fall back to a generic agent.
+6. Confirm the process loads repository `AGENTS.md` after user instructions, discovers the four `.codex/agents/*.toml` roles, discovers the three `.agents/skills/*/SKILL.md` Skills, and reports no startup parse warning.
+7. Run `codex execpolicy check` with the project Rule alone and then together with the intended user Rule files. Supply fixture tokens only; do not execute fixture commands.
 
-Do not invent an agent or Skill list command. If the installed CLI exposes no authoritative list surface, use only a supported fresh-process diagnostic and record the limitation. Actual Custom Agent task execution belongs in a separate validation stage.
+Do not invent an agent or Skill list command. If the installed CLI exposes no authoritative list surface, use only supported diagnostics and record the limitation. A clone does not contain or install a user profile, Hook, approval-reviewer configuration, user Rule, user Skill, trusted Hook state, or machine-specific writable path.
 
 ## Standard PR flow
 
@@ -141,6 +153,18 @@ Do not invent an agent or Skill list command. If the installed CLI exposes no au
 7. Run independent verification and regression read-only.
 8. Resolve findings in a newly authorized writer cycle if needed.
 9. Produce handoff and memory evidence; do not merge automatically.
+
+## Controlled application pilot checklist
+
+The first workspace-write application pilot remains `NOT RUN`. When separately authorized, it must verify all of the following without weakening the repository contract:
+
+- The main implementation session uses workspace-write only for the exact approved repository paths.
+- The implementation role is the sole writer; specification, verifier, and regression remain read-only and perform no fixes.
+- The approved specification, exact file scope, explicit non-goals, protected scope, and source-of-truth order are frozen before mutation.
+- Hook, Rules, and Skills routing are observed separately and are not treated as interchangeable controls.
+- The application build and all proportional static or runtime checks required by the specification are run; every omitted check is labeled `NOT RUN`.
+- Human Gates remain separate from automated evidence and require direct human confirmation.
+- Commit, push, branch, PR, Ready, merge, close, auto-merge, deployment, and release mutations require explicit authorization for the exact action.
 
 ## Failure and recovery
 
@@ -155,24 +179,29 @@ On failure, stop mutation and preserve current evidence. Record branch, HEAD, st
 5. Re-run fresh-process discovery without executing mutation-capable agent tasks.
 6. Update this guide and QA evidence only for verified changes.
 
-## Pinned v0.141.0 source map
+## Pinned v0.142.0 source map
 
-The schema gate uses only `rust-v0.141.0` sources:
+The current operational schema gate uses only `rust-v0.142.0` sources. Stage 8's `rust-v0.141.0` evidence remains historical in the QA chronology.
 
-- [Config schema](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/core/config.schema.json)
-- [Config layer loader](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/config/src/loader/README.md)
-- [Agent role discovery](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/core/src/config/agent_roles.rs)
-- [Skill discovery](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/core-skills/src/loader.rs)
-- [Exec policy Rules](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/execpolicy/README.md)
-- [AGENTS.md hierarchy](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/core/src/agents_md.rs)
-- [Hook discovery](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/hooks/src/engine/discovery.rs)
-- [Hook runtime](https://github.com/openai/codex/blob/rust-v0.141.0/codex-rs/core/src/hook_runtime.rs)
+- [Config schema](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/config.schema.json)
+- [Config layering](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/config/src/loader/README.md)
+- [Agent role discovery](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/config/agent_roles.rs)
+- [`apply_role_to_config`](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/config/mod.rs)
+- [`spawn_agent` schema](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/tools/spec.rs)
+- [Tool registration](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/tools/spec.rs)
+- [`multi_agent_v2` feature configuration](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/features.rs)
+- [v1/v2 multi-agent session selection](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/tools/handlers/multi_agents.rs)
+- [Skill loader](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core-skills/src/loader.rs)
+- [Exec policy Rules](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/execpolicy/README.md)
+- [AGENTS.md hierarchy](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/agents_md.rs)
+- [Hook discovery](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/hooks/src/engine/discovery.rs)
+- [Hook runtime](https://github.com/openai/codex/blob/rust-v0.142.0/codex-rs/core/src/hook_runtime.rs)
 
 Do not substitute `main`, `latest`, or an unpinned documentation URL as version evidence.
 
 ## Known limitations
 
-- Actual Custom Agent execution and behavioral isolation are not proven by static parsing or discovery; they require the separate Stage 8 validation.
+- The 0.142.0 explicit-`agent_type` runtime validated all four role markers, but the effective child sandbox remains `UNCONFIRMED` and the workspace-write application pilot remains `NOT RUN`.
 - Prefix Rules cannot safely represent every shell wrapper, alias, absolute executable path, or semantically equivalent command. Unrepresented forms fall back to other policy layers and human governance.
 - A prompted dry-run can still be harmless in effect, but prefix policy intentionally classifies the publication family rather than inferring runtime intent.
 - Project-local files cannot install, enable, or trust user Hooks; configure approval routing; or guarantee a sandbox mode.
