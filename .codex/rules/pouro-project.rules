@@ -1,0 +1,60 @@
+# Project-local execution policy for NS-del346/Pouro-GPT.
+# Dependency mutation, deployment, workflow dispatch, and release publication
+# require a human approval decision. Destructive Git and secret safeguards stay
+# in user-level Rules and are intentionally not duplicated here.
+
+prefix_rule(
+    pattern = [["npm", "npm.cmd"], "run", "build"],
+    decision = "allow",
+    justification = "The repository build is a standard non-deployment validation command.",
+    match = [["npm", "run", "build"], ["npm.cmd", "run", "build"]],
+    not_match = [["npm", "run", "deploy"], ["npm", "ci"]],
+)
+
+prefix_rule(
+    pattern = [["npm", "npm.cmd"], ["install", "uninstall", "update"]],
+    decision = "prompt",
+    justification = "Application dependency mutation requires explicit human review.",
+    match = [["npm", "install"], ["npm.cmd", "uninstall", "react"], ["npm", "update"]],
+    not_match = [["npm", "ci"], ["npm", "run", "build"]],
+)
+
+prefix_rule(
+    pattern = [["npm", "npm.cmd"], "audit", "fix"],
+    decision = "prompt",
+    justification = "Automated dependency remediation can rewrite the lockfile and requires explicit human review.",
+    match = [["npm", "audit", "fix"], ["npm", "audit", "fix", "--force"], ["npm.cmd", "audit", "fix"]],
+    not_match = [["npm", "audit"], ["npm", "ci"]],
+)
+
+prefix_rule(
+    pattern = [["npm", "npm.cmd"], "run", "deploy"],
+    decision = "prompt",
+    justification = "Deployment changes external state and requires explicit human review.",
+    match = [["npm", "run", "deploy"], ["npm.cmd", "run", "deploy"]],
+    not_match = [["npm", "run", "build"]],
+)
+
+prefix_rule(
+    pattern = [["npm", "npm.cmd"], "publish"],
+    decision = "prompt",
+    justification = "Package publication changes external state and requires explicit human review.",
+    match = [["npm", "publish"], ["npm.cmd", "publish", "--dry-run"]],
+    not_match = [["npm", "ci"]],
+)
+
+prefix_rule(
+    pattern = ["gh", "workflow", "run"],
+    decision = "prompt",
+    justification = "Workflow dispatch can execute remote automation and requires explicit human review.",
+    match = [["gh", "workflow", "run", "ci.yml"], ["gh", "workflow", "run", "deploy.yml", "--ref", "main"]],
+    not_match = [["gh", "pr", "view", "123"]],
+)
+
+prefix_rule(
+    pattern = ["gh", "release", ["create", "edit", "delete"]],
+    decision = "prompt",
+    justification = "Release publication or mutation requires explicit human review.",
+    match = [["gh", "release", "create", "v1.0.0"], ["gh", "release", "edit", "v1.0.0"], ["gh", "release", "delete", "v1.0.0"]],
+    not_match = [["gh", "release", "view", "v1.0.0"], ["gh", "pr", "view", "123"]],
+)

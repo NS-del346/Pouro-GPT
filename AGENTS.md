@@ -366,3 +366,60 @@ whether Draft PR exists
 ```
 
 GitHub PR, branch, commit SHA, and QA documents are the source of truth.
+
+---
+
+## Codex Development Foundation
+
+Use a Fable 5-style development loop for bounded repository changes:
+
+```text
+Design/Specification → Implementation → Independent Verification → Regression → Memory/Handoff
+```
+
+Preserve one writer for every write-capable session. The implementation role is the sole writer; specification, verifier, and regression roles remain read-only. Do not let verifier or regression roles submit reviews, mutate pull requests, or implement fixes during their audit. Agent roles must not depend on recursively spawning other agents.
+
+Native project roles require an explicit `agent_type` in each agent-spawn request. `task_name` is an identifier only; it is not a role selector. Generic-agent fallback is prohibited. If the active tool schema does not expose `agent_type`, stop before spawning, report the role execution `NOT RUN`, and do not substitute a generic agent.
+
+On Codex CLI 0.142.0, spawn metadata is hidden by default. For a session that requires native project roles, expose it with the supported session-only override shown below. Persistent global configuration is not the default. Select `pouro-build` for the implementation writer and `pouro-audit` for specification, verifier, and regression. Replace every angle-bracket placeholder before use; this is a template and is not directly executable as written:
+
+```powershell
+codex --profile <pouro-build|pouro-audit> --strict-config `
+  -c 'approvals_reviewer="user"' `
+  -c 'features.multi_agent_v2.hide_spawn_agent_metadata=false' `
+  -C '<repository-root>'
+```
+
+This session override is user-local runtime setup, not a repository requirement. A clone must remain safe when the profile, override, Hook, approval reviewer, or other user-level configuration is absent.
+
+Keep Human Gates separate from automated evidence. UI review, physical-device checks, assistive-technology checks, and subjective acceptance remain `NOT RUN` until the responsible human supplies direct evidence. Never use an automated check to clear a Human Gate.
+
+Do not auto-merge. Marking a pull request Ready, merging, closing, enabling auto-merge, publishing a release, or performing another external mutation requires explicit user authorization for that exact action.
+
+Every future PR or Codex prompt must include concrete model and reasoning choices under both labels:
+
+```text
+推奨されるモデル: <model and reasoning level>
+最高の成果を期待する場合のモデル: <model and reasoning level>
+```
+
+Repository workflows must remain safe without user-specific configuration. Do not assume a clone has a user-level profile, Rule, Hook, Skill, approval reviewer, trusted Hook state, or writable path. User-level artifacts are not repository prerequisites; each user must configure and trust them independently.
+
+Project-local foundation artifacts are:
+
+```text
+.codex/agents/specification.toml
+.codex/agents/implementation.toml
+.codex/agents/verifier.toml
+.codex/agents/regression.toml
+.agents/skills/pouro-pr-orchestration/SKILL.md
+.agents/skills/pouro-protected-scope-guard/SKILL.md
+.agents/skills/pouro-pr-handoff/SKILL.md
+.codex/rules/pouro-project.rules
+docs/development/CODEX_DEVELOPMENT_FOUNDATION.md
+docs/qa/PR-DEV-TOOLS-01-codex-development-foundation.md
+```
+
+These artifacts supplement and do not weaken the product, legal, Timer, Rebrew, mobile, protected-scope, validation, or file-hygiene requirements above.
+
+Stop before further mutation when repository identity, branch, HEAD, worktree state, upstream or PR expectations, source-of-truth precedence, scope, writer exclusivity, authorization, secret safety, Hook trust, backup, or validation is uncertain or fails. Preserve the current working-tree evidence, report the blocker, label unperformed checks `NOT RUN`, and wait for direction.
