@@ -3243,14 +3243,14 @@ p {
   }
 }
 
-/* PR-008H: extend the approved matte-dark system to Home, Timer, and History. */
+/* PR-UI-HOME-02: compact, fixed-height Flat Stacked Method Deck. */
 .visual-polish-page--home {
-  gap: 14px;
+  gap: 10px;
 }
 
 .visual-polish-page--home .home-hero {
-  gap: 8px;
-  padding: 2px 2px 0;
+  gap: 3px;
+  padding: 0 2px;
   text-align: left;
 }
 
@@ -3258,7 +3258,7 @@ p {
   justify-self: start;
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: clamp(2.35rem, 11vw, 3.35rem);
+  font-size: clamp(2.2rem, 10vw, 3.1rem);
   font-weight: 650;
   letter-spacing: 0;
 }
@@ -3268,7 +3268,7 @@ p {
   max-width: none;
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.015em;
 }
@@ -3277,153 +3277,249 @@ p {
   display: none;
 }
 
-.visual-polish-page--home .last-brew-card {
-  gap: 10px;
-  padding: 14px;
-  border-color: var(--color-border);
-  background: var(--color-surface);
-  box-shadow: none;
-}
-
-.visual-polish-page--home .last-brew-card__header h2 {
-  font-size: 1.15rem;
-  letter-spacing: -0.015em;
-}
-
-.visual-polish-page--home .last-brew-card__summary {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 3px 10px;
-}
-
-.visual-polish-page--home .last-brew-card__summary strong,
-.visual-polish-page--home .last-brew-card__summary p {
-  grid-column: 1;
-}
-
-.visual-polish-page--home .last-brew-card__summary span {
-  grid-row: 1;
-  grid-column: 2;
-  text-align: right;
-}
-
-.visual-polish-page--home .last-brew-card__summary p,
-.visual-polish-page--home .last-brew-card__meta {
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
-}
-
-.visual-polish-page--home .last-brew-card__button {
-  border-color: color-mix(in srgb, var(--color-accent) 36%, var(--color-border));
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface-muted));
-}
-
-.visual-polish-page--home .method-grid {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
-}
-
-.visual-polish-page--home .method-card {
-  grid-template-columns: minmax(0, 1fr) 56px;
-  min-height: 92px;
-  gap: 6px 12px;
-  align-content: center;
+.last-brew-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px;
+  width: 100%;
+  min-height: 52px;
+  max-height: 64px;
   align-items: center;
-  justify-items: start;
-  padding: 13px 12px 13px 16px;
-  border-color: var(--color-border);
-  border-radius: 8px;
+  gap: 8px;
+  padding: 8px 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
   color: var(--color-text);
   background: var(--color-surface);
   box-shadow: none;
   text-align: left;
 }
 
-.visual-polish-page--home .method-card--selected {
+.last-brew-strip__summary {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.last-brew-strip__summary > span {
+  color: var(--color-text-muted);
+}
+
+.last-brew-strip__summary strong {
+  font-weight: 850;
+}
+
+.last-brew-strip__arrow {
+  color: var(--color-accent-text);
+  font-size: 1.55rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.method-deck {
+  --method-deck-tab-step: 42px;
+  position: relative;
+  height: 398px;
+  min-width: 0;
+  isolation: isolate;
+}
+
+.method-deck-card__tab {
+  position: absolute;
+  top: calc(var(--method-index) * var(--method-deck-tab-step));
+  right: 0;
+  left: 12px;
+  z-index: calc(4 - var(--method-index));
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 24px;
+  min-height: 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 9px 9px 5px 5px;
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+  box-shadow: none;
+  text-align: left;
+  transform: translateX(0);
+  transition:
+    transform 200ms ease-out,
+    border-color 200ms ease-out,
+    background-color 200ms ease-out;
+}
+
+.method-deck-card--selected .method-deck-card__tab {
+  z-index: 6;
   border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
-  outline: none;
+  border-left-width: 3px;
+  background: var(--color-surface);
+  transform: translateX(-12px);
 }
 
-.visual-polish-page--home .method-icon-frame {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  justify-self: end;
+.method-deck-card__tab-icon {
+  position: relative;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+}
+
+.method-deck-card__tab-icon img {
+  position: absolute;
   width: 50px;
+  max-width: none;
   height: 50px;
-}
-
-.visual-polish-page--home .method-icon {
-  width: 72px;
-  height: 72px;
-  margin: -36px 0 0 -36px;
   object-fit: contain;
 }
 
-.visual-polish-page--home .method-card__name {
-  grid-column: 1;
-  color: var(--color-text);
-  font-size: 1.12rem;
-  letter-spacing: 0;
+.method-deck-card__tab-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.92rem;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.visual-polish-page--home .method-card__description {
-  grid-column: 1;
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
-  line-height: 1.4;
+.method-deck-card__marker {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: #17130e;
+  font-size: 0.75rem;
+  font-weight: 900;
 }
 
-.visual-polish-page--home .method-card__meta {
-  display: none;
+.method-deck-card--selected .method-deck-card__marker {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
 }
 
-.visual-polish-page--home .method-card .status-pill {
-  display: none;
-}
-
-.visual-polish-page--home .selected-method-card {
-  gap: 10px;
-  padding: 14px;
-  border-color: var(--color-border);
-  border-radius: 8px;
+.method-deck-card__front {
+  position: absolute;
+  top: calc(4 * var(--method-deck-tab-step));
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-rows: auto auto 28px 52px;
+  gap: 8px;
+  min-width: 0;
+  padding: 11px 12px 12px;
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-accent);
+  border-radius: 10px;
   background: var(--color-surface);
+  box-shadow: none;
+  animation: method-deck-front-in 200ms ease-out;
+}
+
+.method-deck-card__front[hidden] {
+  display: none;
+}
+
+.method-deck-card__identity {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.method-deck-card__front-icon {
+  position: relative;
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+}
+
+.method-deck-card__front-icon img {
+  position: absolute;
+  width: 74px;
+  max-width: none;
+  height: 74px;
+  object-fit: contain;
+}
+
+.method-deck-card__identity h2 {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 1.18rem;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.method-deck-card__signature {
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-family: var(--font-numeric);
+  font-size: 0.76rem;
+  font-weight: 750;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.method-deck-card__description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.method-deck-card__front .status-pill {
+  min-height: 28px;
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: 9px;
+  color: var(--color-text);
+  background: var(--color-surface-muted);
+}
+
+.method-deck-card__cta {
+  display: grid;
+  min-height: 52px;
+  place-items: center;
+  padding: 10px 16px;
+  border-radius: 9px;
+  color: #17130e;
+  background: var(--color-accent);
+  font-weight: 900;
+  text-decoration: none;
   box-shadow: none;
 }
 
-.visual-polish-page--home .selected-method-card .section-heading h2 {
-  font-size: 1.45rem;
+.method-deck-card__cta--disabled {
+  pointer-events: none;
+  opacity: 0.55;
 }
 
-.visual-polish-page--home .selected-method-card p {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  line-height: 1.55;
-}
+@keyframes method-deck-front-in {
+  from {
+    opacity: 0.88;
+    transform: translateY(12px);
+  }
 
-.visual-polish-page--home .selected-method-card .status-pill {
-  display: inline-flex;
-  min-height: 30px;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, var(--color-border));
-  color: var(--color-accent-text);
-  background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
-}
-
-.visual-polish-page--home .source-status-list {
-  display: none;
-}
-
-.visual-polish-page--home .status-note {
-  display: none;
-}
-
-.visual-polish-page--home > .primary-cta {
-  bottom: calc(var(--bottom-tabs-height) + 12px + env(safe-area-inset-bottom));
-  min-height: 52px;
-  border-radius: 8px;
-  color: #17130e;
-  background: var(--color-accent);
-  box-shadow: 0 0 0 10px var(--color-bg);
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .visual-polish-page--timer {
@@ -4134,7 +4230,8 @@ p {
 }
 
 @media (hover: hover) {
-  .visual-polish-page--home .method-card:hover {
+  .visual-polish-page--home .method-deck-card__tab:hover,
+  .visual-polish-page--home .last-brew-strip:hover {
     border-color: color-mix(in srgb, var(--color-accent) 64%, var(--color-border));
   }
 
@@ -4146,39 +4243,43 @@ p {
 
 @media (max-width: 390px) {
   .visual-polish-page--home {
-    gap: 14px;
+    gap: 10px;
   }
 
   .visual-polish-page--home .home-wordmark {
-    font-size: 2.35rem;
+    font-size: 2.2rem;
   }
 
-  .visual-polish-page--home .method-card {
-    min-height: 88px;
-    padding: 12px 10px 12px 14px;
+  .method-deck-card__front {
+    padding-right: 11px;
+    padding-left: 11px;
   }
 
-  .visual-polish-page--home .method-card__description {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+  .method-deck-card__front-icon {
+    width: 50px;
   }
 
-  .visual-polish-page--home .selected-method-card {
-    padding: 14px;
+  .method-deck-card__identity {
+    grid-template-columns: 50px minmax(0, 1fr);
+    gap: 8px;
   }
 
-  .visual-polish-page--home .last-brew-card__summary {
-    grid-template-columns: minmax(0, 1fr);
+  .method-deck-card__signature {
+    font-size: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .method-deck-card__tab {
+    transition: none;
   }
 
-  .visual-polish-page--home .last-brew-card__summary span {
-    grid-row: auto;
-    grid-column: 1;
-    text-align: left;
+  .method-deck-card__front {
+    animation: none;
   }
+}
 
+@media (max-width: 390px) {
   .visual-polish-page--timer {
     gap: 0;
   }
