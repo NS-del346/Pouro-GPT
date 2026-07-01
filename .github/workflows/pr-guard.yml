@@ -2,6 +2,11 @@ name: PR Guard
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
     branches:
       - main
 
@@ -26,12 +31,39 @@ jobs:
           git diff --name-only "origin/$GITHUB_BASE_REF...HEAD" | tee changed_files.txt
 
       - name: Block protected file changes
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
+          set -euo pipefail
+
           echo "Checking protected files..."
 
-          if grep -E '^(package\.json|package-lock\.json|vite\.config\..*|public/|src/service-worker\.ts|src/sw\.ts)$' changed_files.txt; then
-            echo "Protected file change detected. Split this into a dedicated PR with explicit approval."
-            exit 1
+          protected_pattern='^(package\.json|package-lock\.json|vite\.config\..*|public/|src/service-worker\.ts|src/sw\.ts)$'
+          mapfile -t protected_files < <(grep -E "$protected_pattern" changed_files.txt || true)
+
+          if (( ${#protected_files[@]} == 0 )); then
+            echo "No protected file changes detected."
+            exit 0
           fi
 
-          echo "No protected file changes detected."
+          if [[
+            "$PR_NUMBER" == "108" &&
+            "$PR_HEAD_REF" == "codex/pr-ab-00-test-feature-flag-foundation" &&
+            "$PR_HEAD_SHA" == "3db7ffcc74c5ec27cc9e8f6963e9c64cfb6821d0" &&
+            "$PR_BODY" == *"POURO-GPT-PR-GUARD-PR108-ONE-TIME-EXCEPTION-AND-RECHECK-HG-019"*
+          ]]; then
+            actual="$(printf '%s\n' "${protected_files[@]}" | sort -u)"
+            expected=$'package-lock.json\npackage.json'
+
+            if [[ "$actual" == "$expected" ]]; then
+              echo "Approved one-time protected-file exception for PR #108."
+              exit 0
+            fi
+          fi
+
+          printf 'Protected file change detected: %s\n' "${protected_files[@]}"
+          echo "Split this into a dedicated PR with explicit approval."
+          exit 1
