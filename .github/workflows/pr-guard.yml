@@ -52,14 +52,18 @@ jobs:
           if [[
             "$PR_NUMBER" == "108" &&
             "$PR_HEAD_REF" == "codex/pr-ab-00-test-feature-flag-foundation" &&
-            "$PR_HEAD_SHA" == "3db7ffcc74c5ec27cc9e8f6963e9c64cfb6821d0" &&
             "$PR_BODY" == *"POURO-GPT-PR-GUARD-PR108-ONE-TIME-EXCEPTION-AND-RECHECK-HG-019"*
           ]]; then
+            git fetch origin "$PR_HEAD_SHA" --depth=1
+            current_tree="$(git rev-parse "$PR_HEAD_SHA^{tree}")"
             actual="$(printf '%s\n' "${protected_files[@]}" | sort -u)"
             expected=$'package-lock.json\npackage.json'
 
-            if [[ "$actual" == "$expected" ]]; then
-              echo "Approved one-time protected-file exception for PR #108."
+            if [[
+              "$current_tree" == "ba6790559de00c000c65a2e86eec735c7a2b84ce" &&
+              "$actual" == "$expected"
+            ]]; then
+              echo "Approved one-time content-bound exception for PR #108."
               exit 0
             fi
           fi
